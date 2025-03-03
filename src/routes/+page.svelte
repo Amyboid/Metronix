@@ -40,7 +40,7 @@
 									</div>
 									<div class="flex items-center justify-between">
 										<p class="text-sm font-semibold tracking-wider text-green-700">
-											Min {item.discount}% off
+											Save Upto {item.discount}%
 										</p>
 										<p class="item-brand z-10 text-sm font-bold tracking-widest capitalize">
 											{item.brand}
@@ -80,7 +80,10 @@
 		height: 40vh;
 		/* box-shadow: 1px 1px 0.2px 1px var(--accent); */
 	}
+	.items{
 
+		/* border: 1px solid purple; */
+	}
 	.item {
 		/* border: 1px solid purple; */
 		/* box-shadow: 1px 1px 0.2px 1px var(--primary); */
@@ -91,7 +94,7 @@
 	.item-image {
 		/* background-color: #d4d2cc; */
 		/* background-color: #e2ded1;  */
-		background-color: #dcd8cd; 
+		background-color: var(--primary-background); 
 		height: 80%;
 		width: 100%;
 		padding: 1.5rem;
@@ -178,7 +181,6 @@
 		.item-container {
 			grid-template-columns: repeat(4, 1fr);
 		}
-		.hero,
 		.items {
 			width: 90%;
 		}
