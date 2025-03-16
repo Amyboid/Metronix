@@ -8,6 +8,7 @@
 		{ name: 'Chimney', link: '/explore/chimney' },
 		{ name: 'Ro', link: '/explore/ro' },
 		{ name: 'Speaker', link: '/explore/speaker' },
+		{ name: 'Oven', link: '/explore/oven' },
 		{ name: 'Misc', link: '/explore/misc' }
 	];
 
@@ -48,7 +49,7 @@
 		<div class="hidden items-center justify-between md:mr-3 md:flex lg:mr-5">
 			{#each navLinks as link}
 				<a
-					class="font-semibold tracking-widest md:mr-2 md:ml-2 md:text-xs lg:mr-4 lg:ml-4 lg:text-sm"
+					class="font-semibold tracking-widest md:mr-2 md:ml-2 md:text-xs lg:mr-4 lg:ml-4 lg:text-xs"
 					href={link.link}>{link.name}</a
 				>
 			{/each}
@@ -151,7 +152,7 @@
 			<div
 				class="hamburger-menu absolute right-0 flex h-[80vh] w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
 			>
-				<div class="flex flex-col gap-5">
+				<div class="flex flex-col gap-5 pb-14">
 					{#each navLinks as link}
 						<a
             onclick={handleShowHamburger}
