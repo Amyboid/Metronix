@@ -1,12 +1,48 @@
 <script>
+	import { onMount } from 'svelte';
+	import { fade, fly } from 'svelte/transition';
+
 	let buttons = [
 		{ id: 'product', label: 'Browse by Product' },
-		{ id: 'brand', label: 'Browse by Brand' }
+		{ id: 'category', label: 'Browse by Category' }
 	];
 	let activeButton = $state('product');
-	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'tv', 'fan'];
+	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'fan', 'stove'];
+	let categoryIcons = [
+		'Consumer Electronics',
+		'Home Appliances',
+		'Kitchen Appliances',
+		'SelfCare Appliances'
+	];
 
 	let showMore = $state(true);
+	let productIconRow = $state(0);
+	let categoryIconRow = $state(0);
+
+	// Function to update size based on window width
+	function updateSize() {
+		const width = window.innerWidth; 
+		if (width >= 1024) {
+			productIconRow = Math.ceil(productIcons.length / 4);
+			categoryIconRow = Math.ceil(categoryIcons.length / 4);
+		}else if (width >= 768) {
+			productIconRow = Math.ceil(productIcons.length / 3);
+			categoryIconRow = Math.ceil(categoryIcons.length / 3);
+		} else if (width >= 640) {
+			productIconRow = Math.ceil(productIcons.length / 3);
+			categoryIconRow = Math.ceil(categoryIcons.length / 3);
+		} else {
+			productIconRow = Math.ceil(productIcons.length / 2);
+			categoryIconRow = Math.ceil(categoryIcons.length / 2);
+		}
+	}
+
+	// Update size on window resize
+	onMount(() => {
+		updateSize();
+		window.addEventListener('resize', updateSize);
+		return () => window.removeEventListener('resize', updateSize);
+	});
 </script>
 
 <section
@@ -53,6 +89,7 @@
 					<button
 						onclick={() => {
 							activeButton = button.id;
+							showMore = true;
 						}}
 						class="nav-btn {activeButton === button.id ? 'active' : ''}"
 					>
@@ -61,75 +98,117 @@
 				</li>
 			{/each}
 		</ul>
-
-		<div class="products flex flex-col items-center justify-center pt-10 pb-6">
+		<div class="products flex w-full flex-col items-center justify-center gap-10 pt-10 pb-10">
 			{#if activeButton === 'product'}
 				<div
-					class="browse-by-product w-max gap-6 overflow-hidden md:gap-10 {showMore
-						? 'h-[368px] md:h-[1000px]'
-						: 'h-max'}"
+					in:fade
+					class="browse-by grid gap-6 overflow-hidden transition-all duration-500 ease-in-out md:gap-10 {showMore
+						? 'h-[344px] sm:h-[160px] md:h-[192px]'
+						: 'show-less-product'}"
+					style="--height: {productIconRow};"
 				>
 					{#each productIcons as productIcon}
-						<a href={'/explore/' + productIcon} class="flex flex-col items-center gap-2">
+						<a
+							href={'/explore/' + productIcon}
+							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
+						>
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
-								<img src={'/search/product/' + productIcon + '.png'} alt="" srcset="" />
+								<img src={'/search/product/' + productIcon + '.png'} alt={productIcon} srcset="" />
 							</div>
-							<p>{productIcon}</p>
+							<p class="text-center text-xs md:text-sm">{productIcon}</p>
 						</a>
 					{/each}
 				</div>
 			{/if}
-			{#if activeButton === 'brand'}
-				<div>brand</div>
+			{#if activeButton === 'category'}
+				<div
+					in:fade
+					class="browse-by grid gap-6 overflow-hidden transition-all duration-500 ease-in-out md:gap-10 {showMore
+						? 'h-[344px] sm:h-[160px] md:h-[192px]'
+						: 'show-less-category'}"
+					style="--height: {categoryIconRow};"
+				>
+					{#each categoryIcons as categoryIcon}
+						<a
+							href={'/explore/' + categoryIcon}
+							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
+						>
+							<div class="category-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
+								<img
+									src={'/search/category/' + categoryIcon + '.png'}
+									alt={categoryIcon}
+									srcset=""
+								/>
+							</div>
+							<p class="text-center text-xs md:text-sm">{categoryIcon}</p>
+						</a>
+					{/each}
+				</div>
 			{/if}
-			<button onclick={() => (showMore = !showMore)}>
-				Show
-				{#if showMore}
-					more
-				{:else}
-					less
-				{/if}
+			<button
+				class="show-more-btn flex h-10 w-full cursor-pointer items-center justify-center"
+				onclick={() => (showMore = !showMore)}
+			>
+				<div class="relative -top-5">
+					<p class="flex items-center gap-1">
+						Show
+						{#if showMore}
+							more
+							<span class="icon-[ri--arrow-down-s-line] -mb-1"></span>
+						{:else}
+							less
+							<span class="icon-[ri--arrow-up-s-line] -mb-1"></span>
+						{/if}
+					</p>
+				</div>
 			</button>
 		</div>
 	</section>
 </section>
 
 <style>
-	.browse-by-product {
-		display: grid;
-		place-items: center;
-		grid-template-columns: repeat(2, 1fr); 
+	.browse-by {
+		grid-template-columns: repeat(2, 1fr);
+		grid-template-rows: repeat(2, 1fr);
 	}
-	.product-icon {
+	.product-icon,
+	.category-icon {
 		border: 1px solid var(--primary-background);
 		border-radius: 10%;
 	}
+	.show-less-product,
+	.show-less-category {
+		height: calc((var(--height) * 184px) - 24px);
+	}
 	.hero {
 	}
-	.hero > * {
+	.products {
 		/* border: 1px solid plum; */
 	}
-	/* .hero-right, .hero-img{
-		border: 1px solid plum;
-	} */
+	.browse-by {
+		/* border: 1px solid #a4dda0; */
+	}
+	.browse-by > * {
+		/* border: 1px solid #a4dda0; */
+	}
 
-	/* .product-section, */
-	.product-section > * {
-		/* border: 1px solid plum; */
-	}
 	.product-nav {
 		border-bottom: 1px solid var(--primary-background);
 	}
-
+	.show-more-btn {
+		border-top: 1px solid var(--primary-background);
+	}
+	.show-more-btn div {
+		padding: 0 10px;
+		background-color: var(--neutral);
+	}
 	.nav-btn {
 		position: relative;
 		cursor: pointer;
 		padding: 10px 0;
 		margin: 5px 0;
 	}
-	/* .nav-btn::after {
-		border-bottom: 1px solid #00000002;
-	} */
+
 	.nav-btn.active::after {
 		content: '';
 		position: absolute;
@@ -167,8 +246,12 @@
 			height: 100%;
 			/* border: 1px solid plum; */
 		}
-		.browse-by-product {
+		.browse-by {
 			grid-template-columns: repeat(3, 1fr);
+		}
+		.show-less-product,
+		.show-less-category {
+			height: calc((var(--height) * 184px) - 24px);
 		}
 	}
 
@@ -182,12 +265,16 @@
 		.hero {
 			height: 60vh;
 		}
-		.browse-by-product {
-			grid-template-columns: repeat(4, 1fr);
+		.show-less-product,
+		.show-less-category {
+			height: calc((var(--height) * 232px) - 40px);
 		}
 	}
 	@media only screen and (min-width: 1024px) {
 		/* lg */
+		.browse-by {
+			grid-template-columns: repeat(4, 1fr);
+		}
 	}
 	@media only screen and (min-width: 1280px) {
 		/* xl */
