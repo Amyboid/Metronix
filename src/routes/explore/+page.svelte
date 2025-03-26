@@ -1,6 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
+	import ImgSlider from '$lib/ImgSlider.svelte';
+
 
 	let buttons = [
 		{ id: 'product', label: 'Browse by Product' },
@@ -21,11 +23,11 @@
 
 	// Function to update size based on window width
 	function updateSize() {
-		const width = window.innerWidth; 
+		const width = window.innerWidth;
 		if (width >= 1024) {
 			productIconRow = Math.ceil(productIcons.length / 4);
 			categoryIconRow = Math.ceil(categoryIcons.length / 4);
-		}else if (width >= 768) {
+		} else if (width >= 768) {
 			productIconRow = Math.ceil(productIcons.length / 3);
 			categoryIconRow = Math.ceil(categoryIcons.length / 3);
 		} else if (width >= 640) {
@@ -43,6 +45,22 @@
 		window.addEventListener('resize', updateSize);
 		return () => window.removeEventListener('resize', updateSize);
 	});
+
+	let soundEssentials = [
+
+		{
+			src: 'ac'
+		},
+		{
+			src: 'chimney'
+		},
+		{
+			src: 'fridge'
+		},
+		{
+			src: 'oven'
+		}
+	];
 </script>
 
 <section
@@ -77,12 +95,12 @@
 	</div>
 </section>
 <section
-	class="main-section flex w-full min-w-80 flex-col items-center gap-20 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:pr-12 md:pl-12"
+	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:pr-12 md:pl-12"
 >
 	<h1 class="text-xl font-medium tracking-wide sm:text-2xl md:text-3xl md:tracking-wider">
 		Find the perfect product for you.
 	</h1>
-	<section class="product-section w-[90%] md:w-[85%]">
+	<section class="w-[90%] md:w-[85%]">
 		<ul class="product-nav flex w-full items-center justify-center gap-20">
 			{#each buttons as button}
 				<li>
@@ -98,7 +116,7 @@
 				</li>
 			{/each}
 		</ul>
-		<div class="products flex w-full flex-col items-center justify-center gap-10 pt-10 pb-10">
+		<div class="flex w-full flex-col items-center justify-center gap-10 pt-10 pb-10">
 			{#if activeButton === 'product'}
 				<div
 					in:fade
@@ -164,12 +182,21 @@
 			</button>
 		</div>
 	</section>
+
+	<section
+		class="product-section w-[90%] h-auto flex flex-col items-center justify-center gap-10 md:w-[85%] "
+	>
+		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
+			Sound Essentials
+		</h1>
+		<ImgSlider images={soundEssentials} />
+	</section>
 </section>
 
-<style>
+<style> 
+
 	.browse-by {
 		grid-template-columns: repeat(2, 1fr);
-		grid-template-rows: repeat(2, 1fr);
 	}
 	.product-icon,
 	.category-icon {
@@ -180,17 +207,15 @@
 	.show-less-category {
 		height: calc((var(--height) * 184px) - 24px);
 	}
-	.hero {
-	}
-	.products {
-		/* border: 1px solid plum; */
-	}
+	/* .hero {
+	} */
+	/*
+	.product-section {
+		border: 10px solid plum;
+		}
 	.browse-by {
-		/* border: 1px solid #a4dda0; */
-	}
-	.browse-by > * {
-		/* border: 1px solid #a4dda0; */
-	}
+		border: 1px solid #a4dda0;
+	} */
 
 	.product-nav {
 		border-bottom: 1px solid var(--primary-background);
@@ -221,9 +246,9 @@
 		cursor: pointer;
 	}
 
-	.main-section {
-		/* border: 5px solid plum; */
-	}
+	/* .main-section {
+		border: 5px solid plum;
+	} */
 
 	.hero {
 		height: 70vh;
