@@ -3,7 +3,6 @@
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/ImgSlider.svelte';
 
-
 	let buttons = [
 		{ id: 'product', label: 'Browse by Product' },
 		{ id: 'category', label: 'Browse by Category' }
@@ -47,18 +46,47 @@
 	});
 
 	let soundEssentials = [
-
 		{
-			src: 'ac'
+			src: 'sound/1',
+			name: 'Sony HT-S350 Home Theater System',
+			price: '18,999'
 		},
 		{
-			src: 'chimney'
+			src: 'sound/2',
+			name: 'LG LHD657 Home Theater System',
+			price: '22,999'
 		},
 		{
-			src: 'fridge'
+			src: 'sound/3',
+			name: 'Sony SSCS3 3-Way Floor-Standing Speaker',
+			price: '14,999'
 		},
 		{
-			src: 'oven'
+			src: 'sound/4',
+			name: 'JBL Stage A190 Tower Speaker',
+			price: '18,999'
+		}
+	];
+	let selfCareEssentials = [
+		{
+			src: 'selfcare/1',
+			name: 'Revlon One-Step Hair Dryer and Volumizer',
+			price: '4,999'
+		},
+		{
+			src: 'selfcare/2',
+			name: 'Philips HP8316/00 Hair Straightener',
+			price: '3,499'
+		},
+		{
+			src: 'selfcare/3',
+			name: 'Philips BHD318/00 Hair Dryer',
+			price: '2,999'
+		},
+		{
+			src: 'selfcare/4',
+			name: 'Remington S5500 Digital Anti-Static Hair Straightener',
+			price: '3,999'
 		}
 	];
 </script>
@@ -88,8 +116,8 @@
 		<h3 class="w-[80%] text-center text-sm tracking-wide sm:mb-6 sm:text-left md:pr-6 md:text-xl">
 			Transform your living room into a cinematic paradise.
 		</h3>
-		<a class="mt-auto flex items-center text-sm tracking-wide sm:text-left md:text-xl" href="/">
-			<p class="">Browse Samsung TVs</p>
+		<a class="mt-auto flex items-center text-sm tracking-wide sm:text-left md:text-xl" href="/#">
+			<p class="hover:underline">Browse Samsung TVs</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-9 w-4 md:h-6 md:w-6"></span>
 		</a>
 	</div>
@@ -131,7 +159,7 @@
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
-								<img src={'/search/product/' + productIcon + '.png'} alt={productIcon} srcset="" />
+								<img src={'/search/product/' + productIcon + '.png'} alt={productIcon} />
 							</div>
 							<p class="text-center text-xs md:text-sm">{productIcon}</p>
 						</a>
@@ -184,24 +212,39 @@
 	</section>
 
 	<section
-		class="product-section w-[90%] h-auto flex flex-col items-center justify-center gap-10 md:w-[85%] "
+		class="product-section flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%] mb-10"
 	>
 		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
 			Sound Essentials
 		</h1>
 		<ImgSlider images={soundEssentials} />
+		<a class="-mt-5 flex items-center tracking-wide sm:text-left" href="/#">
+			<p class="hover:underline text-blue-700">shop all sound essentials</p>
+			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
+		</a> 
+	</section>
+	<section
+		class="product-section flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]  mb-10"
+	>
+		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
+			Self-Care Essentials
+		</h1>
+		<ImgSlider images={selfCareEssentials} />
+		<a class="-mt-5 flex items-center tracking-wide sm:text-left" href="/#">
+			<p class="hover:underline text-blue-700">shop all self-care essentials</p>
+			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
+		</a> 
 	</section>
 </section>
 
-<style> 
-
+<style>
 	.browse-by {
 		grid-template-columns: repeat(2, 1fr);
 	}
 	.product-icon,
 	.category-icon {
 		border: 1px solid var(--primary-background);
-		border-radius: 10%;
+		border-radius: 8px;
 	}
 	.show-less-product,
 	.show-less-category {
@@ -211,7 +254,9 @@
 	} */
 	/*
 	.product-section {
-		border: 10px solid plum;
+		border: 5px solid white;
+		background-color: var(--primary-background);
+		padding: 10px;
 		}
 	.browse-by {
 		border: 1px solid #a4dda0;
