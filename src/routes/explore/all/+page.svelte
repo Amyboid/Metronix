@@ -10,10 +10,10 @@
 	let activeButton = $state('product');
 	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'fan', 'stove'];
 	let categoryIcons = [
-		'Consumer Electronics',
-		'Home Appliances',
-		'Kitchen Appliances',
-		'SelfCare Appliances'
+		'Consumer-Electronics',
+		'Home-Appliances',
+		'Kitchen-Appliances',
+		'Self-Care-Appliances'
 	];
 
 	let showMore = $state(true);
@@ -47,48 +47,50 @@
 
 	let soundEssentials = [
 		{
-			src: 'sound/1',
+			src: 'sound/sony-ht-s350-home-theater-system',
 			name: 'Sony HT-S350 Home Theater System',
 			price: '18,999'
 		},
 		{
-			src: 'sound/2',
+			src: 'sound/lg-lhd657-home-theater-system',
 			name: 'LG LHD657 Home Theater System',
 			price: '22,999'
 		},
 		{
-			src: 'sound/3',
+			src: 'sound/sony-sscs3-3-way-floor-standing-speaker',
 			name: 'Sony SSCS3 3-Way Floor-Standing Speaker',
 			price: '14,999'
 		},
 		{
-			src: 'sound/4',
+			src: 'sound/jbl-stage-a190-tower-speaker',
 			name: 'JBL Stage A190 Tower Speaker',
 			price: '18,999'
 		}
 	];
-	let selfCareEssentials = [
+
+let selfCareEssentials = [
 		{
-			src: 'selfcare/1',
+			src: 'selfcare/revlon-one-step-hair-dryer-and-volumizer',
 			name: 'Revlon One-Step Hair Dryer and Volumizer',
 			price: '4,999'
 		},
 		{
-			src: 'selfcare/2',
+			src: 'selfcare/philips-hp8316-00-hair-straightener',
 			name: 'Philips HP8316/00 Hair Straightener',
 			price: '3,499'
 		},
 		{
-			src: 'selfcare/3',
+			src: 'selfcare/philips-bhd318-00-hair-dryer',
 			name: 'Philips BHD318/00 Hair Dryer',
 			price: '2,999'
 		},
 		{
-			src: 'selfcare/4',
+			src: 'selfcare/remington-s5500-digital-anti-static-hair-straightener',
 			name: 'Remington S5500 Digital Anti-Static Hair Straightener',
 			price: '3,999'
 		}
 	];
+
 </script>
 
 <section
@@ -179,14 +181,14 @@
 							href={'/explore/' + categoryIcon}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
-							<div class="category-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
+							<div class="category-icon w-32 h-32 md:w-40 md:h-40 p-9 md:p-12 cursor-pointer">
 								<img
 									src={'/search/category/' + categoryIcon + '.png'}
 									alt={categoryIcon}
 									srcset=""
 								/>
 							</div>
-							<p class="text-center text-xs md:text-sm">{categoryIcon}</p>
+							<p class="text-center text-xs md:text-sm">{categoryIcon.replaceAll('-', ' ')}</p>
 						</a>
 					{/each}
 				</div>
@@ -196,7 +198,7 @@
 				onclick={() => (showMore = !showMore)}
 			>
 				<div class="relative -top-5">
-					<p class="flex items-center gap-1">
+					<p class="flex items-center gap-1 text-blue-700">
 						Show
 						{#if showMore}
 							more

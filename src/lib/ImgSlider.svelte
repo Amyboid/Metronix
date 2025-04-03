@@ -1,4 +1,6 @@
 <script>
+	import { fade } from 'svelte/transition';
+
 	let { images } = $props();
 	let currentIndex = $state(0);
 
@@ -59,13 +61,14 @@
 	<div class="img-slider-dot absolute bottom-0 flex items-center justify-center">
 		{#each images as _, index}
 			<button
+				in:fade
 				class="img-slider-dot-btn flex items-center justify-center"
 				onclick={() => (currentIndex = index)}
 			>
 				{#if currentIndex === index}
-					<span class="icon-[fluent-mdl2--location-dot]"></span>
+					<span in:fade class="icon-[fluent-mdl2--location-dot]"></span>
 				{:else}
-					<span class="icon-[ph--dot-outline-thin]"></span>
+					<span  class="icon-[ph--dot-outline-thin]"></span>
 				{/if}
 			</button>
 		{/each}
@@ -73,12 +76,6 @@
 </div>
 
 <style>
-	.xx > * {
-		/* border: 1px solid black; */
-	}
-	.xx {
-		/* border: 1px solid black; */
-	}
 	.img-slider-img-box {
 		flex-shrink: 0;
 		flex-grow: 0;
@@ -89,7 +86,6 @@
 	}
 	img {
 		object-fit: contain;
-		/* border: 1px solid black; */
 	}
 	.img-slider-btn:hover > * {
 		animation: squish 300ms ease-in-out;
@@ -100,19 +96,19 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		background-color: #b1afa786; 
+		background-color: #b1afa786;
 		backdrop-filter: blur(5px);
 		border-radius: 8px;
 		top: 50%;
 		transform: translateY(-50%);
 		transition: background-color 200ms ease-in-out;
 	}
-	.img-slider-btn:hover{
+	.img-slider-btn:hover {
 		background-color: #b1afa7c2;
 	}
 	.img-slider-btn span {
-		width: 20px;
-		height: 20px;
+		width: 25px;
+		height: 25px;
 	}
 
 	.img-slider-dot {

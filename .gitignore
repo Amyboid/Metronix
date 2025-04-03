@@ -1,5 +1,6 @@
 node_modules
 static
+rename.js
 
 # Output
 .output

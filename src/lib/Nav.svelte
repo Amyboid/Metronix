@@ -13,7 +13,7 @@
 	];
 
 	let navLinks = [
-		{ name: 'Explore', link: '/explore' },
+		{ name: 'Explore', link: '/explore/all' },
 		...products,
 		{ name: 'Achievements', link: '/achievements' }
 	];
