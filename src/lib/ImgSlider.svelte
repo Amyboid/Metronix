@@ -68,7 +68,7 @@
 				{#if currentIndex === index}
 					<span in:fade class="icon-[fluent-mdl2--location-dot]"></span>
 				{:else}
-					<span  class="icon-[ph--dot-outline-thin]"></span>
+					<span  class="icon-[bi--dot]"></span>
 				{/if}
 			</button>
 		{/each}
@@ -80,9 +80,11 @@
 		flex-shrink: 0;
 		flex-grow: 0;
 		background-color: transparent;
+		/* background: var(--primary-background-gradient); */
 	}
 	.img-slider-img {
 		background: linear-gradient(to bottom, #dcd8cd80 0%, #dcd8cde1 60%, #dcd8cd80 100%);
+		/* background: var(--primary-background); */
 	}
 	img {
 		object-fit: contain;
@@ -114,12 +116,13 @@
 	.img-slider-dot {
 		left: 50%;
 		transform: translateX(-50%);
-		bottom: -35px;
+		bottom: -40px;
 	}
 
 	.img-slider-dot-btn > * {
 		width: 30px;
-		height: 30px;
+		height: 30px; 
+		color: #00000076;
 	}
 	@media only screen and (min-width: 640px) {
 		.img-slider-img-box {

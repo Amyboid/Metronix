@@ -3,6 +3,8 @@
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/ImgSlider.svelte';
 
+	let searchQuery = $state(null);
+
 	let buttons = [
 		{ id: 'product', label: 'Browse by Product' },
 		{ id: 'category', label: 'Browse by Category' }
@@ -68,7 +70,7 @@
 		}
 	];
 
-let selfCareEssentials = [
+	let selfCareEssentials = [
 		{
 			src: 'selfcare/revlon-one-step-hair-dryer-and-volumizer',
 			name: 'Revlon One-Step Hair Dryer and Volumizer',
@@ -90,20 +92,19 @@ let selfCareEssentials = [
 			price: '3,999'
 		}
 	];
-
 </script>
 
 <section
-	class="hero mt-5 mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mt-4 sm:mb-18 sm:p-4 md:p-6"
+	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 sm:p-4 md:p-6"
 >
 	<div
 		class="hero-right flex h-[60%] w-full sm:h-full sm:w-[60%] sm:justify-center md:justify-end md:pr-12"
 	>
 		<!-- todo : shadow on images for desktop only  -->
-		<div class="hero-img flex items-start sm:items-center">
+		<div class="hero-img flex items-start sm:items-center md:items-center">
 			<picture>
 				<source srcset="/assets/bg/d.jpg" media="(min-width: 768px)" />
-				<img loading="lazy" src="/assets/bg/ii.jpg" class="" alt="" />
+				<img loading="lazy" src="/assets/bg/ii.jpg" class="" alt="samsung-tv" />
 			</picture>
 		</div>
 	</div>
@@ -127,9 +128,12 @@ let selfCareEssentials = [
 <section
 	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:pr-12 md:pl-12"
 >
-	<h1 class="text-xl font-medium tracking-wide sm:text-2xl md:text-3xl md:tracking-wider">
-		Find the perfect product for you.
-	</h1>
+	<div>
+		<h1 class="text-xl font-medium tracking-wide sm:text-2xl md:text-3xl md:tracking-wider">
+			Find the perfect product for you.
+		</h1> 
+		<input type="text" />
+	</div>
 	<section class="w-[90%] md:w-[85%]">
 		<ul class="product-nav flex w-full items-center justify-center gap-20">
 			{#each buttons as button}
@@ -157,7 +161,7 @@ let selfCareEssentials = [
 				>
 					{#each productIcons as productIcon}
 						<a
-							href={'/explore/' + productIcon}
+							href={'/products/' + productIcon}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
@@ -178,10 +182,10 @@ let selfCareEssentials = [
 				>
 					{#each categoryIcons as categoryIcon}
 						<a
-							href={'/explore/' + categoryIcon}
+							href={'/products/' + categoryIcon}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
-							<div class="category-icon w-32 h-32 md:w-40 md:h-40 p-9 md:p-12 cursor-pointer">
+							<div class="category-icon h-32 w-32 cursor-pointer p-9 md:h-40 md:w-40 md:p-12">
 								<img
 									src={'/search/category/' + categoryIcon + '.png'}
 									alt={categoryIcon}
@@ -214,28 +218,28 @@ let selfCareEssentials = [
 	</section>
 
 	<section
-		class="product-section flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%] mb-10"
+		class="product-section mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
 	>
 		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
 			Sound Essentials
 		</h1>
 		<ImgSlider images={soundEssentials} />
-		<a class="-mt-5 flex items-center tracking-wide sm:text-left" href="/#">
-			<p class="hover:underline text-blue-700">shop all sound essentials</p>
+		<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
+			<p class="text-blue-700 hover:underline">shop all sound essentials</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-		</a> 
+		</a>
 	</section>
 	<section
-		class="product-section flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]  mb-10"
+		class="product-section mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
 	>
 		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
 			Self-Care Essentials
 		</h1>
 		<ImgSlider images={selfCareEssentials} />
-		<a class="-mt-5 flex items-center tracking-wide sm:text-left" href="/#">
-			<p class="hover:underline text-blue-700">shop all self-care essentials</p>
+		<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
+			<p class="text-blue-700 hover:underline">shop all self-care essentials</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-		</a> 
+		</a>
 	</section>
 </section>
 
@@ -252,17 +256,6 @@ let selfCareEssentials = [
 	.show-less-category {
 		height: calc((var(--height) * 184px) - 24px);
 	}
-	/* .hero {
-	} */
-	/*
-	.product-section {
-		border: 5px solid white;
-		background-color: var(--primary-background);
-		padding: 10px;
-		}
-	.browse-by {
-		border: 1px solid #a4dda0;
-	} */
 
 	.product-nav {
 		border-bottom: 1px solid var(--primary-background);
@@ -332,7 +325,7 @@ let selfCareEssentials = [
 
 		.hero-img {
 			width: 722px;
-			height: 389px;
+			height: 100%;
 		}
 		.hero {
 			height: 60vh;
