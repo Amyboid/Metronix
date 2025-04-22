@@ -1,6 +1,13 @@
 <script>
-	import { itemCategory1 } from '$lib/itemData';
+	
 </script>
+
+
+
+
+
+
+
 
 <section
 	class="main-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
@@ -289,6 +296,7 @@
 		/* md */
 		.homepage-section {
 			height: 75vh;
+			max-height: 528px;
 		}
 		.oven-img {
 			width: 700px;

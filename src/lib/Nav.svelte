@@ -1,6 +1,6 @@
 <script>
 	import { fade, fly } from 'svelte/transition';
-	import SearchBar from './SearchBox.svelte';
+	import SearchBar from './SearchBoxNav.svelte';
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
 

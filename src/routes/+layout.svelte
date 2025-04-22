@@ -4,7 +4,7 @@
 	import Nav from '$lib/Nav.svelte';
 </script>
 
-<div class="relative z-20 h-max w-full">
+<div class="relative z-100 h-max w-full">
 	<Nav />
 </div>
 <main

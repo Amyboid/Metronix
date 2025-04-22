@@ -2,8 +2,17 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/ImgSlider.svelte';
+	import { entertainmentEssentials, selfCareEssentials, kitchenEssentials } from '$lib/itemData';
 
-	let searchQuery = $state(null);
+	let searchQuery = $state('');
+	let isFocused = $state(false);
+	let searchinput = $state();
+	let clearSearch = () => {
+		searchQuery = '';
+		if (searchinput) {
+			searchinput.focus();
+		}
+	};
 
 	let buttons = [
 		{ id: 'product', label: 'Browse by Product' },
@@ -16,6 +25,24 @@
 		'Home-Appliances',
 		'Kitchen-Appliances',
 		'Self-Care-Appliances'
+	];
+
+	let productData = [
+		{
+			heading: 'Entertainment Essentials',
+			images: entertainmentEssentials,
+			msg: 'entertainment essentials'
+		},
+		{
+			heading: 'Self-Care Essentials',
+			images: selfCareEssentials,
+			msg: 'self-care essentials'
+		},
+		{
+			heading: 'Kitchen Essentials',
+			images: kitchenEssentials,
+			msg: 'kitchen essentials'
+		}
 	];
 
 	let showMore = $state(true);
@@ -46,94 +73,128 @@
 		window.addEventListener('resize', updateSize);
 		return () => window.removeEventListener('resize', updateSize);
 	});
-
-	let soundEssentials = [
-		{
-			src: 'sound/sony-ht-s350-home-theater-system',
-			name: 'Sony HT-S350 Home Theater System',
-			price: '18,999'
-		},
-		{
-			src: 'sound/lg-lhd657-home-theater-system',
-			name: 'LG LHD657 Home Theater System',
-			price: '22,999'
-		},
-		{
-			src: 'sound/sony-sscs3-3-way-floor-standing-speaker',
-			name: 'Sony SSCS3 3-Way Floor-Standing Speaker',
-			price: '14,999'
-		},
-		{
-			src: 'sound/jbl-stage-a190-tower-speaker',
-			name: 'JBL Stage A190 Tower Speaker',
-			price: '18,999'
-		}
-	];
-
-	let selfCareEssentials = [
-		{
-			src: 'selfcare/revlon-one-step-hair-dryer-and-volumizer',
-			name: 'Revlon One-Step Hair Dryer and Volumizer',
-			price: '4,999'
-		},
-		{
-			src: 'selfcare/philips-hp8316-00-hair-straightener',
-			name: 'Philips HP8316/00 Hair Straightener',
-			price: '3,499'
-		},
-		{
-			src: 'selfcare/philips-bhd318-00-hair-dryer',
-			name: 'Philips BHD318/00 Hair Dryer',
-			price: '2,999'
-		},
-		{
-			src: 'selfcare/remington-s5500-digital-anti-static-hair-straightener',
-			name: 'Remington S5500 Digital Anti-Static Hair Straightener',
-			price: '3,999'
-		}
-	];
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 sm:p-4 md:p-6"
+	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 md:p-0"
 >
 	<div
-		class="hero-right flex h-[60%] w-full sm:h-full sm:w-[60%] sm:justify-center md:justify-end md:pr-12"
-	>
-		<!-- todo : shadow on images for desktop only  -->
-		<div class="hero-img flex items-start sm:items-center md:items-center">
-			<picture>
-				<source srcset="/assets/bg/d.jpg" media="(min-width: 768px)" />
-				<img loading="lazy" src="/assets/bg/ii.jpg" class="" alt="samsung-tv" />
-			</picture>
-		</div>
-	</div>
-	<div
-		class="hero-left flex h-[40%] w-full flex-col items-center p-6 sm:h-full sm:w-[40%] sm:items-baseline md:pl-12"
+		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
 	>
 		<h1
-			class="mb-4 pb-1 text-center text-3xl font-bold tracking-widest sm:mb-4 sm:pt-0 sm:text-left sm:text-3xl md:mb-6 md:pr-24 md:text-4xl lg:text-5xl"
+			class="mb-4 pb-1 text-center text-3xl font-bold tracking-widest sm:mb-4 sm:pt-0 sm:text-left sm:text-3xl md:mb-6 md:pr-24 md:text-5xl"
 		>
-			Connect. Stream. Enjoy.
+			Product at your fingertips.
 		</h1>
-		<h3 class="w-[80%] text-center text-sm tracking-wide sm:mb-6 sm:text-left md:pr-6 md:text-xl">
-			Transform your living room into a cinematic paradise.
+		<h3
+			class="mb-1 w-[80%] text-center text-base tracking-wide sm:mb-6 sm:text-left md:pr-6 md:text-xl"
+		>
+			Get washing machine, Samsung tv, fridge and many more.
 		</h3>
-		<a class="mt-auto flex items-center text-sm tracking-wide sm:text-left md:text-xl" href="/#">
-			<p class="hover:underline">Browse Samsung TVs</p>
+		<a
+			class="flex items-center text-base tracking-wide text-blue-700 sm:text-left md:text-xl"
+			href="/#"
+		>
+			<p class="hover:underline">Shop Samsung tv</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-9 w-4 md:h-6 md:w-6"></span>
 		</a>
+	</div>
+	<div
+		class="hero-right z-10 flex h-[60%] w-full justify-center sm:h-full sm:w-[60%] sm:pr-6 md:justify-end md:pr-[8%]"
+	>
+		<!-- todo : shadow on images for desktop only  -->
+		<div
+			class="hero-img flex items-end justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
+		>
+			<picture class="">
+				<source srcset="/assets/bg/big2.png" media="(min-width: 768px)" />
+				<img
+					class="w-[500px] md:w-[650px]"
+					loading="lazy"
+					src="/assets/bg/sm.png"
+					alt="samsung-tv"
+				/>
+			</picture>
+		</div>
 	</div>
 </section>
 <section
 	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:pr-12 md:pl-12"
 >
-	<div>
-		<h1 class="text-xl font-medium tracking-wide sm:text-2xl md:text-3xl md:tracking-wider">
+	<section
+		class="find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]"
+	>
+		{#if isFocused}
+			<button
+				onclick={() => (isFocused = false)}
+				aria-label="blur-background"
+				class="blur-background absolute top-0 left-0 z-40 h-full w-full"
+			>
+			</button>
+		{/if}
+		<h1
+			class="m-2 text-center text-xl font-medium tracking-wide sm:text-2xl md:text-3xl md:tracking-wider"
+		>
 			Find the perfect product for you.
-		</h1> 
-		<input type="text" />
-	</div>
+		</h1>
+		<div class="search-box relative z-50 flex w-full flex-col items-center">
+			<div class="relative flex w-full items-center justify-center">
+				<button
+					aria-label="search"
+					class="absolute left-7 flex h-full items-center sm:left-3.5 md:left-4"
+				>
+					<span
+						class="icon-[basil--search-outline] h-6 w-6 cursor-pointer sm:h-7 sm:w-7 lg:h-8 lg:w-8"
+					></span>
+				</button>
+				<input
+					class="search-input h-[55px] w-[90%] rounded-lg bg-[var(--neutral)] text-base outline-none focus:bg-[var(--neutral)] sm:h-[55px] sm:w-full md:h-[60px] {searchQuery &&
+					isFocused
+						? 'remove-border'
+						: 'block'}"
+					type="text"
+					aria-label="search for product"
+					placeholder="Search for product"
+					bind:this={searchinput}
+					bind:value={searchQuery}
+					onfocus={() => (isFocused = true)}
+				/>
+				{#if searchQuery}
+					<button
+						aria-label="clear-search"
+						class="absolute right-7 flex h-full items-center sm:right-3.5 md:right-4"
+						onclick={clearSearch}
+					>
+						<span class="icon-[mdi--clear] h-4 w-4 cursor-pointer md:h-5 md:w-5"></span>
+					</button>
+				{/if}
+			</div>
+			{#if searchQuery && isFocused}
+				<div
+					class="search-result absolute top-[55px] w-[90%] overflow-scroll bg-[var(--neutral)] p-2 sm:w-full md:top-[60px]"
+				>
+					<p class="mb-2 text-xs text-[#9d9d9d] sm:text-sm md:text-sm">Search Results</p>
+					<ul class="m-0 list-none overflow-scroll p-0 text-xs sm:text-sm md:text-sm">
+						<li class="flex items-center">
+							<span class="icon-[basil--search-outline] mr-2"></span>Explore new fridge
+						</li>
+						<li class="flex items-center">
+							<span class="icon-[basil--search-outline] mr-2"></span> Explore new Ac
+						</li>
+						<li class="flex items-center">
+							<span class="icon-[basil--search-outline] mr-2"></span> Explore new dildo
+						</li>
+						<li class="flex items-center">
+							<span class="icon-[basil--search-outline] mr-2"></span> Explore new fridge
+						</li>
+						<li class="flex items-center">
+							<span class="icon-[basil--search-outline] mr-2"></span> Explore new fridge
+						</li>
+					</ul>
+				</div>
+			{/if}
+		</div>
+	</section>
 	<section class="w-[90%] md:w-[85%]">
 		<ul class="product-nav flex w-full items-center justify-center gap-20">
 			{#each buttons as button}
@@ -217,33 +278,51 @@
 		</div>
 	</section>
 
-	<section
-		class="product-section mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
-	>
-		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
-			Sound Essentials
-		</h1>
-		<ImgSlider images={soundEssentials} />
-		<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
-			<p class="text-blue-700 hover:underline">shop all sound essentials</p>
-			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-		</a>
-	</section>
-	<section
-		class="product-section mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
-	>
-		<h1 class="w-full text-center text-2xl font-semibold tracking-wider md:text-3xl lg:text-4xl">
-			Self-Care Essentials
-		</h1>
-		<ImgSlider images={selfCareEssentials} />
-		<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
-			<p class="text-blue-700 hover:underline">shop all self-care essentials</p>
-			<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-		</a>
-	</section>
+	{#each productData as product}
+		<section
+			class="product-section z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
+		>
+			<h1
+				class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
+			>
+				{product.heading}
+			</h1>
+			<ImgSlider images={product.images} />
+			<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
+				<p class="text-blue-700 hover:underline">shop all {product.msg}</p>
+				<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
+			</a>
+		</section>
+	{/each}
 </section>
 
 <style>
+	
+	.search-input {
+		border: 1px solid black;
+		padding: 8px 48px;
+	}
+	.remove-border {
+		border: 0;
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+
+	.hero-right {
+		background: linear-gradient(to bottom, #dcd8cd 0%, #efefef 100%);
+	}
+	.find-product-section input:focus {
+		border-color: #1447e6;
+	}
+	.search-result {
+		box-shadow: 0 4px 4px -4px rgba(0, 0, 0, 0.758);
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+	}
+
+	.blur-background {
+		background-color: #dcd8cd80;
+	}
 	.browse-by {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -304,13 +383,22 @@
 		/* sm */
 		.hero {
 			height: 50vh;
-			flex-direction: row-reverse;
+			flex-direction: row;
+		}
+		.hero-right {
+			background: linear-gradient(to right, #dcd8cd 0%, #efefef 100%);
 		}
 		.hero-img {
-			width: 80%;
+			width: 100%;
 			height: 100%;
 			/* border: 1px solid plum; */
 		}
+
+		.find-product-section input {
+			padding: 8px 56px;
+			border-width: 2px;
+		}
+
 		.browse-by {
 			grid-template-columns: repeat(3, 1fr);
 		}
@@ -329,7 +417,16 @@
 		}
 		.hero {
 			height: 60vh;
+			max-height: 422px;
 		}
+		/* .hero-right {
+			background: linear-gradient(to left, #dcd8cd 0%, #dcd8cd 50%, #efefef 100%); 
+			background: white;
+		} */
+		.find-product-section input {
+			padding: 8px 64px;
+		}
+
 		.show-less-product,
 		.show-less-category {
 			height: calc((var(--height) * 232px) - 40px);

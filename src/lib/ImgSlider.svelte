@@ -109,8 +109,8 @@
 		background-color: #b1afa7c2;
 	}
 	.img-slider-btn span {
-		width: 25px;
-		height: 25px;
+		width: 30px;
+		height: 30px;
 	}
 
 	.img-slider-dot {
