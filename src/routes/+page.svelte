@@ -1,17 +1,84 @@
 <script>
-	
 </script>
 
+<section class="hero relative mb-4 flex w-full min-w-80 flex-col p-0 md:flex-row-reverse">
+	<img
+		class="absolute top-10 right-10 z-10 h-20 sm:h-30 md:left-10 md:h-40"
+		src="/assets/bg/gurantee-tag.png"
+		alt="gurantee-tag"
+		srcset=""
+	/>
 
+	<div
+		class="hero-left flex h-[50%] w-full flex-col items-center justify-end sm:h-[50%] md:h-full md:w-[50%]"
+	>
+		<div
+			class="hero-left-top hidden h-[50%] flex-col items-center justify-center lg:gap-1 p-6 md:flex"
+		>
+			<span class="w-[70%] md:text-3xl lg:text-4xl tracking-wide">
+				Original<span class="font-bold"></span> quality
+			</span>
+			<span class="w-[70%] md:text-4xl lg:text-5xl tracking-wide">
+				<span class="font-bold text-[var(--primary)]">Electronics</span> product
+			</span>
+		</div>
+		<div class="hero-left-bottom hidden h-[50%] flex-col p-6 md:flex">
+			<div class="w-full justify-center md:flex md:gap-8 lg:gap-32">
+				<div class="flex flex-col">
+					<span class="text-sm">Upto</span>
+					<span class="font-bold md:text-4xl lg:text-5xl">70% <br /> OFF!</span>
+				</div>
+				<div class="flex items-end justify-end gap-2">
+					<span class="bold-zero font-bold">0</span>
+					<span class="down-pay flex flex-col">
+						down <br />
+						<span class="font-bold">payment</span>
+					</span>
+				</div>
+			</div>
+			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-2">
+				<span class="text-base sm:text-xl"> All bank credit and debit card accepted </span>
+				<a class="text-base font-bold underline sm:text-xl" href="/products/all"
+					>View all products</a
+				>
+			</div>
+		</div>
+ 
+			<div
+			class="md:hidden h-[50%] flex flex-col items-center justify-center gap-1 p-6"
+		>
+			<span class="w-[100%] text-center sm:w-[50%] text-xl sm:text-3xl tracking-wide">
+				Original<span class="font-bold"></span> quality
+			</span>
+			<span class="w-[100%] text-center sm:w-[50%] text-3xl sm:text-4xl tracking-wide">
+				<span class="font-bold">Electronics</span> product
+			</span>
+		</div> 
+	</div>
+	<div
+		class="hero-right relative flex h-[50%] w-full flex-col justify-center p-4 pt-8 pb-8 sm:pt-6 sm:pb-6 sm:h-[50%] md:h-full md:w-[50%]"
+	>
+		<div class="flex w-full justify-center gap-8 sm:gap-32 md:hidden text-[var(--neutral)]">
+			<div class="flex flex-col">
+				<span class="text-sm text-[var(--primary)] sm:text-base">Upto</span>
+				<span class="text-4xl font-bold sm:text-[3rem]">70% <br /> OFF!</span>
+			</div>
+			<div class="flex items-end justify-end gap-2">
+				<span class="bold-zero font-bold">0</span>
+				<span class="down-pay flex flex-col text-4xl">
+					down <br />
+					<span class="font-bold">payment</span>
+				</span>
+			</div>
+		</div>
+		<div class="mt-auto flex w-full flex-col items-center justify-between gap-6 sm:gap-1 md:hidden text-[var(--neutral)]">
+			<span class="text-base sm:text-xl"> All bank credit and debit card accepted </span>
+			<a class="text-base font-bold underline sm:text-xl" href="/products/all">View all products</a>
+		</div>
+	</div>
+</section>
 
-
-
-
-
-
-<section
-	class="main-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
->
+<section class="main-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden">
 	<!-- fridge -->
 	<section class="homepage-section fridge-section">
 		<div class="relative z-10 mt-6 flex flex-col items-center sm:mt-10">
@@ -33,7 +100,12 @@
 		</div>
 		<h1 class="home-haier-logo-text mt-4 text-8xl font-extrabold sm:hidden">Haier</h1>
 		<div class="frige-img relative z-10 sm:mt-16">
-			<img class="z-30" src="/assets/homeImg/refrigerator.png" alt="haier-refrigerator" loading="lazy"/>
+			<img
+				class="z-30"
+				src="/assets/homeImg/refrigerator.png"
+				alt="haier-refrigerator"
+				loading="lazy"
+			/>
 		</div>
 	</section>
 	<section class="homepage-section oven-section">
@@ -59,7 +131,7 @@
 		<h1 class="home-lg-logo-text mt-4 text-8xl font-extrabold sm:hidden">LG</h1>
 		<div class="oven-img relative z-10 mt-auto mb-6 sm:mb-5">
 			<div class="oven-img-shadow absolute z-20"></div>
-			<img class="z-30" src="/assets/homeImg/big-lg-oven.png" alt="lg-oven" loading="lazy"/>
+			<img class="z-30" src="/assets/homeImg/big-lg-oven.png" alt="lg-oven" loading="lazy" />
 		</div>
 	</section>
 
@@ -93,7 +165,12 @@
 			<div class="philips-ro-bottom-section flex w-full flex-col sm:flex-row">
 				<div class="philips-ro-img relative z-10 items-center sm:flex">
 					<div class="ro-img-shadow absolute z-10"></div>
-					<img class="z-30" src="/assets/homeImg/philips-ro.png" alt="philips-white-ro" loading="lazy" />
+					<img
+						class="z-30"
+						src="/assets/homeImg/philips-ro.png"
+						alt="philips-white-ro"
+						loading="lazy"
+					/>
 				</div>
 				<div class="short-description z-10 flex flex-col items-center">
 					<h1 class="z-30 text-3xl font-semibold tracking-wider sm:text-4xl md:text-4xl">
@@ -125,7 +202,23 @@
 <!-- </main> -->
 
 <style>
-	.homepage-section { 
+	.hero {
+		height: 70vh;
+		background: url('/assets/bg/d.jpg');
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+
+	.hero-right {
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.200), rgba(0, 0, 0, 0.500)); 
+		backdrop-filter: blur(5px); 
+	}
+	.bold-zero {
+		font-size: 4.5rem;
+		line-height: 0.8;
+	}
+	.homepage-section {
 		width: 100%;
 		padding: 24px;
 		padding-bottom: 0;
@@ -209,7 +302,7 @@
 	.philips-ro-img {
 		width: 170px;
 	}
-	.philips-ro-img img{
+	.philips-ro-img img {
 		filter: brightness(90%);
 	}
 	.ro-img-shadow {
@@ -241,6 +334,27 @@
 
 	@media only screen and (min-width: 640px) {
 		/* sm */
+
+		.hero {
+			height: 80vh;
+		}
+		.hero-left > * {
+			width: 100%;
+		}
+		.bold-zero {
+			font-size: 6.5rem;
+			line-height: 0.8;
+			font-weight: bold;
+		}
+		.down-pay {
+			font-size: 3rem; 
+		}
+
+		/* .hero-img {
+			width: 100%;
+			height: 100%;
+		} */
+
 		.oven-section {
 			background: var(--primary-background);
 		}
@@ -294,6 +408,35 @@
 
 	@media only screen and (min-width: 768px) {
 		/* md */
+		.hero {
+			height: 75vh;
+			max-height: 527px;
+			background: none;
+			min-width: 1024px;
+		}
+		.bold-zero { 
+			font-size: 6rem;
+		}
+		.down-pay {
+			font-size: 2.25rem;  
+			line-height: normal;
+		}
+		.hero-left-top {
+			background-color: #000;
+			color: white;
+		}
+		.hero-left-bottom {
+ 
+			background: var(--primary-background-gradient);
+		}
+		.hero-right {
+			background: linear-gradient(rgba(0, 0, 0, 0.136)), url('/assets/bg/d.jpg');
+			/* filter: brightness(85%); */
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+		}
+
 		.homepage-section {
 			height: 75vh;
 			max-height: 528px;
@@ -333,6 +476,16 @@
 		}
 	}
 	@media only screen and (min-width: 1024px) {
+		.hero {
+			min-width: 1124px;
+		}
+		.bold-zero {
+			font-size: 7rem;
+		}
+		.down-pay {
+			font-size: 3rem;
+			line-height: normal;
+		}
 		/* lg */
 	}
 	@media only screen and (min-width: 1280px) {

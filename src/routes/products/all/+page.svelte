@@ -76,7 +76,7 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 md:p-0"
+	class="hero mb-12 flex w-full min-w-80 flex-col sm:flex-row bg-[var(--primary-background)] p-0 sm:mb-18 md:p-0"
 >
 	<div
 		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
@@ -106,13 +106,13 @@
 		<div
 			class="hero-img flex items-end justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
-			<picture class="">
+			<picture>
 				<source srcset="/assets/bg/big2.png" media="(min-width: 768px)" />
 				<img
 					class="w-[500px] md:w-[650px]"
 					loading="lazy"
 					src="/assets/bg/sm.png"
-					alt="samsung-tv"
+					alt="products-img"
 				/>
 			</picture>
 		</div>
@@ -382,8 +382,7 @@
 	@media only screen and (min-width: 640px) {
 		/* sm */
 		.hero {
-			height: 50vh;
-			flex-direction: row;
+			height: 50vh; 
 		}
 		.hero-right {
 			background: linear-gradient(to right, #dcd8cd 0%, #efefef 100%);
@@ -410,14 +409,14 @@
 
 	@media only screen and (min-width: 768px) {
 		/* md */
-
-		.hero-img {
-			width: 722px;
-			height: 100%;
-		}
+		
 		.hero {
 			height: 60vh;
 			max-height: 422px;
+		}
+		.hero-img {
+			width: 722px;
+			height: 100%;
 		}
 		/* .hero-right {
 			background: linear-gradient(to left, #dcd8cd 0%, #dcd8cd 50%, #efefef 100%); 

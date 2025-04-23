@@ -8,7 +8,7 @@
 	<Nav />
 </div>
 <main
-	class="relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[60px] md:pt-[90px]"
+	class="relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[65px] sm:pt-[75px] md:pt-[90px]"
 >
 	{@render children()}
 	<footer class="flex w-full items-center justify-center bg-[var(--neutral)] p-4 md:p-6">
