@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import ImgSlider from '$lib/ImgSlider.svelte';
+	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 	import { entertainmentEssentials, selfCareEssentials, kitchenEssentials } from '$lib/itemData';
 
 	let searchQuery = $state('');
@@ -95,7 +95,7 @@
 			class="flex items-center text-base tracking-wide text-blue-700 sm:text-left md:text-xl"
 			href="/#"
 		>
-			<p class="hover:underline">Shop Samsung tv</p>
+			<p class="hover:underline">Shop godrej refrigerator</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-9 w-4 md:h-6 md:w-6"></span>
 		</a>
 	</div>

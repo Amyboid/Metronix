@@ -1,7 +1,7 @@
 <script>
 	let { children } = $props();
 	import '../app.css';
-	import Nav from '$lib/Nav.svelte';
+	import Nav from '$lib/Components/Nav.svelte';
 </script>
 
 <div class="relative z-100 h-max w-full">

@@ -181,7 +181,4 @@ let kitchenEssentials = [
 ];
 
 
-
-
-
-export {itemCategory1, entertainmentEssentials, selfCareEssentials, kitchenEssentials} 
+export { itemCategory1, entertainmentEssentials, selfCareEssentials, kitchenEssentials } 
