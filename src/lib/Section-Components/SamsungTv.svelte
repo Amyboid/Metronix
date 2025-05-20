@@ -8,9 +8,9 @@
 			<img class="z-30" src="/assets/homeImg/samsung-tv.png" alt="samsung-tv" loading="lazy" />
 		</div>
 		<div class="z-10 flex flex-col items-center">
-			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Kutchina chimney</h1>
+			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Samsung tv</h1>
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
-				<span class="mr-2 text-center">Breathe Easy, Cook Freely.</span>
+				<span class="mr-2 text-center">Endless Viewing Pleasure.</span>
 			</div>
 			<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
@@ -29,7 +29,6 @@
 		color: black;
 	}
 	.gradient-bg-section {
-		background: #ffcf30;
 		background: linear-gradient(59deg, rgba(255, 207, 48, 1) 0%, rgba(253, 45, 225, 1) 100%);
 	}
 </style>
