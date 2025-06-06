@@ -4,68 +4,18 @@
 	import LgOven from '$lib/Section-Components/LgOven.svelte';
 	import PhilipsRo from '$lib/Section-Components/PhilipsRo.svelte';
 	import SamsungTv from '$lib/Section-Components/SamsungTv.svelte';
+	import VoltasAc from '$lib/Section-Components/VoltasAc.svelte';
 	import WashMacine from '$lib/Section-Components/WashMacine.svelte';
-	import { onMount } from 'svelte';
-	let brands = [
-		'SAMSUNG',
-		'Haier',
-		'LG',
-		'godrej',
-		'whirlpool',
-		'VOLTAS',
-		'DAIKIN',
-		'BLUE STAR',
-		'Aquagaurd',
-		'KENT',
-		'PHILIPS',
-		'KUTCHINA',
-		'hindware',
-		'SONY',
-		'INTeX',
-		'Crompton',
-		'BAJAJ'
-	];
 
-	let itemsPerGroup = 3;
-	/**
-	 * @type {any[]}
-	 */
-	let groupedBrands = [];
-
-	function updateGroupedBrands() {
-		groupedBrands = [];
-		for (let i = 0; i < brands.length; i += itemsPerGroup) {
-			let arr = brands.slice(i, i + itemsPerGroup);
-			groupedBrands.push(arr);
-		}
-	}
-
-	function updateItemsPerGroup() {
-		const width = window.innerWidth;
-
-		if (width < 640) {
-			itemsPerGroup = 3;
-		} else if (width < 768) {
-			itemsPerGroup = 5;
-		} else {
-			itemsPerGroup = 6;
-		}
-
-		updateGroupedBrands();
-	}
-
-	onMount(() => {
-		updateItemsPerGroup(); // Initial call
-		window.addEventListener('resize', updateItemsPerGroup);
-
-		return () => {
-			window.removeEventListener('resize', updateItemsPerGroup);
-		};
-	});
+	let brandGroup1 = ['SAMSUNG', 'Haier', 'LG', 'godrej', 'whirlpool', 'VOLTAS'];
+	let brandGroup2 = ['DAIKIN', 'BLUESTAR', 'Aquagaurd', 'PHILIPS', 'KUTCHINA'];
+	let brandGroup3 = ['hindware', 'SONY', 'INTeX', 'Crompton', 'BAJAJ'];
 </script>
 
 <!-- hero section -->
-<section class="hero relative mb-4 flex w-full min-w-80 flex-col p-0 md:flex-row-reverse">
+<section
+	class="hero relative mb-4 flex w-full min-w-80 flex-col overflow-hidden p-0 md:flex-row-reverse"
+>
 	<img
 		class="absolute top-10 right-10 z-10 h-20 sm:h-30 md:left-10 md:h-40"
 		src="/assets/bg/gurantee-tag.png"
@@ -83,7 +33,7 @@
 				Original<span class="font-bold"></span> quality
 			</span>
 			<span class="w-[70%] tracking-wide md:text-4xl lg:text-5xl">
-				<span class="font-bold text-[var(--primary)]">Electronics</span> product
+				<span class="font-bold text-[var(--primary-background)]">Electronics</span> product
 			</span>
 		</div>
 		<div class="hero-left-bottom hidden h-[50%] flex-col p-6 md:flex">
@@ -143,41 +93,52 @@
 </section>
 
 <section class="homepage-brand-section mt-5 p-5">
-	<h1 class="text-center text-base tracking-wider sm:text-xl md:text-2xl">
-		We proudly offer a diverse selection of <span class="font-semibold text-blue-600">trusted</span>
-		products from renowned <span class="font-semibold text-blue-600">brands</span>.
-	</h1>
-	<div class="flex flex-col flex-wrap gap-2 sm:gap-3">
-		{#each groupedBrands as group}
-			<div class="brand-group flex justify-center gap-2 sm:gap-3">
-				{#each group as brand}
-					<h1 class="h-max w-max rounded-lg border bg-transparent p-3 text-base sm:p-4 md:text-xl">
-						{brand}
-					</h1>
-				{/each}
-			</div>
-		{/each}
+	<div class="w-[50%]">
+		<h1 class="text-center text-base tracking-wider sm:text-xl md:text-2xl">
+			We proudly offer a diverse selection of <span class="font-semibold text-blue-600"
+				>trusted</span
+			>
+			products from renowned <span class="font-semibold text-blue-600">brands</span>.
+		</h1>
 	</div>
 
-	<div></div>
+	<div class="flex w-[50%] flex-col items-center justify-center border">
+		<ul class="brand-scroller relative h-[94px] w-[400px] overflow-hidden border-2 p-1">
+			{#each brandGroup1 as brand, index}
+				<li
+					class="brand-logo absolute left-[100%] h-8 w-40 p-6"
+					style="animation-delay: {(40 / brandGroup1.length) *
+						(index) *
+						- 1}s"
+				>
+					<img
+						class="h-full w-30 object-contain"
+						src={'/assets/brandLogo/' + brand.toLocaleLowerCase() + '.png'}
+						alt={brand}
+					/>
+				</li>
+			{/each}
+		</ul>
+	</div>
 </section>
 
-
-<!-- meta electronics best sellers --> 
-<section class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden">
-	<h1 class="text-2xl tracking-wide">Meta Electronics Best Sellers.</h1>
-	<HaierFridge /> 
-	<LgOven />  
+<!-- meta electronics best sellers -->
+<section
+	class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
+>
+	<h1 class="mt-4 text-2xl tracking-wide">Meta Electronics Best Sellers.</h1>
+	<HaierFridge />
+	<LgOven />
 	<WashMacine />
 
-	<section class="homepage-grid-section grid w-full gap-4"> 
-		<PhilipsRo />
- 
-		<SamsungTv />
-		
-		<KutchinaChimney />
+	<section class="homepage-grid-section grid w-full gap-4">
+		<VoltasAc />
 
-		<section class="homepage-section">1a</section>
+		<PhilipsRo />
+
+		<SamsungTv />
+
+		<KutchinaChimney />
 	</section>
 
 	<div class="social-media flex items-center gap-6">
@@ -208,31 +169,62 @@
 
 	.homepage-brand-section {
 		width: 100%;
-		padding-bottom: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: space-between;
 		overflow: hidden;
 		height: 70vh;
-		/* cursor: pointer; */
 	}
-
-	.homepage-section {
-		width: 100%;
-		padding: 24px;
-		padding-bottom: 0;
+	.brand-scroller {
+		/* overflow: hidden;
+		-webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+		mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
+		gap: 40px;
+		padding-bottom: 16px;   */
+	}
+	/* .brand-scroller {
 		overflow: hidden;
-		height: 60vh;
-		cursor: pointer;
+		-webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+		mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		padding-bottom: 16px;  
+	}
+	.brand-scroller-inner{
+		display: flex;
+		gap: 16px;
+		animation: scroll 20s linear infinite;
+	}
+	@keyframes scroll{
+		0%{
+			transform: translate(-100%);
+		}
+	} */
+	.brand-scroller li {
+		background-color: var(--primary-background);
 	}
 
-	.homepage-grid-section {
-		display: grid;
+	@keyframes horizontalScroll {
+		to {
+			left: -160px;
+		}
+	}
+	.brand-logo {
+		height: 80px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		animation: horizontalScroll 4s linear infinite;
+	}
+	.brand-logo img {
+		max-width: fit-content;
+	}
+
+	.homepage-grid-section { 
 		grid-template-columns: repeat(1, 1fr);
 	}
 	.social-media span {
@@ -259,17 +251,13 @@
 		.down-pay {
 			font-size: 3rem;
 		}
-
-		.homepage-section {
-			height: 80vh;
-		}
 	}
 
 	@media only screen and (min-width: 768px) {
 		/* md */
 		.hero {
-			height: 75vh;
-			max-height: 527px;
+			height: 80vh;
+			max-height: 550px;
 			background: none;
 			min-width: 1024px;
 		}
@@ -295,11 +283,10 @@
 			background-repeat: no-repeat;
 		}
 
-		.homepage-section {
-			height: 75vh;
-			max-height: 528px;
+		.homepage-brand-section {
+			flex-direction: row;
+			align-items: unset;
 		}
-
 		.homepage-grid-section {
 			padding: 0 16px;
 			grid-template-columns: repeat(2, minmax(580px, 1fr));

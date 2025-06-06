@@ -2,6 +2,7 @@
 	let { children } = $props();
 	import '../app.css';
 	import Nav from '$lib/Components/Nav.svelte';
+	import Footer from '$lib/Components/Footer.svelte';
 </script>
 
 <div class="relative z-100 h-max w-full">
@@ -11,15 +12,9 @@
 	class="relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[65px] sm:pt-[75px] md:pt-[90px]"
 >
 	{@render children()}
-	<footer class="flex w-full items-center justify-center bg-[var(--neutral)] p-4 md:p-6">
-		<p class="text-xs text-[#9d9d9d] sm:text-sm md:text-sm">
-			Copyright &copy; 2025 Meta electronics. All rights reserved.
-		</p>
-	</footer>
+	<Footer/> 
 </main>
 
 <style>
-	footer {
-		border-top: 1px solid var(--primary);
-	}
+	
 </style>

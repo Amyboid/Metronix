@@ -2,7 +2,45 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
-	import { entertainmentEssentials, selfCareEssentials, kitchenEssentials } from '$lib/itemData';
+	import {
+		essentials,
+		entertainmentEssentials,
+		selfCareEssentials,
+		kitchenEssentials
+	} from '$lib/itemData';
+
+	import FuzzySearcher from '$lib/fuzzySearcher';
+
+	// search options
+	const globalSearchOptions = {
+		includeScore: true,
+		threshold: 0.2,
+		keys: [
+			{
+				name: 'name',
+				weight: 0.7
+			},
+			{
+				name: 'category',
+				weight: 0.3
+			}
+		]
+	};
+
+	const categoryFilterOptions = {
+		includeScore: true,
+		threshold: 0.2,
+		keys: [
+			{
+				name: 'productType',
+				weight: 0.7
+			}
+		]
+	};
+
+	const globalSearch = new FuzzySearcher(essentials, globalSearchOptions);
+	const categoryFilter = new FuzzySearcher(essentials, categoryFilterOptions);
+	console.log('kk', categoryFilter.fuzzSearch('tv'));
 
 	let searchQuery = $state('');
 	let isFocused = $state(false);
@@ -19,7 +57,7 @@
 		{ id: 'category', label: 'Browse by Category' }
 	];
 	let activeButton = $state('product');
-	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'fan', 'stove'];
+	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'fan', 'stove', 'tv'];
 	let categoryIcons = [
 		'Consumer-Electronics',
 		'Home-Appliances',
@@ -76,7 +114,7 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col sm:flex-row bg-[var(--primary-background)] p-0 sm:mb-18 md:p-0"
+	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 sm:flex-row md:p-0"
 >
 	<div
 		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
@@ -95,7 +133,7 @@
 			class="flex items-center text-base tracking-wide text-blue-700 sm:text-left md:text-xl"
 			href="/#"
 		>
-			<p class="hover:underline">Shop godrej refrigerator</p>
+			<p class="text-sm hover:underline sm:text-base">Shop godrej refrigerator</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-9 w-4 md:h-6 md:w-6"></span>
 		</a>
 	</div>
@@ -137,6 +175,8 @@
 		>
 			Find the perfect product for you.
 		</h1>
+
+		<!-- search box -->
 		<div class="search-box relative z-50 flex w-full flex-col items-center">
 			<div class="relative flex w-full items-center justify-center">
 				<button
@@ -171,25 +211,25 @@
 			</div>
 			{#if searchQuery && isFocused}
 				<div
-					class="search-result absolute top-[55px] w-[90%] overflow-scroll bg-[var(--neutral)] p-2 sm:w-full md:top-[60px]"
+					class="search-result absolute top-[55px] w-[90%] overflow-scroll bg-[var(--neutral)] sm:w-full md:top-[60px]"
 				>
-					<p class="mb-2 text-xs text-[#9d9d9d] sm:text-sm md:text-sm">Search Results</p>
-					<ul class="m-0 list-none overflow-scroll p-0 text-xs sm:text-sm md:text-sm">
-						<li class="flex items-center">
-							<span class="icon-[basil--search-outline] mr-2"></span>Explore new fridge
-						</li>
-						<li class="flex items-center">
-							<span class="icon-[basil--search-outline] mr-2"></span> Explore new Ac
-						</li>
-						<li class="flex items-center">
-							<span class="icon-[basil--search-outline] mr-2"></span> Explore new dildo
-						</li>
-						<li class="flex items-center">
-							<span class="icon-[basil--search-outline] mr-2"></span> Explore new fridge
-						</li>
-						<li class="flex items-center">
-							<span class="icon-[basil--search-outline] mr-2"></span> Explore new fridge
-						</li>
+					<p class="p-2 pl-3 text-xs text-[#9d9d9d] sm:text-sm md:p-3 md:text-sm">Search Results</p>
+					<!-- search results -->
+					<ul class="search-results mb-4">
+						{#if globalSearch.fuzzSearch(searchQuery)}
+							{#each globalSearch.fuzzSearch(searchQuery) as items}
+								<a href={'/products/cart/' + items.item.name}>
+									<li
+										class="flex cursor-pointer items-center gap-2 p-2 pr-3 pl-3 text-xs transition-all hover:bg-[var(--primary-background)] hover:underline sm:text-sm md:pr-4 md:pl-4 md:text-sm"
+									>
+										<span class="icon-[basil--search-outline] h-3 w-3 md:h-4 md:w-4"></span>{items
+											.item.name}
+									</li>
+								</a>
+							{/each}
+						{:else}
+							jii
+						{/if}
 					</ul>
 				</div>
 			{/if}
@@ -243,7 +283,7 @@
 				>
 					{#each categoryIcons as categoryIcon}
 						<a
-							href={'/products/' + categoryIcon}
+							href={'/products/category/' + categoryIcon}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="category-icon h-32 w-32 cursor-pointer p-9 md:h-40 md:w-40 md:p-12">
@@ -280,7 +320,7 @@
 
 	{#each productData as product}
 		<section
-			class="product-section z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
+			class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
 		>
 			<h1
 				class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
@@ -297,7 +337,6 @@
 </section>
 
 <style>
-	
 	.search-input {
 		border: 1px solid black;
 		padding: 8px 48px;
@@ -382,7 +421,7 @@
 	@media only screen and (min-width: 640px) {
 		/* sm */
 		.hero {
-			height: 50vh; 
+			height: 50vh;
 		}
 		.hero-right {
 			background: linear-gradient(to right, #dcd8cd 0%, #efefef 100%);
@@ -409,7 +448,7 @@
 
 	@media only screen and (min-width: 768px) {
 		/* md */
-		
+
 		.hero {
 			height: 60vh;
 			max-height: 422px;
