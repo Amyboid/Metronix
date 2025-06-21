@@ -4,7 +4,7 @@
 		<div class="kutchina-chimney-img relative z-10 items-center sm:flex">
 			<img
 				class="z-30"
-				src="/assets/homeImg/kutchina-chimney.png"
+				src="/assets/homePageImg/kutchina-chimney.png"
 				alt="kutchina-chimney"
 				loading="lazy"
 			/>
@@ -14,10 +14,12 @@
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
 				<span class="mr-2 text-center">Breathe Easy, Cook Freely.</span>
 			</div>
-			<button
+			<a href="/products/chimney"> 
+				<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 				>Visit Now</button
-			>
+				>
+			</a>
 		</div>
 	</div>
 </section>

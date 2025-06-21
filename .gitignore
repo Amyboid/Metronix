@@ -1,6 +1,9 @@
 node_modules
 static
 rename.js
+categoryWiseData
+itemData.ts
+insertMockData.ts
 
 # Output
 .output

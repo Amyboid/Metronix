@@ -9,22 +9,24 @@
 			<div class="ro-img-shadow absolute z-10"></div>
 			<img
 				class="z-30"
-				src="/assets/homeImg/philips-ro.png"
+				src="/assets/homePageImg/philips-ro.png"
 				alt="philips-white-ro"
 				loading="lazy"
 			/>
 		</div>
-		<div class="text-[var(--primary-background)] z-10 flex flex-col items-center">
+		<div class="z-10 flex flex-col items-center text-[var(--primary-background)]">
 			<h1 class="z-30 text-3xl font-semibold tracking-wider sm:text-4xl md:text-4xl">
 				Water Purifier
 			</h1>
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-xl md:text-lg">
 				<span class="mr-2">Wellness in every drop.</span>
 			</div>
-			<button
-				class="visit-btn-light mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
-				>Visit Now</button
-			>
+			<a href="/products/ro">
+				<button
+					class="visit-btn-light mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
+					>Visit Now</button
+				>
+			</a>
 		</div>
 	</div>
 </section>
@@ -66,8 +68,8 @@
 		user-select: none;
 	}
 
-	.home-philips-logo-text { 
-		color: #dcd8cd98; 
+	.home-philips-logo-text {
+		color: #dcd8cd98;
 	}
 
 	@media only screen and (min-width: 640px) {

@@ -5,17 +5,19 @@
 		<div
 			class="voltas-ac-img relative z-10 w-[300px] items-center sm:flex sm:w-[420px] md:w-[450px]"
 		>
-			<img class="z-30" src="/assets/homeImg/voltas-ac.png" alt="voltas-ac" loading="lazy" />
+			<img class="z-30" src="/assets/homePageImg/voltas-ac.png" alt="voltas-ac" loading="lazy" />
 		</div>
 		<div class="z-10 flex flex-col items-center">
 			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Voltas ac</h1>
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
 				<span class="mr-2 text-center">Endless Viewing Pleasure.</span>
 			</div>
-			<button
+			<a href="/products/ac"> 
+				<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 				>Visit Now</button
-			>
+				>
+			</a>
 		</div>
 	</div>
 

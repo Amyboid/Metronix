@@ -11,16 +11,18 @@
 		<div class="z-30 mt-1 flex items-center text-sm sm:text-xl md:text-2xl">
 			<span class="mr-2">Get Fresh Vegetables</span>
 		</div>
-		<button
-			class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
-			>Visit Now</button
-		>
+		<a href="/products/fridge">
+			<button
+				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
+				>Visit Now</button
+			>
+		</a>
 	</div>
 	<h1 class="home-haier-logo-text mt-4 text-8xl font-extrabold sm:hidden">Haier</h1>
 	<div class="frige-img relative z-10 sm:mt-16">
 		<img
 			class="z-30"
-			src="/assets/homeImg/refrigerator.png"
+			src="/assets/homePageImg/refrigerator.png"
 			alt="haier-refrigerator"
 			loading="lazy"
 		/>

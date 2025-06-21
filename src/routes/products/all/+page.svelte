@@ -2,19 +2,15 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
-	import {
-		essentials,
-		entertainmentEssentials,
-		selfCareEssentials,
-		kitchenEssentials
-	} from '$lib/itemData';
-
 	import FuzzySearcher from '$lib/fuzzySearcher';
 
+	let { data } = $props();
+	const { essentials } = data;  
+	
 	// search options
 	const globalSearchOptions = {
 		includeScore: true,
-		threshold: 0.2,
+		threshold: 0.5,
 		keys: [
 			{
 				name: 'name',
@@ -38,9 +34,8 @@
 		]
 	};
 
-	const globalSearch = new FuzzySearcher(essentials, globalSearchOptions);
-	const categoryFilter = new FuzzySearcher(essentials, categoryFilterOptions);
-	console.log('kk', categoryFilter.fuzzSearch('tv'));
+	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions);
+	const categoryFilter = new FuzzySearcher(essentials.products, categoryFilterOptions);
 
 	let searchQuery = $state('');
 	let isFocused = $state(false);
@@ -57,7 +52,18 @@
 		{ id: 'category', label: 'Browse by Category' }
 	];
 	let activeButton = $state('product');
-	let productIcons = ['ac', 'chimney', 'fridge', 'oven', 'ro', 'speaker', 'fan', 'stove', 'tv'];
+	let productIcons = [
+		'ac',
+		'chimney',
+		'fridge',
+		'oven',
+		'ro',
+		'speaker',
+		'fan',
+		'stove',
+		'tv',
+		'washing-machine'
+	];
 	let categoryIcons = [
 		'Consumer-Electronics',
 		'Home-Appliances',
@@ -68,18 +74,21 @@
 	let productData = [
 		{
 			heading: 'Entertainment Essentials',
-			images: entertainmentEssentials,
-			msg: 'entertainment essentials'
+			images: data.entertainmentEssentials,
+			msg: 'entertainment essentials',
+			link: 'consumer-electronics'
 		},
 		{
 			heading: 'Self-Care Essentials',
-			images: selfCareEssentials,
-			msg: 'self-care essentials'
+			images: data.selfCareEssentials,
+			msg: 'self-care essentials',
+			link: 'self-care-appliances'
 		},
 		{
 			heading: 'Kitchen Essentials',
-			images: kitchenEssentials,
-			msg: 'kitchen essentials'
+			images: data.kitchenEssentials,
+			msg: 'kitchen essentials',
+			link: 'kitchen-appliances'
 		}
 	];
 
@@ -218,7 +227,7 @@
 					<ul class="search-results mb-4">
 						{#if globalSearch.fuzzSearch(searchQuery)}
 							{#each globalSearch.fuzzSearch(searchQuery) as items}
-								<a href={'/products/cart/' + items.item.name}>
+								<a href={'/products/cart/' + items.item.src}>
 									<li
 										class="flex cursor-pointer items-center gap-2 p-2 pr-3 pl-3 text-xs transition-all hover:bg-[var(--primary-background)] hover:underline sm:text-sm md:pr-4 md:pl-4 md:text-sm"
 									>
@@ -268,7 +277,7 @@
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
 								<img src={'/search/product/' + productIcon + '.png'} alt={productIcon} />
 							</div>
-							<p class="text-center text-xs md:text-sm">{productIcon}</p>
+							<p class="text-center text-xs md:text-sm">{productIcon.split('-').join(' ')}</p>
 						</a>
 					{/each}
 				</div>
@@ -283,7 +292,7 @@
 				>
 					{#each categoryIcons as categoryIcon}
 						<a
-							href={'/products/category/' + categoryIcon}
+							href={'/products/category/' + categoryIcon.toLowerCase()}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="category-icon h-32 w-32 cursor-pointer p-9 md:h-40 md:w-40 md:p-12">
@@ -328,7 +337,10 @@
 				{product.heading}
 			</h1>
 			<ImgSlider images={product.images} />
-			<a class="-mt-1 flex items-center tracking-wide sm:text-left" href="/#">
+			<a
+				class="-mt-1 flex items-center tracking-wide sm:text-left"
+				href={'/products/category/' + product.link}
+			>
 				<p class="text-blue-700 hover:underline">shop all {product.msg}</p>
 				<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
 			</a>
@@ -419,7 +431,6 @@
 	}
 
 	@media only screen and (min-width: 640px) {
-		/* sm */
 		.hero {
 			height: 50vh;
 		}
@@ -447,8 +458,6 @@
 	}
 
 	@media only screen and (min-width: 768px) {
-		/* md */
-
 		.hero {
 			height: 60vh;
 			max-height: 422px;
@@ -471,7 +480,6 @@
 		}
 	}
 	@media only screen and (min-width: 1024px) {
-		/* lg */
 		.browse-by {
 			grid-template-columns: repeat(4, 1fr);
 		}

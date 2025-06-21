@@ -5,17 +5,19 @@
 		<div
 			class="samsung-tv-img relative z-10 w-[300px] items-center sm:flex sm:w-[420px] md:w-[400px]"
 		>
-			<img class="z-30" src="/assets/homeImg/samsung-tv.png" alt="samsung-tv" loading="lazy" />
+			<img class="z-30" src="/assets/homePageImg/samsung-tv.png" alt="samsung-tv" loading="lazy" />
 		</div>
 		<div class="z-10 flex flex-col items-center">
 			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Samsung tv</h1>
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
 				<span class="mr-2 text-center">Endless Viewing Pleasure.</span>
 			</div>
-			<button
+			<a href="/products/tv"> 
+				<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 				>Visit Now</button
-			>
+				>
+			</a>
 		</div>
 	</div>
 

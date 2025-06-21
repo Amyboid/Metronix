@@ -1,7 +1,6 @@
 <script>
 	let { product } = $props();
 	console.log('pr', product);
-	
 </script>
 
 <div

@@ -1,6 +1,5 @@
 <script>
-	let { product } = $props();
-	console.log('pr', product);
+	let { product } = $props(); 
 	
 </script>
 
@@ -14,7 +13,8 @@
 		<div class="flex flex-col items-center">
 			<a
 				class="min-h-16 text-center text-sm tracking-wider hover:underline md:text-base"
-				href={"/products/cart/" + product.name}>{product.name}
+				data-sveltekit-reload
+				href={"/products/cart/" + product.src}>{product.name}
 				</a
 			>
 			<div class="flex items-center">

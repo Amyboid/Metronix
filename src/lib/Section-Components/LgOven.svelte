@@ -11,15 +11,17 @@
 			<span class="icon-[bi--currency-rupee] h-4 w-4 sm:ml-1 md:h-5 md:w-5"></span>
 			<span class=""> 12,000 </span>
 		</div>
-		<button
+		<a href="/products/oven"> 
+			<button
 			class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 			>Visit Now</button
-		>
+			>
+		</a>
 	</div>
 	<h1 class="home-lg-logo-text mt-4 text-8xl font-extrabold sm:hidden">LG</h1>
 	<div class="oven-img relative z-10 mt-auto mb-6 sm:mb-5">
 		<div class="oven-img-shadow absolute z-20"></div>
-		<img class="z-30" src="/assets/homeImg/big-lg-oven.png" alt="lg-oven" loading="lazy" />
+		<img class="z-30" src="/assets/homePageImg/big-lg-oven.png" alt="lg-oven" loading="lazy" />
 	</div>
 </section>
 
@@ -55,7 +57,7 @@
 	}
 
 	@media only screen and (min-width: 640px) {
-		/* sm */
+		
 
 		.oven-section {
 			background: var(--primary-background);

@@ -3,7 +3,8 @@
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
 
-	let navLinks = [
+	let navLinks = [ 
+		{ name: 'Home', link: '/' },
 		{ name: 'Products', link: '/products/all' },
 		{ name: 'About Us', link: '/about' }
 	];
@@ -27,9 +28,9 @@
 	</a>
 
 	<!-- right -->
-	<div class="nav-right flex items-center gap-4 sm:gap-4 md:gap-5">
+	<div class="nav-right flex items-center gap-4">
 		<!-- nav-links -->
-		<div class="hidden items-center justify-between md:mr-3 md:flex lg:mr-5">
+		<div class="hidden items-center justify-between md:flex">
 			{#each navLinks as link}
 				<a
 					class="font-semibold tracking-widest md:mr-2 md:ml-2 lg:mr-4 lg:ml-4 md:text-base"
@@ -66,11 +67,11 @@
 
 <style>
 	@media only screen and (min-width: 640px) {
-		/* sm */
+		
 	}
 
 	@media only screen and (min-width: 768px) {
-		/* md */
+		
 
 		.enquer::after {
 			position: absolute;
@@ -88,7 +89,7 @@
 		}
 	}
 	@media only screen and (min-width: 1024px) {
-		/* lg */
+		
 	}
 	@media only screen and (min-width: 1280px) {
 		/* xl */

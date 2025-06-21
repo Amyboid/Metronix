@@ -28,7 +28,7 @@
 					<div class="flex flex-col items-center">
 						<a
 							class="min-h-16 text-center text-sm tracking-wider hover:underline md:text-base"
-							href={"/products/cart/" + image.name}>{image.name}</a
+							href={"/products/cart/" + image.src}>{image.name}</a
 						>
 						<div class="flex items-center">
 							<span class="icon-[bi--currency-rupee] -ml-1 h-[14px] w-[14px]"></span>

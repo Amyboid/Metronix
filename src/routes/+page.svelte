@@ -139,14 +139,8 @@
 		<SamsungTv />
 
 		<KutchinaChimney />
-	</section>
-
-	<div class="social-media flex items-center gap-6">
-		<span class="icon-[ri--twitter-x-line] h-5 w-5 md:h-6 md:w-6"></span>
-		<span class="icon-[uim--facebook-f] h-5 w-5 md:h-6 md:w-6"></span>
-		<span class="icon-[simple-icons--onlyfans] h-5 w-5 md:h-6 md:w-6"></span>
-		<span class="icon-[fa--instagram] h-5 w-5 md:h-6 md:w-6"></span>
-	</div>
+	</section> 
+	
 </section>
 
 <style>
@@ -227,15 +221,10 @@
 	.homepage-grid-section { 
 		grid-template-columns: repeat(1, 1fr);
 	}
-	.social-media span {
-		transition: all 0.2s;
-	}
-	.social-media span:hover {
-		color: var(--accent);
-	}
+	
 
 	@media only screen and (min-width: 640px) {
-		/* sm */
+		
 
 		.hero {
 			height: 80vh;
@@ -254,7 +243,7 @@
 	}
 
 	@media only screen and (min-width: 768px) {
-		/* md */
+		
 		.hero {
 			height: 80vh;
 			max-height: 550px;
@@ -294,7 +283,7 @@
 	}
 
 	@media only screen and (min-width: 1024px) {
-		/* lg */
+		
 		.hero {
 			min-width: 1124px;
 		}
