@@ -3,7 +3,8 @@ import { error } from '@sveltejs/kit';
 
 
 export async function load({ params, fetch }) {
-    try {
+    try { 
+        
         const item = await fetchProductBySrc(fetch, params.file);
 
         if (!item) {
@@ -19,8 +20,7 @@ export async function load({ params, fetch }) {
             1,
             3,
             item._id       
-        )
-        console.log('simmm',similarProductsPromise);
+        ) 
         
         const similarProducts = similarProductsPromise?.products 
         

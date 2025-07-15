@@ -98,7 +98,7 @@
 	{/each}
 </section>
 
-<div class="load-more-container relative w-[90%] text-center md:w-[85%] mb-12">
+<div class="load-more-container relative mb-12 w-[90%] text-center md:w-[85%]">
 	{#if errorLoadingMore}
 		<p class="mb-4 text-red-500">{errorLoadingMore}</p>
 	{/if}
@@ -110,6 +110,7 @@
 			class="load-more-section-msg absolute flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:pr-4 sm:pl-4 md:tracking-widest"
 		>
 			{#if isLoading}
+			
 				<p class="text-gray-400">Loading...</p>
 			{:else}
 				<p class="flex items-center gap-1">
@@ -119,9 +120,13 @@
 			{/if}
 		</button>
 	{:else if totalProducts > 0}
-		<div class="load-more-section-msg text-gray-400 absolute p-2 sm:pr-4 sm:pl-4 w-full">You've reached the end of the products!</div>
+		<div class="load-more-section-msg absolute w-full p-2 text-gray-400 sm:pr-4 sm:pl-4">
+			You've reached the end of the products!
+		</div>
 	{:else}
-		<p class="load-more-section-msg text-gray-400 absolute p-2 sm:pr-4 sm:pl-4">No products found for this {productType}.</p>
+		<p class="load-more-section-msg absolute p-2 text-gray-400 sm:pr-4 sm:pl-4">
+			No products found for this {productType}.
+		</p>
 	{/if}
 </div>
 
@@ -145,17 +150,15 @@
 		grid-template-columns: repeat(1, 1fr);
 		place-content: center;
 	}
-	.load-more-container {
-		border-top: 1px solid var(--primary-background);
-	}
-	.load-more-section-msg {  
+
+	.load-more-section-msg {
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		background: var(--neutral); 
+		background: var(--neutral);
 	}
 
-	.load-more-btn:disabled {
+	.load-more-section-msg:disabled {
 		cursor: not-allowed;
 	}
 
@@ -173,6 +176,9 @@
 		}
 		.product-section {
 			grid-template-columns: repeat(2, 1fr);
+		}
+		.load-more-container {
+			border-top: 1px solid var(--primary-background);
 		}
 	}
 

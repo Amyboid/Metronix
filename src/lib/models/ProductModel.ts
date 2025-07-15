@@ -15,11 +15,11 @@ const productSchema = new Schema({
     productType: { type: String, required: true },
     brand: { type: String, required: true },
     description: { type: String, required: true },
-    InStock: { type: Number, required: true },
+    inStock: { type: Number, required: true },
     specifications: [
         { label: { type: String, required: true }, value: { type: String, required: true } }
     ],
-    InTheBox: { type: [String], required: true },
+    inTheBox: { type: [String], required: true },
     offers: { type: [String], required: true }
 });
  

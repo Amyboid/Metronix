@@ -1,5 +1,5 @@
 // src/routes/+layout.server.ts
-import { fetchProductsFiltered } from '$lib/data/products'; // Assuming fetchProductsFiltered can fetch all now
+import { fetchProductsFiltered } from '$lib/data/products';
 
 export async function load({ fetch }) {
     let essentials = [];

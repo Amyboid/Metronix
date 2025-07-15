@@ -1,19 +1,19 @@
 import { PUBLIC_DB_URI } from "$env/static/public";
 import { connect } from 'mongoose';
-import insertMockData from '../../../insertMockData'
+// import insertMockData from '../../../insertMockData'
 
 type connectionObj = {
     isConnected?: number
 }
 
-
 if (!PUBLIC_DB_URI) {
     throw new Error('please define PUBLIC_DB_URI inside .env*');
 }
 const connection: connectionObj = {};
+let c = 0;
 const connectToDatabase = async () => {
     if (connection.isConnected) {
-        console.error('Already connected...'); 
+        console.error('Already connected...');
         return
     }
     try {

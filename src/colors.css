@@ -2,9 +2,9 @@
 	--neutral: #f1efe9;
 	--primary: #eddea4;
 	--primary-gradient: linear-gradient(to bottom, hsl(48, 66%, 79%), hsl(49, 64%, 75%));
-	--primary-background: #dcd8cd;
+	--primary-background: hsl(44, 18%, 83%);
+	--primary-background-h: hsla(44, 18%, 83%, 0.212);
 	--primary-background-gradient: linear-gradient(to bottom, #dbd7cc 60%, #c6c2b9);
 	--primary-background-gradient-light: linear-gradient(to bottom, #dcd8cd80 0%, #dcd8cde1 60%, #dcd8cd80 100%);
 	--accent: #0bacc5; 
 }
-

@@ -1,14 +1,31 @@
-@import url("./colors.css");
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url('./colors.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 @plugin "@iconify/tailwind4";
 
 :root {
-    font-family: "Inter", serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  ::selection {
-    background: var(--primary);
-  }
+	font-family: 'Inter', serif;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+::selection {
+	background: var(--primary);
+}
+
+@theme {
+	--color-neutral: #f1efe9;
+	--color-primary: #eddea4;
+	--color-primary-gradient: linear-gradient(to bottom, hsl(48, 66%, 79%), hsl(49, 64%, 75%));
+	--color-primary-background: #dcd8cd;
+	--color-primary-background-dark: #dcd8cd36;
+	--color-primary-background-gradient: linear-gradient(to bottom, #dbd7cc 60%, #c6c2b9);
+	--color-primary-background-gradient-light: linear-gradient(
+		to bottom,
+		#dcd8cd80 0%,
+		#dcd8cde1 60%,
+		#dcd8cd80 100%
+	);
+	--color-accent: #0bacc5;
+	--font-inter: 'Inter', serif;
+}

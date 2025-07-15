@@ -69,8 +69,8 @@ let bannerData = [
 
 const fetchProductsFiltered = async (
     fetch: typeof globalThis.fetch,
-    filterType?: 'category' | 'productType', // New: specifies which type of filter
-    filterValue?: string, 
+    filterType?: 'category' | 'productType',
+    filterValue?: string,
     page:number = 1,
     limit: number = 10,
     excludeProductId?: string
@@ -94,8 +94,8 @@ const fetchProductsFiltered = async (
 
         console.log('url', url);
         
-        const response = await fetch(url);
-
+        const response = await fetch(url); 
+        
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Failed to fetch products: ${response.status} - ${errorText}`);
@@ -116,6 +116,8 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
     try {
         // Call the new dedicated API endpoint for fetching by src
         const url = `/api/products/src/${encodeURIComponent(productSource)}`;
+        console.log('urrrrl', url);
+        
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -127,11 +129,8 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
             throw new Error(`Failed to fetch product: ${response.statusText}`);
         }
 
-        const product = await response.json();
-
-        console.log('siiiingle: ', product);
-        
-        return product; // Returns the single product object
+        const product = await response.json(); 
+        return product;
     } catch (error) {
         console.error('Error in fetchProductBySrc:', error);
         throw error;

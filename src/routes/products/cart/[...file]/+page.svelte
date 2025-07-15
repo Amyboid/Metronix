@@ -3,10 +3,10 @@
 	import { error } from '@sveltejs/kit';
 	let { data } = $props();
 	const product = data.item;
-	const similarProducts = data.similarProducts; 
+	const similarProducts = data.similarProducts;
 
 	export const load = () => {
-		error(404, 'Not Found');
+		error(404, 'Page Not Found\nhello');
 	};
 
 	let showMore = $state(true);
@@ -64,7 +64,7 @@
 				<span class="icon-[material-symbols-light--inventory-rounded] h-6 w-6"></span>
 				<h3 class="text-sm font-semibold">In Stock:</h3>
 				<h4 class="text-sm">
-					{product.InStock}
+					{product.inStock}
 				</h4>
 			</div>
 		</div>
@@ -133,12 +133,12 @@
 		<div class="product-info-field border-b border-b-[var(--primary-background)]">
 			<h1 class="text-lg font-medium md:w-[20%]">What's In The Box</h1>
 			<container class="flex items-center text-justify text-sm tracking-wide md:w-[80%]">
-				{product.InTheBox.join(', ')}.
+				{product.inTheBox.join(', ')}.
 			</container>
 		</div>
 		<div class="flex flex-col gap-3 p-3 md:flex-row md:gap-6">
 			<h1 class="text-lg font-medium md:w-[20%]">Specifications</h1>
-			<container class="text-justify text-sm tracking-wide md:w-[80%]">
+			<container class="specification text-justify text-sm tracking-wide md:w-[80%]">
 				{#each product.specifications as label}
 					<p class="p-1 pl-0">{label.label} : {label.value}</p>
 				{/each}
@@ -150,7 +150,7 @@
 {#if similarProducts.length !== 0}
 	<section class="mb-12 flex w-[90%] min-w-[300px] flex-col gap-6 p-6 md:w-[80%] md:min-w-[1125px]">
 		<div class="flex w-full items-center justify-center p-3">
-			<h1 class="text-2xl sm:text-3xl font-semibold tracking-wider">You Might Also Enjoy</h1>
+			<h1 class="text-2xl font-semibold tracking-wider sm:text-3xl">You Might Also Enjoy</h1>
 		</div>
 
 		<div class="product-section mb-10 grid h-auto gap-4">
@@ -165,12 +165,13 @@
 	img {
 		object-fit: contain;
 	}
-	img {
-		object-fit: contain;
-	}
 	.preview-img {
 		background-color: var(--primary-background);
 		/* background-color: var(--accent); */
+	}
+	container:not(.specification) {
+		display: flex;
+		align-items: center;
 	}
 	.product-info {
 		padding: 24px 0;
@@ -185,17 +186,15 @@
 		gap: 0.75rem;
 	}
 
-
 	.product-section {
 		grid-template-columns: repeat(1, 1fr);
 		place-content: center;
 	}
 
 	@media only screen and (min-width: 640px) {
-		
 		.product-section {
 			grid-template-columns: repeat(2, 1fr);
-		place-content: center;
+			place-content: center;
 		}
 	}
 
@@ -206,7 +205,7 @@
 		}
 		.product-section {
 			grid-template-columns: repeat(3, 1fr);
-		place-content: center;
+			place-content: center;
 		}
 	}
 </style>

@@ -1,5 +1,4 @@
 <script>
-	import { fade, fly } from 'svelte/transition'; 
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
 
@@ -15,7 +14,7 @@
 </script>
 
 <nav
-	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-[var(--neutral)] p-4 pt-2 pb-2 md:pr-12 md:pl-12"
+	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-[var(--neutral)] p-4 pt-2 pb-2 md:px-12"
 >
 	<!-- left -->
 	<a href="/">

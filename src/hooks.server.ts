@@ -1,3 +1,3 @@
-import connectToDatabase from "./lib/server/connectDatabase";
+import connectToDatabase from "$lib/server/connectDatabase";
 
 connectToDatabase()

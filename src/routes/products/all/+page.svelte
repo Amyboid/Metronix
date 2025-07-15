@@ -23,20 +23,7 @@
 		]
 	};
 
-	const categoryFilterOptions = {
-		includeScore: true,
-		threshold: 0.2,
-		keys: [
-			{
-				name: 'productType',
-				weight: 0.7
-			}
-		]
-	};
-
-	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions);
-	const categoryFilter = new FuzzySearcher(essentials.products, categoryFilterOptions);
-
+	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions); 
 	let searchQuery = $state('');
 	let isFocused = $state(false);
 	let searchinput = $state();
@@ -166,7 +153,7 @@
 	</div>
 </section>
 <section
-	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:pr-12 md:pl-12"
+	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:px-12"
 >
 	<section
 		class="find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]"
