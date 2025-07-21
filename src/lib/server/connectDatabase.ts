@@ -6,6 +6,7 @@ type connectionObj = {
     isConnected?: number
 }
 
+// const PUBLIC_DB_URI = process.env.PUBLIC_DB_URI
 if (!PUBLIC_DB_URI) {
     throw new Error('please define PUBLIC_DB_URI inside .env*');
 }
@@ -19,6 +20,7 @@ const connectToDatabase = async () => {
     try {
         let connectionInstance = await connect(PUBLIC_DB_URI);
         console.log('Database connected successfully', connectionInstance.connection.host);
+        
         connection.isConnected = connectionInstance.connections[0].readyState
         // insertMockData()
     } catch (error) {

@@ -1,7 +1,7 @@
 // src/routes/+layout.server.ts
 import { fetchProductsFiltered } from '$lib/data/products';
 
-export async function load({ fetch }) {
+export async function load({ fetch, locals }) {
     let essentials = [];
     try {
         essentials = await fetchProductsFiltered(fetch, undefined, undefined, 1, 99999); 
@@ -10,6 +10,7 @@ export async function load({ fetch }) {
     }
 
     return {
-        essentials
+        essentials,
+        user: locals.user
     };
 }

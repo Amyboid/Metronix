@@ -19,6 +19,8 @@
 	const totalPages = $derived(data.totalPages);
 	let currentLimit = $state(data.limit);
 
+	let currentUser = $derived(data.user);
+
 	async function loadAll(page: number, limit: number) {
 		if (isLoadAllLoading) {
 			return;
@@ -87,7 +89,6 @@
 	<h1 class="text-lg font-semibold md:text-xl">Manage your products.</h1>
 </header>
 
-
 {#if showForm.show}
 	<AdminProductForm {form} />
 {/if}
@@ -96,7 +97,7 @@
 	class="section-options flex h-10 w-full items-center justify-between gap-5 p-5 text-xs sm:h-12 md:mt-0 md:justify-end"
 >
 	<button
-		class="load-all-btn border-primary-background cursor-pointer rounded-lg border bg-primary-background-dark p-1 px-2"
+		class="load-all-btn border-primary-background bg-primary-background-dark cursor-pointer rounded-lg border p-1 px-2"
 		onclick={() => loadAll(1, 99999)}
 		disabled={isLoadAllLoading || (items.length === totalProducts && totalProducts > 0)}
 	>
@@ -110,7 +111,7 @@
 	</button>
 
 	<button
-		class="border-primary-background flex cursor-pointer items-center gap-1 rounded-lg border bg-primary-background-dark p-1 px-2"
+		class="border-primary-background bg-primary-background-dark flex cursor-pointer items-center gap-1 rounded-lg border p-1 px-2"
 		onclick={() => (showForm.show = !showForm.show)}
 		><span class="icon-[ic--round-plus]"></span> Add new</button
 	>

@@ -269,9 +269,7 @@
 	select > option {
 		padding: 12px;
 	}
-
-	@media only screen and (min-width: 640px) {
-	}
+ 
 	@media only screen and (min-width: 768px) {
 		label {
 			font-size: var(--text-lg);

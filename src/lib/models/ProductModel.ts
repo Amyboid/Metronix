@@ -22,7 +22,7 @@ const productSchema = new Schema({
     inTheBox: { type: [String], required: true },
     offers: { type: [String], required: true }
 });
- 
+
 const Product = models.Product || model('Product', productSchema);
 
 export default Product;

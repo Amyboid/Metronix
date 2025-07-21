@@ -1,16 +1,45 @@
 <script>
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
+	import LogoutButton from './LogoutButton.svelte';
+	import { fly } from 'svelte/transition';
 
-	let navLinks = [ 
-		{ name: 'Home', link: '/' },
-		{ name: 'Products', link: '/products/all' },
-		{ name: 'About Us', link: '/about' }
-	];
-	
-	let hamburger = $state({ show: false }); 
-	setContext('hamburger', hamburger); 
-	
+	const { navLinks, adminProfile } = $props();
+	let hamburger = $state({ show: false });
+	let showAdminProfile = $state(false);
+	setContext('hamburger', hamburger);
+
+	/**
+	 * @param {HTMLDivElement} element
+	 * @param {{ (): void; }} callback
+	 */
+
+	function clickOutside(element, callback) {
+		/**
+		 * @param {{ target: Node | null; }} event
+		 */
+		function handleClick(event) {
+			if (!element.contains(event.target)) {
+				console.log('clicked outside');
+
+				callback();
+			}
+		}
+
+		// @ts-ignore
+		document.body.addEventListener('click', handleClick, true);
+
+		return {
+			// @ts-ignore
+			update(newCallback) {
+				callback = newCallback;
+			},
+			destroy() {
+				// @ts-ignore
+				document.body.removeEventListener('click', handleClick, true);
+			}
+		};
+	}
 </script>
 
 <nav
@@ -29,17 +58,47 @@
 	<!-- right -->
 	<div class="nav-right flex items-center gap-4">
 		<!-- nav-links -->
-		<div class="hidden items-center justify-between md:flex">
-			{#each navLinks as link}
-				<a
-					class="font-semibold tracking-widest md:mr-2 md:ml-2 lg:mr-4 lg:ml-4 md:text-base"
-					href={link.link}>{link.name}</a
+		<div class="navlinks hidden gap-8 md:flex md:items-center">
+			{#if navLinks}
+				{#each navLinks as link}
+					<a href={link.link}>{link.name}</a>
+				{/each}
+				<button class="contact-us-btn relative hidden cursor-pointer items-center md:flex">
+					<a href="/contact">ContactUs</a>
+				</button>
+			{:else}
+				<button
+					onclick={() => (showAdminProfile = !showAdminProfile)}
+					aria-label="profile"
+					class="h-8 w-8 p-1 cursor-pointer rounded-full border border-primary-background bg-primary-background-dark"
 				>
-			{/each}
-		</div> 
+					<span class="icon-[solar--user-bold-duotone] w-full h-full"></span>
+				</button>
+
+				{#if showAdminProfile}
+					<div
+						in:fly={{ x: 50, duration: 300 }}
+						out:fly={{ x: 50, duration: 300 }}
+						use:clickOutside={() => (showAdminProfile = false)}
+						class="bg-primary-background absolute top-15 right-12 w-48 h-24 flex flex-col justify-between px-4 p-4 rounded-lg"
+					>
+						<div>
+							<h1 class="capitalize">
+								{adminProfile}
+							</h1>
+						</div>
+						<div class="bg-neutral rounded-lg">
+							<LogoutButton />
+						</div>
+					</div>
+				{/if}
+			{/if}
+		</div>
 		<!-- hamburger or cancel button-->
 		<button
-			onclick={()=>{hamburger.show = !hamburger.show}}
+			onclick={() => {
+				hamburger.show = !hamburger.show;
+			}}
 			aria-label="hamburger"
 			class="flex items-center justify-center md:hidden"
 		>
@@ -50,60 +109,35 @@
 				<span class="icon-[ix--cancel] h-5 w-5 transition-all sm:h-6 sm:w-6"></span>
 			{/if}
 		</button>
-
-		<!-- contact us button -->
-		<button class="enquer relative hidden cursor-pointer items-center p-2 md:flex">
-			<a href="/contact" class="font-semibold md:text-base md:tracking-widest lg:text-lg"
-				>Contact Us</a
-			>
-		</button>
 	</div>
-	
+
 	{#if hamburger.show}
-		<HamburgerMenu navLinks={navLinks}/>
+		<HamburgerMenu {navLinks} {adminProfile} />
 	{/if}
 </nav>
 
-<style>
-	@media only screen and (min-width: 640px) {
-		
-	}
-
+<style>  
 	@media only screen and (min-width: 768px) {
-		
-
-		.enquer::after {
+		.navlinks {
+			font-size: var(--text-base);
+		}
+		.contact-us-btn::after {
 			position: absolute;
 			right: 0;
 			bottom: 0;
 			content: '';
 			width: 100%;
-			height: 5%;
+			height: 6%;
 			background: var(--accent);
 			transition: all 0.2s;
 			z-index: -1;
 		}
-		.enquer:hover::after {
-			height: 50%;
+		.contact-us-btn:hover::after {
+			height: 40%;
 		}
-	}
-	@media only screen and (min-width: 1024px) {
-		
-	}
-	@media only screen and (min-width: 1280px) {
-		/* xl */
-	}
-
-	/* .search-result,
-  .quick-links,
-  .search-input,
-  .search-box {
-    border: 1px solid black;
-  } */
+	} 
 
 	.nav {
 		box-shadow: 0px 0px 8px 12px var(--neutral);
 	}
-
-	
 </style>

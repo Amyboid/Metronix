@@ -3,6 +3,7 @@
 
 	let isEditing = $state(false);
 	let { item } = $props();
+	
 	function toggleEditing() {
 		isEditing = !isEditing;
 	}
@@ -24,7 +25,7 @@
 						disabled={!isEditing}
 						class:border-input={isEditing}
 						class:no-border-input={!isEditing}
-						class="w-full text-center"
+						class="w-full text-center resize-none"
 					></textarea>
 				</p>
 				<div class="flex w-full items-center justify-center">

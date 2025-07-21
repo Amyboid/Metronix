@@ -9,7 +9,7 @@
 	<div class="flex">
 		<a href="/">
 			<button
-			class="font-semibold bg-accent mt-6 flex cursor-pointer items-center justify-center rounded-lg p-3 px-4 sm:mt-10 sm:px-4 text-sm sm:text-base"
+			class="bg-accent mt-6 flex cursor-pointer items-center justify-center rounded-lg p-3 px-4 sm:mt-10 sm:px-4 text-xs sm:text-sm"
 			>
 			BACK TO HOME
 		</button>
@@ -18,8 +18,8 @@
 </div>
 
 <style>
-	
-	button {
-		border: 3px solid #0a98ae;
+	button
+	{
+		backdrop-filter: blur(10px);
 	}
 </style>
