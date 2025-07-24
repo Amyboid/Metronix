@@ -3,8 +3,8 @@
 	import { error } from '@sveltejs/kit';
 	let { data } = $props();
 	const product = data.item;
-	const similarProducts = data.similarProducts;
-
+	const similarProducts = data.similarProducts; 
+	
 	export const load = () => {
 		error(404, 'Page Not Found\nhello');
 	};
@@ -13,7 +13,7 @@
 </script>
 
 <section
-	class="flex min-h-[70vh] w-[90%] min-w-[300px] flex-col-reverse gap-4 pb-6 md:h-[85vh] md:w-[80%] md:min-w-[1125px] md:flex-row"
+	class="flex min-h-[70vh] w-[90%] min-w-[300px] flex-col-reverse gap-4 pb-6 md:min-h-[85vh] md:w-[80%] md:min-w-[1125px] md:flex-row"
 >
 	<div class="flex flex-col justify-between gap-4 p-6 md:w-[45%] md:gap-4">
 		<div
@@ -41,9 +41,13 @@
 					<h3 class="text-sm font-semibold">Offers:</h3>
 				</div>
 				<div class="flex flex-col pl-8 text-sm">
-					{#each product.offers as offer}
-						<span>{offer}</span>
-					{/each}
+					{#if product.offers}
+						{#each product.offers as offer}
+							<span>{offer}</span>
+						{/each}
+					{:else}
+						<p>No offers available</p>
+					{/if}
 				</div>
 			</div>
 			<div class="flex flex-col gap-1">
@@ -84,7 +88,7 @@
 	</div>
 
 	<div
-		class="flex h-full w-full flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center md:w-[55%] md:flex-col"
+		class="flex h-full w-full flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center md:w-[55%] md:flex-col md:justify-between md:h-auto"
 	>
 		<img class="h-[300px]" src={'/assets/' + product?.src + '.png'} alt={product?.name} srcset="" />
 		<div
