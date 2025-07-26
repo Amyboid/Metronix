@@ -4,12 +4,23 @@
 	import AdminProductForm from '$lib/Components/AdminProductForm.svelte';
 	import { setContext } from 'svelte';
 	import AdminProductCard from '$lib/Components/AdminProductCard.svelte';
+	import { fade, fly } from 'svelte/transition';
 
 	let { data, form }: PageProps = $props();
-	let showForm = $state({ show: false });
-	setContext('showForm', showForm);
+	let showForm = $state(false);
+	let showDeleteToast = $state(false);
+	function closeForm() {
+		showForm = false;
+	}
 
+	function handleDeleteToast() {
+		showDeleteToast = true;
+		setTimeout(() => {
+			showDeleteToast = false;
+		}, 1000);
+	}
 	let items = $state(data.items);
+
 	let currentPage = $state(1);
 	let isLoading = $state(false);
 	let isLoadAllLoading = $state(false);
@@ -18,8 +29,6 @@
 	const totalProducts = $derived(data.totalProducts);
 	const totalPages = $derived(data.totalPages);
 	let currentLimit = $state(data.limit);
-
-	let currentUser = $derived(data.user);
 
 	async function loadAll(page: number, limit: number) {
 		if (isLoadAllLoading) {
@@ -36,15 +45,12 @@
 
 			const response = await fetchProductsFiltered(fetch, undefined, undefined, page, limit);
 			items = [...response.products];
-			// After loading all, if there are products, set currentPage to totalPages
-			// to disable the "Load More" button.
+
 			if (response.products.length > 0) {
 				currentPage = totalPages;
 			} else {
 				currentPage = 1;
 			}
-
-			console.log(currentPage, totalPages, totalProducts);
 		} catch (err) {
 			console.error('Failed to load all products:', err);
 			errorLoadingMore = 'Failed to load all products. Please try again.';
@@ -56,11 +62,8 @@
 
 	async function loadMore() {
 		if (currentPage >= totalPages || isLoading || isLoadAllLoading) {
-			// Also check isLoadAllLoading
 			return;
 		}
-
-		console.log(currentPage);
 
 		isLoading = true;
 		errorLoadingMore = null;
@@ -83,14 +86,18 @@
 			isLoading = false;
 		}
 	}
+
+	$effect(() => {
+		items = data.items;
+	});
 </script>
 
 <header class="section-header mt-2 flex h-24 w-full items-center pl-6 sm:h-30 md:mt-0 md:pl-[8%]">
 	<h1 class="text-lg font-semibold md:text-xl">Manage your products.</h1>
 </header>
 
-{#if showForm.show}
-	<AdminProductForm {form} />
+{#if showForm}
+	<AdminProductForm {closeForm} {form} />
 {/if}
 
 <div
@@ -112,16 +119,24 @@
 
 	<button
 		class="border-primary-background bg-primary-background-dark flex cursor-pointer items-center gap-1 rounded-lg border p-1 px-2"
-		onclick={() => (showForm.show = !showForm.show)}
+		onclick={() => (showForm = !showForm)}
 		><span class="icon-[ic--round-plus]"></span> Add new</button
 	>
 </div>
 
 <section class="grid w-full grid-cols-1 sm:grid-cols-2 md:min-w-[70vw] md:grid-cols-4">
 	{#each items as item (item._id)}
-		<AdminProductCard {item} />
+		<AdminProductCard {form} {item} {handleDeleteToast} />
 	{/each}
 </section>
+{#if showDeleteToast}
+	<div
+		in:fly={{ y: 200 }} out:fade
+		class="border-primary-background bg-primary-background fixed left-[50%] -translate-[50%] -bottom-4 sm:left-auto sm:translate-0 sm:right-6 sm:bottom-6 h-auto w-[80%] rounded-lg border p-4 text-center text-sm sm:w-60"
+	>
+		<div class="bg-neutral w-full rounded-lg text-center p-2">Product deleted!</div>
+	</div>
+{/if}
 
 <button
 	disabled={isLoading || isLoadAllLoading}

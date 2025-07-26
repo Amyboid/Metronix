@@ -36,7 +36,8 @@ export const actions: Actions = {
         cookies.set(PUBLIC_AUTH_COOKIE_NAME, sessionId, {
             path: '/',
             httpOnly: true,
-            maxAge: 60 * 60 * 24 * 7
+            maxAge: 60 * 60 * 24 * 7,
+            secure: false
         });
 
         throw redirect(302, '/admin');

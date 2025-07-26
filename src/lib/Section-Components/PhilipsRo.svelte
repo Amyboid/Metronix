@@ -5,16 +5,16 @@
 		PHILIPS
 	</h1>
 	<div class="grid-child-bottom-section flex w-full flex-col gap-4 sm:flex-row sm:gap-6">
-		<div class="philips-ro-img relative z-10 items-center sm:flex">
+		<div class="philips-ro-img relative z-10 flex justify-center items-center sm:flex h-[55%] md:h-[auto]">
 			<div class="ro-img-shadow absolute z-10"></div>
 			<img
-				class="z-30"
+				class="z-30 h-full"
 				src="/assets/homePageImg/philips-ro.png"
 				alt="philips-white-ro"
 				loading="lazy"
 			/>
 		</div>
-		<div class="z-10 flex flex-col items-center text-[var(--primary-background)]">
+		<div class="z-10 flex flex-col items-center text-[var(--primary-background)] h-[45%] md:h-[auto]">
 			<h1 class="z-30 text-3xl font-semibold tracking-wider sm:text-4xl md:text-4xl">
 				Water Purifier
 			</h1>
@@ -46,8 +46,7 @@
 	.grid-child-bottom-section {
 		align-items: center;
 		justify-content: center;
-		margin-top: -24px;
-		padding-bottom: 64px;
+		margin-top: -40px; 
 	}
 
 	.philips-ro-img {

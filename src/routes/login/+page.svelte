@@ -3,8 +3,8 @@
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 
-	let username = $state<string>('');
-	let password = $state<string>('');
+	let username = $state<string>('rakesh');
+	let password = $state<string>('r@1234');
 	let error = $state<string>('');
 	let loading = $state<boolean>(false);
 	let { data }: { data: PageData } = $props();

@@ -126,7 +126,7 @@
 <section
 	class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
 >
-	<h1 class="mt-4 text-2xl tracking-wide">Meta Electronics Best Sellers.</h1>
+	<h1 class="mt-4 text-xl sm:text-2xl tracking-wide">Meta Electronics Best Sellers.</h1>
 	<HaierFridge />
 	<LgOven />
 	<WashMacine />

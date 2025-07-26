@@ -1,7 +1,7 @@
 <section class="homepage-section light-bg-section relative">
 	<h1 class="home-grid-logo-text text-center text-6xl font-extrabold sm:text-7xl">KUTCHINA</h1>
-	<div class="grid-child-bottom-section flex w-full flex-col gap-4 sm:flex-row sm:gap-0">
-		<div class="kutchina-chimney-img relative z-10 items-center sm:flex">
+	<div class="grid-child-bottom-section flex w-full flex-col gap-5 sm:flex-row sm:gap-0">
+		<div class="kutchina-chimney-img relative z-10 items-center sm:flex justify-center h-[55%] md:h-[auto]">
 			<img
 				class="z-30"
 				src="/assets/homePageImg/kutchina-chimney.png"
@@ -9,7 +9,7 @@
 				loading="lazy"
 			/>
 		</div>
-		<div class="z-10 flex flex-col items-center">
+		<div class="z-10 flex flex-col items-center h-[45%] md:h-[auto]">
 			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Kutchina chimney</h1>
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
 				<span class="mr-2 text-center">Breathe Easy, Cook Freely.</span>
@@ -37,7 +37,7 @@
 	.grid-child-bottom-section {
 		align-items: center;
 		justify-content: center;
-		margin-top: -24px;
+		margin-top: -40px;
 		padding-bottom: 64px;
 	}
 

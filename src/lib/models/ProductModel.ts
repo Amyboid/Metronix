@@ -2,6 +2,22 @@ import mongoose from 'mongoose';
 
 const { Schema, model, models } = mongoose;
 
+export interface ProductType {
+    _id?: string; // Mongoose adds _id automatically, and it's an ObjectId which converts to string
+    src: string;
+    name: string;
+    price: number;
+    category: 'home-appliances' | 'consumer-electronics' | 'kitchen-appliances' | 'self-care-appliances';
+    productType: string;
+    brand: string;
+    description: string;
+    inStock: number;
+    specifications: { label: string; value: string }[];
+    inTheBox: string[];  
+    offers: string[];  
+    createdAt?: Date; 
+    updatedAt?: Date; 
+}
 // Define the base product schema
 const productSchema = new Schema({ 
     src: { type: String, required: true },

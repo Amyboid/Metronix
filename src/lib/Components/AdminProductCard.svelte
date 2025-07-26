@@ -1,71 +1,112 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import { fade, fly } from 'svelte/transition';
+	import AdminProductForm from './AdminProductForm.svelte';
 
 	let isEditing = $state(false);
-	let { item } = $props();
-	
-	function toggleEditing() {
-		isEditing = !isEditing;
+	let isFormOpen = $state(false);
+	let showConfirmation = $state(false);
+	let { item, form, handleDeleteToast } = $props();
+
+	function toggleForm() {
+		isFormOpen = !isFormOpen;
+	}
+
+	function closeEditForm() {
+		isFormOpen = false;
 	}
 </script>
 
-<div
-	class="item-card relative flex h-[420px] w-full flex-col items-center justify-center gap-5 p-5"
->
-	<img class=" h-[40%] object-contain" src={'/assets/' + item.src + '.png'} alt={item.name} />
+<div class="item-card flex h-[420px] w-full flex-col items-center justify-center gap-5 p-5">
+	<img class="h-[40%] object-contain" src={'/assets/' + item.src + '.png'} alt={item.name} />
 
-	<div class="flex h-[60%] w-full flex-col justify-around gap-2">
+	<div class="relative flex h-[60%] w-full flex-col justify-around gap-2">
 		<!-- The form for updating item details -->
-		<form action="?/update" method="post" use:enhance class="flex w-full flex-col gap-2">
-			<div class="flex flex-col items-center text-sm">
-				<p class="min-h-16 w-full text-center tracking-wider">
-					<textarea
-						name="name"
-						bind:value={item.name}
-						disabled={!isEditing}
-						class:border-input={isEditing}
-						class:no-border-input={!isEditing}
-						class="w-full text-center resize-none"
-					></textarea>
-				</p>
-				<div class="flex w-full items-center justify-center">
-					<span class="icon-[bi--currency-rupee] ml-8 h-[14px] w-[14px] border"></span>
-					<span class="flex items-center justify-between gap-2 tracking-wider">
-						<input
-							name="price"
-							type="text"
-							bind:value={item.price}
-							disabled={!isEditing}
-							class:border-input={isEditing}
-							class:no-border-input={!isEditing}
-							class="w-24 border pl-0"
-						/>
-					</span>
-				</div>
+
+		<div class="flex flex-col items-center gap-2 text-sm">
+			<p class="min-h-16 w-full text-center tracking-wider">
+				{item.name}
+			</p>
+			<div class="flex items-center justify-center">
+				<span class="icon-[bi--currency-rupee] h-[14px] w-[14px]"></span>
+				<span class="">
+					{item.price}
+				</span>
 			</div>
-			<div class="mt-2 flex w-full justify-between text-sm">
-				<button
-					class="update-button cursor-pointer rounded-lg p-2 px-3"
-					type="submit"
-					disabled={!isEditing}
-				>
-					Update
-				</button>
-				<button
-					type="button"
-					onclick={toggleEditing}
-					aria-label="edit"
-					class="edit-button cursor-pointer p-2 px-3"
-				>
-					<span class="icon-[material-symbols--edit-rounded]"></span>
-				</button>
-			</div>
-		</form>
-		<form action="?/delete" method="post" use:enhance class="w-full">
+		</div>
+		<div class="mt-2 flex w-full justify-between text-sm">
+			<button
+				type="button"
+				onclick={toggleForm}
+				aria-label="edit"
+				class="edit-button cursor-pointer p-2 px-3"
+			>
+				<span class="icon-[material-symbols--edit-rounded]"></span>
+			</button>
+		</div>
+
+		{#if isFormOpen}
+			<AdminProductForm closeForm={closeEditForm} initialProductData={item} />
+		{/if}
+		<form
+			action="?/delete"
+			method="post"
+			use:enhance={() => {
+				return async ({ result, update }) => {
+					console.log('resstypee', result.type);
+
+					if (result.type === 'success') {
+						console.log('Product deleted successfully from server.');
+						let invalidatePr = await invalidateAll();
+						handleDeleteToast();
+						console.log('invalidatePr: ', invalidatePr);
+					} else if (result.type === 'failure') {
+						console.error('Failed to delete product (server validation):', result.data);
+					} else if (result.type === 'error') {
+						console.error('Error deleting product:', result.error);
+					}
+					await update();
+				};
+			}}
+			class="w-full"
+		>
 			<input type="hidden" name="id" value={item._id} />
+			<input type="hidden" name="imgSrc" value={item.src} />
+			{#if showConfirmation}
+				<div  
+					in:fade={{ duration: 100 }}
+					out:fade={{ duration: 100 }}
+					class="border-primary-background bg-primary-background absolute bottom-[10%] left-[50%] flex h-auto w-[95%] -translate-x-[50%] flex-col gap-1 rounded-lg border p-4 pt-12"
+				>
+					<button
+						type="button"
+						class="absolute top-2 right-2 flex cursor-pointer items-center rounded-md bg-[#d1cbbd] p-2 transition-all duration-200 ease-in hover:bg-[#c7bfae]"
+						onclick={() => {
+							showConfirmation = false;
+						}}
+						aria-label="cancel"
+					>
+						<span class="icon-[ix--cancel] h-4 w-4"></span>
+					</button>
+					<h1 class="text-sm">Are you sure you want to delete this item?</h1>
+					<h3 class="text-xs text-[#6d6d6d]">This action is irreversible.</h3>
+					<button
+						onclick={() => {
+							showConfirmation = false;
+						}}
+						type="submit"
+						class="bg-neutral mt-4 p-2 text-sm">Confirm</button
+					>
+				</div>
+			{/if}
 			<button
 				class="delete-button flex w-full cursor-pointer items-center justify-center p-2 text-sm"
 				aria-label="delete"
+				type="button"
+				onclick={() => {
+					showConfirmation = true;
+				}}
 			>
 				Delete
 			</button>
@@ -73,29 +114,23 @@
 	</div>
 </div>
 
-<style>
+<style> 
 	.item-card {
 		border-right: 1px solid var(--primary-background);
 		border-bottom: 1px solid var(--primary-background);
 	}
 
-	input,
-	textarea {
-		padding: 8px;
-		transition: border 0.3s ease;
-		border-radius: 8px;
-	}
 	input {
 		margin-left: -8px;
 	}
-	.border-input {
+	/* .border-input {
 		border: 1px solid var(--primary-background);
 		margin-left: 0;
 	}
 	.no-border-input {
 		border: 1px solid transparent;
 		cursor: not-allowed;
-	}
+	} */
 	button {
 		border: none;
 		border-radius: 8px;
@@ -108,17 +143,7 @@
 	.edit-button:hover {
 		background-color: #0a98ae;
 	}
-	.update-button {
-		background-color: #0bacc5;
-	}
-	.update-button:hover:not(:disabled) {
-		background-color: #0a98ae;
-	}
-	.update-button:disabled {
-		background-color: var(--primary-background);
-		color: #6d6d6d;
-		cursor: not-allowed;
-	}
+
 	.delete-button {
 		background-color: #0bacc5;
 	}

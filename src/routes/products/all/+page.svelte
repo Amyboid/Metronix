@@ -1,12 +1,13 @@
 <script>
-	import { onMount } from 'svelte';
+	// import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 	import FuzzySearcher from '$lib/fuzzySearcher';
 
 	let { data } = $props();
-	const { essentials } = data;  
-	
+	const { essentials, entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
+	console.log('dataaaa', selfCareEssentials.length);
+
 	// search options
 	const globalSearchOptions = {
 		includeScore: true,
@@ -23,7 +24,7 @@
 		]
 	};
 
-	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions); 
+	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions);
 	let searchQuery = $state('');
 	let isFocused = $state(false);
 	let searchinput = $state();
@@ -61,19 +62,19 @@
 	let productData = [
 		{
 			heading: 'Entertainment Essentials',
-			images: data.entertainmentEssentials,
+			images: entertainmentEssentials.length > 2 ? entertainmentEssentials : null,
 			msg: 'entertainment essentials',
 			link: 'consumer-electronics'
 		},
 		{
 			heading: 'Self-Care Essentials',
-			images: data.selfCareEssentials,
+			images: selfCareEssentials.length > 2 ? selfCareEssentials : null,
 			msg: 'self-care essentials',
 			link: 'self-care-appliances'
 		},
 		{
 			heading: 'Kitchen Essentials',
-			images: data.kitchenEssentials,
+			images: kitchenEssentials.length > 2 ? kitchenEssentials : null,
 			msg: 'kitchen essentials',
 			link: 'kitchen-appliances'
 		}
@@ -102,7 +103,7 @@
 	}
 
 	// Update size on window resize
-	onMount(() => {
+	$effect(() => {
 		updateSize();
 		window.addEventListener('resize', updateSize);
 		return () => window.removeEventListener('resize', updateSize);
@@ -153,7 +154,7 @@
 	</div>
 </section>
 <section
-	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:pt-0 md:px-12"
+	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0"
 >
 	<section
 		class="find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]"
@@ -315,23 +316,25 @@
 	</section>
 
 	{#each productData as product}
-		<section
-			class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
-		>
-			<h1
-				class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
+		{#if product.images}
+			<section
+				class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
 			>
-				{product.heading}
-			</h1>
-			<ImgSlider images={product.images} />
-			<a
-				class="-mt-1 flex items-center tracking-wide sm:text-left"
-				href={'/products/category/' + product.link}
-			>
-				<p class="text-blue-700 hover:underline">shop all {product.msg}</p>
-				<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-			</a>
-		</section>
+				<h1
+					class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
+				>
+					{product.heading}
+				</h1>
+				<ImgSlider images={product.images} />
+				<a
+					class="-mt-1 flex items-center tracking-wide sm:text-left"
+					href={'/products/category/' + product.link}
+				>
+					<p class="text-blue-700 hover:underline">shop all {product.msg}</p>
+					<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
+				</a>
+			</section>
+		{/if}
 	{/each}
 </section>
 

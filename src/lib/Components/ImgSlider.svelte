@@ -3,7 +3,8 @@
 
 	let { images } = $props();
 	let currentIndex = $state(0);
-
+	console.log('images', images);
+	
 	function prevImg() {
 		if (currentIndex == 0) currentIndex = images.length - 1;
 		else currentIndex = currentIndex - 1;

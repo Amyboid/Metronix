@@ -44,6 +44,11 @@ let bannerData = [
         Type: 'tv',
         msg: 'Uncover fresh entertainment.'
     },
+     {
+        src: 'banner/washing-machine',
+        Type: 'washing-machine',
+        msg: 'Get ultimate clean with our smart washers!'
+    },
     {
         src: 'banner/home-appliances',
         Type: 'home-appliances',

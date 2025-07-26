@@ -45,13 +45,13 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:flex-row md:p-0"
+	class="hero mb-6 flex w-full min-w-80 flex-col bg-[var(--primary-background)] pt-2 sm:mb-12 sm:flex-row md:p-0"
 >
 	<div
-		class="hero-left z-10 flex h-[30%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
+		class="hero-left z-10 flex h-[30%] w-full flex-col items-center justify-center p-2 sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
 	>
 		<h1
-			class="mb-4 pb-1 text-center text-3xl font-bold tracking-widest sm:mb-4 sm:pt-0 sm:text-left sm:text-3xl md:mb-6 md:pr-24 md:text-5xl"
+			class="mb-4 pb-1 text-center text-2xl font-bold tracking-widest sm:mb-4 sm:pt-0 sm:text-left sm:text-3xl md:mb-6 md:pr-24 md:text-5xl"
 		>
 			{data.banner?.msg}
 		</h1>
@@ -68,7 +68,7 @@
 		class="hero-right z-20 flex h-[70%] w-full justify-center sm:h-full sm:w-[60%] sm:pr-6 md:justify-end md:pr-[8%]"
 	>
 		<div
-			class="hero-img flex items-center justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
+			class="hero-img flex items-center justify-center p-3 sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
 			<picture>
 				<source srcset={'/assets/' + data.banner?.src + '.png'} media="(min-width: 768px)" />
@@ -110,7 +110,6 @@
 			class="load-more-section-msg absolute flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:pr-4 sm:pl-4 md:tracking-widest"
 		>
 			{#if isLoading}
-			
 				<p class="text-gray-400">Loading...</p>
 			{:else}
 				<p class="flex items-center gap-1">
@@ -125,7 +124,7 @@
 		</div>
 	{:else}
 		<p class="load-more-section-msg absolute p-2 text-gray-400 sm:pr-4 sm:pl-4">
-			No products found for this {productType}.
+			No products found for this item.
 		</p>
 	{/if}
 </div>
