@@ -418,6 +418,7 @@
 		resize: none;
 		border: 1px solid transparent;
 		transition: all 0.2s ease;
+		color: #6d6d6d;
 	}
 
 	textarea:focus,

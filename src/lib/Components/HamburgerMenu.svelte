@@ -21,7 +21,7 @@
 		out:fly={{ x: 50, duration: 300 }}
 		class="hamburger-menu bg-primary-background absolute top-1 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
 	>
-		<div class="flex flex-col items-center gap-5 pb-14">
+		<div class="relative flex flex-col items-center gap-5 pb-14">
 			{#if navLinks}
 				{#each navLinks as link}
 					<a
@@ -38,10 +38,13 @@
 					>
 				</button>
 			{:else}
+				<span class="text-sm text-[#6d6d6d]">Role: {adminProfile.role}</span>
 				<h1 class="capitalize">
 					{adminProfile.username}
 				</h1>
-				<LogoutButton />
+				<div class="bg-neutral w-full rounded-lg p-1 px-3">
+					<LogoutButton />
+				</div>
 			{/if}
 		</div>
 	</div>

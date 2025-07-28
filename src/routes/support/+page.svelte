@@ -1,1 +1,0 @@
-<h1 class="mt-10">Support</h1>

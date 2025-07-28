@@ -145,17 +145,10 @@
 		cursor: pointer;
 		transition: background-color 0.3s ease;
 	}
-	.edit-button {
+	.edit-button, .delete-button {
 		background-color: #0bacc5;
 	}
-	.edit-button:hover {
+	.edit-button:hover,.delete-button:hover {
 		background-color: #0a98ae;
-	}
-
-	.delete-button {
-		background-color: #0bacc5;
-	}
-	.delete-button:hover {
-		background-color: #0a98ae;
-	}
+	} 
 </style>
