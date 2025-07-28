@@ -34,9 +34,16 @@ function getImageSrc(productImage: File, category: string, productType: string) 
 }
 
 export const actions = {
-	create: async ({ request }) => {
-
-
+	create: async ({ request, locals }) => { 
+		const userRole = locals.user?.role;
+		if (userRole === 'Editor') {
+			return fail(401,
+				{
+					message: 'sorry! you don\'t have the access to add product',
+					success: false
+				}
+			)
+		}
 
 		const formData = await request.formData()
 		console.log("formdata: ", formData.entries());
@@ -147,8 +154,17 @@ export const actions = {
 	},
 
 
-	update: async ({ request }) => {
+	update: async ({ request, locals }) => {
+		const userRole = locals.user?.role;
 
+		if (userRole === 'Editor') {
+			return fail(401,
+				{
+					message: 'sorry! you don\'t have the access to update',
+					success: false
+				}
+			)
+		}
 		const formData = await request.formData()
 		const product_id = formData.get('product_id') as string;
 		const name = formData.get('name') as string;
@@ -164,6 +180,25 @@ export const actions = {
 		const price = parseFloat(priceString);
 		const inStock = parseInt(inStockString, 10);
 
+		if (!name || name.trim() === '') {
+			return fail(400, { name, message: 'Product name is required.' });
+		}
+		if (isNaN(price) || price <= 0) {
+			return fail(400, { price, message: 'Valid price is required.' });
+		}
+		if (!category || category.trim() === '') {
+			return fail(400, { category, message: 'Category is required.' });
+		}
+		if (!brand || brand.trim() === '') {
+			return fail(400, { brand, message: 'Brand is required.' });
+		}
+		if (!productType || productType.trim() === '') {
+			return fail(400, { productType, message: 'Product type is required.' });
+		}
+		if (isNaN(inStock) || inStock < 0) {
+			return fail(400, { inStock, message: 'Valid stock quantity is required.' });
+		}
+		
 		const productImage = formData.get('productImage');
 		if (productImage instanceof File && productImage.size > 0) {
 			const imageType = productImage.type;
@@ -241,13 +276,9 @@ export const actions = {
 
 		try {
 			const updatedProduct = await Product.findByIdAndUpdate(product_id, dataToUpdate)
-
-			console.log('datatoupdate', dataToUpdate);
-
 			if (!updatedProduct) {
 				return fail(404, { message: "product not found" })
 			}
-			console.log('respppp: ', updatedProduct);
 
 			return {
 				message: 'product updated successfully',
@@ -262,12 +293,21 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ request }) => {
+	delete: async ({ request, locals }) => {
+		const userRole = locals.user?.role;
+		if (userRole === 'Editor') {
+			return fail(401,
+				{
+					message: 'sorry! you don\'t have the access to delete',
+					success: false
+				}
+			)
+		}
+
 		const formData = await request.formData();
 		const itemId = formData.get('id')
 		const imgSrc = formData.get('imgSrc') as string
 		const ImageToDelete = path.join(process.cwd(), 'static', 'assets', imgSrc) + '.png';
-
 
 		try {
 			const deletedProduct = await Product.findByIdAndDelete(itemId)
@@ -292,12 +332,16 @@ export const actions = {
 		} catch (error) {
 			console.log('error in deleting product image', error);
 		}
+
+
 	}
+
 };
 
 
 
-export async function load({ params, fetch, url }) {
+export async function load({ locals, params, fetch, url }) {
+	const currentUserRole = locals.user?.role;
 
 	const page = parseInt(url.searchParams.get('page') || '1');
 	const limit = parseInt(url.searchParams.get('limit') || '8');
@@ -320,6 +364,7 @@ export async function load({ params, fetch, url }) {
 		items,
 		limit: currentLimit,
 		totalProducts,
-		totalPages
+		totalPages,
+		currentUserRole
 	};
 }

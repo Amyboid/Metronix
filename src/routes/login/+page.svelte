@@ -3,8 +3,9 @@
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 
-	let username = $state<string>('rakesh');
-	let password = $state<string>('r@1234');
+	let username = $state<string>('');
+	let password = $state<string>('');
+	let role: 'Admin' | 'Editor' = $state('Editor');
 	let error = $state<string>('');
 	let loading = $state<boolean>(false);
 	let { data }: { data: PageData } = $props();
@@ -13,6 +14,13 @@
 		if (data.user) {
 			goto('/admin');
 		}
+		if (role === 'Editor') {
+            username = 'arpan';
+            password = 'a@1234';
+        } else if (role === 'Admin') {
+            username = '';
+            password = '';
+        }
 	});
 </script>
 
@@ -25,7 +33,8 @@
 		method="POST"
 		class="flex flex-col gap-4"
 		action="?/login"
-		use:enhance={() => {
+		use:enhance={({formData}) => {
+			formData.append('role', role)
 			loading = true; // Show loading state
 			error = '';
 
@@ -53,7 +62,26 @@
 			<label for="password">Password:</label>
 			<input type="password" id="password" name="password" bind:value={password} required />
 		</div>
-
+		<div>
+			<button
+				type="button"
+				class="role-button rounded-md px-6 py-2 transition-colors duration-200"
+				class:selected={role === 'Admin'}
+				onclick={() => (role = 'Admin')}
+			>
+				Admin
+			</button>
+			<button
+				type="button"
+				class="role-button rounded-md px-6 py-2 transition-colors duration-200"
+				class:selected={role === 'Editor'}
+				onclick={() => (role = 'Editor')}
+			>
+				Editor
+			</button>
+			<!-- <input type="radio" name="role" id="admin" value="Admin" />
+			<input type="radio" name="role" id="editor" value="Editor" /> -->
+		</div>
 		<button
 			type="submit"
 			disabled={loading}
@@ -105,6 +133,25 @@
 		border-radius: 5px;
 		margin-bottom: 20px;
 	}
+
+	.role-button {
+        background-color: #e0e0e0; /* Default unselected background */
+        color: #555;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+
+    .role-button:hover:not(.selected) {
+        background-color: #d0d0d0; /* Slightly darker on hover */
+    }
+
+    .role-button.selected {
+        background-color: #4f46e5; /* Indigo-600 for selected */
+        color: white;
+        border-color: #4f46e5;
+        box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3); /* More prominent shadow for selected */
+        font-weight: 600; /* Bolder text for selected */
+    }
 
 	button[type='submit']:disabled {
 		background: #d3cdc0;

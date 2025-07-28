@@ -18,19 +18,21 @@ export const actions: Actions = {
         const data = await request.formData();
         const username = data.get('username')?.toString();
         const password = data.get('password')?.toString();
+        const userRole = data.get('role')?.toString();
 
         if (!username || !password) {
             return fail(400, { message: 'Username and password are required.' });
         }
 
-        const user = await findUserByUsername(username);
-        if (!user || !(await comparePassword(password, user.passwordHash))) {
-            return fail(400, { message: "invalid username or password" });
+        const user = await findUserByUsername(username); 
+        
+        if (!user || !(await comparePassword(password, user.passwordHash)) || (user.role !== userRole)) {
+            return fail(400, { message: "invalid username or password or role" });
         }
 
         console.log("User authenticated:", user);
 
-        const sessionId = await createSession(user.id);
+        const sessionId = await createSession(user.id, user.role);
         console.log("Session created:", sessionId); 
 
         cookies.set(PUBLIC_AUTH_COOKIE_NAME, sessionId, {

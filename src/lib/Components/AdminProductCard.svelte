@@ -1,12 +1,11 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { fade, fly } from 'svelte/transition';
 	import AdminProductForm from './AdminProductForm.svelte';
-
-	let isEditing = $state(false);
 	let isFormOpen = $state(false);
 	let showConfirmation = $state(false);
+	let deleteErrorMessage: string | null = $state(null);
 	let { item, form, handleDeleteToast } = $props();
 
 	function toggleForm() {
@@ -15,6 +14,13 @@
 
 	function closeEditForm() {
 		isFormOpen = false;
+	}
+
+	function handleErrorMessage() {
+		showConfirmation = true;
+		// setTimeout(() => {
+		// 	showConfirmation = false
+		// }, 1000);
 	}
 </script>
 
@@ -58,11 +64,12 @@
 
 					if (result.type === 'success') {
 						console.log('Product deleted successfully from server.');
-						let invalidatePr = await invalidateAll();
+						await invalidateAll();
 						handleDeleteToast();
-						console.log('invalidatePr: ', invalidatePr);
 					} else if (result.type === 'failure') {
-						console.error('Failed to delete product (server validation):', result.data);
+						handleErrorMessage();
+						deleteErrorMessage = result.data?.message as string;
+						console.error('Failed to delete product (server validation):');
 					} else if (result.type === 'error') {
 						console.error('Error deleting product:', result.error);
 					}
@@ -74,7 +81,7 @@
 			<input type="hidden" name="id" value={item._id} />
 			<input type="hidden" name="imgSrc" value={item.src} />
 			{#if showConfirmation}
-				<div  
+				<div
 					in:fade={{ duration: 100 }}
 					out:fade={{ duration: 100 }}
 					class="border-primary-background bg-primary-background absolute bottom-[10%] left-[50%] flex h-auto w-[95%] -translate-x-[50%] flex-col gap-1 rounded-lg border p-4 pt-12"
@@ -84,20 +91,28 @@
 						class="absolute top-2 right-2 flex cursor-pointer items-center rounded-md bg-[#d1cbbd] p-2 transition-all duration-200 ease-in hover:bg-[#c7bfae]"
 						onclick={() => {
 							showConfirmation = false;
+							
 						}}
 						aria-label="cancel"
 					>
 						<span class="icon-[ix--cancel] h-4 w-4"></span>
 					</button>
-					<h1 class="text-sm">Are you sure you want to delete this item?</h1>
-					<h3 class="text-xs text-[#6d6d6d]">This action is irreversible.</h3>
-					<button
-						onclick={() => {
-							showConfirmation = false;
-						}}
-						type="submit"
-						class="bg-neutral mt-4 p-2 text-sm">Confirm</button
-					>
+
+					{#if deleteErrorMessage}
+						<p class="w-full text-sm text-center text-[#6d6d6d]">
+							{deleteErrorMessage}
+						</p>
+					{:else}
+						<h1 class="text-sm">Are you sure you want to delete this item?</h1>
+						<h3 class="text-xs text-[#6d6d6d]">This action is irreversible.</h3>
+						<button
+							onclick={() => {
+								showConfirmation = false;
+							}}
+							type="submit"
+							class="bg-neutral mt-4 p-2 text-sm">Confirm</button
+						>
+					{/if}
 				</div>
 			{/if}
 			<button
@@ -114,7 +129,7 @@
 	</div>
 </div>
 
-<style> 
+<style>
 	.item-card {
 		border-right: 1px solid var(--primary-background);
 		border-bottom: 1px solid var(--primary-background);
@@ -123,14 +138,7 @@
 	input {
 		margin-left: -8px;
 	}
-	/* .border-input {
-		border: 1px solid var(--primary-background);
-		margin-left: 0;
-	}
-	.no-border-input {
-		border: 1px solid transparent;
-		cursor: not-allowed;
-	} */
+	
 	button {
 		border: none;
 		border-radius: 8px;

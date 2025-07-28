@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import connectToDatabase from './connectDatabase';
 import User from '$lib/models/UserModel';
 import Session from '$lib/models/SessionModel';
-import mongoose from 'mongoose'; 
+import mongoose from 'mongoose';
 
 export async function hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
@@ -21,14 +21,15 @@ export async function findUserByUsername(username: string) {
         return {
             id: user._id.toString(),
             username: user.username,
-            passwordHash: user.password, 
+            passwordHash: user.password,
+            role: user.role
         }
     }
 
     return null;
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, userRole: string) {
     const sessionId = crypto.randomUUID()
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000 * 7)
 
@@ -36,6 +37,7 @@ export async function createSession(userId: string) {
         {
             sessionId,
             userId: new mongoose.Types.ObjectId(userId),
+            userRole,
             expiresAt,
         }
     );
@@ -45,21 +47,22 @@ export async function createSession(userId: string) {
 
 export async function verifySession(sessionId: string) {
     await connectToDatabase();
-    const session = await Session.findOne({ sessionId }).populate('userId'); 
-    
+    const session = await Session.findOne({ sessionId }).populate('userId');
+
     if (!session || session.expiresAt < new Date()) {
-        if (session && session.expiresAt < new Date()) { 
+        if (session && session.expiresAt < new Date()) {
             await invalidateSession(sessionId);
         }
         return null;
     }
 
-    const userDoc = session.userId as any; 
-    
+    const userDoc = session.userId as any;
+
     if (userDoc) {
         return {
             id: userDoc._id.toString(),
             username: userDoc.username,
+            role: userDoc.role
         };
     }
     return null;
@@ -71,10 +74,10 @@ export async function invalidateSession(sessionId: string) {
 }
 
 
-export async function createInitialAdminUser(username: string, passwordPlain: string) {
+export async function createInitialAdminUser(username: string, passwordPlain: string, role: string) {
     const existingUser = await User.findOne({ username });
     console.log(existingUser);
-    
+
     if (existingUser) {
         console.warn(`User "${username}" already exists.`);
         return existingUser;
@@ -84,7 +87,8 @@ export async function createInitialAdminUser(username: string, passwordPlain: st
     const newUser = await User.create(
         {
             username,
-            password: hashedPassword
+            password: hashedPassword,
+            role
         }
     )
     console.log(`Admin user "${username}" created successfully.`);

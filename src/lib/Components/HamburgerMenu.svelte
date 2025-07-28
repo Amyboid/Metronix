@@ -39,7 +39,7 @@
 				</button>
 			{:else}
 				<h1 class="capitalize">
-					{adminProfile}
+					{adminProfile.username}
 				</h1>
 				<LogoutButton />
 			{/if}

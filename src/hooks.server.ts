@@ -1,5 +1,3 @@
-// src/hooks.server.ts
-// import connectToDatabase from "$lib/server/connectDatabase"; // No longer needed here
 import { redirect, type Handle } from '@sveltejs/kit';
 import { PUBLIC_AUTH_COOKIE_NAME } from '$env/static/public';
 import { verifySession, invalidateSession } from '$lib/server/auth';
@@ -13,8 +11,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         if (user) {
             event.locals.user = user;
         } else {
-            console.log('delete session cookie...');
-            // invalidateSession internally calls connectToDatabase()
+            console.log('delete session cookie...'); 
             event.cookies.delete(PUBLIC_AUTH_COOKIE_NAME, { path: '/' });
             event.locals.user = null;
         }

@@ -9,13 +9,13 @@
 	];
 	let { children, data } = $props();
 
-	const admin = $derived(data.user);
-	const adminProfile = $derived(admin?.username)
+	const user = $derived(data.user);
+	const adminProfile = $derived(user)
 
 </script>
 
 <div class="relative z-100 h-max w-full">
-	{#if !admin}
+	{#if !user}
 		<Nav {navLinks} adminProfile={null} />
 	{:else}
 		<Nav navLinks={null} {adminProfile}/>

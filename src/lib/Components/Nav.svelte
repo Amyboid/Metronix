@@ -67,6 +67,7 @@
 					<a href="/contact">ContactUs</a>
 				</button>
 			{:else}
+				<h1>{adminProfile.role}</h1>
 				<button
 					onclick={() => (showAdminProfile = !showAdminProfile)}
 					aria-label="profile"
@@ -84,7 +85,7 @@
 					>
 						<div>
 							<h1 class="capitalize">
-								{adminProfile}
+								{adminProfile.username}
 							</h1>
 						</div>
 						<div class="bg-neutral rounded-lg">

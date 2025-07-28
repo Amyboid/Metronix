@@ -12,6 +12,7 @@
 	let { form, initialProductData, closeForm }: AdminProductFormProps = $props();
 
 	let submissionMessage: string | null = $state(null);
+	let submissionError: string | null = $state(null);
 	let isSuccess = $state(false);
 	let imagePreviewUrl = $state(
 		initialProductData ? '/assets/' + initialProductData.src + '.png' : null
@@ -126,6 +127,9 @@
 			selectedFile = null;
 		}
 	}
+	$effect(() => {
+		submissionError = null;
+	});
 </script>
 
 <div
@@ -147,7 +151,7 @@
 			<form
 				action={initialProductData ? `?/update` : `?/create`}
 				method="post"
-				use:enhance={({formData}) => {
+				use:enhance={({ formData }) => {
 					formData.append('offers', JSON.stringify(productOffers));
 					formData.append('specifications', JSON.stringify(specifications));
 					if (initialProductData) {
@@ -163,15 +167,22 @@
 							// 	closeForm();
 							// }, 300);
 						}
+						if (result.type == 'failure') {
+							if (result.status === 400) {
+								submissionError = result.data?.message as string;
+							} else {
+								submissionMessage = result.data?.message as string;
+							}
+						}
 						await update();
 					};
 				}}
 				enctype="multipart/form-data"
 				class="flex flex-col gap-4"
 			>
-				{#if form?.message}
+				{#if submissionError}
 					<div class="text-red-500">
-						<p>{form.message}</p>
+						<p>{submissionError}</p>
 					</div>
 				{/if}
 				<div>
