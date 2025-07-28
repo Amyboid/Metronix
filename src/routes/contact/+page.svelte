@@ -120,7 +120,7 @@
 	}
 
 	.contact-person-img{
-		background: url('/static//assets/bg/contact-bg1.svg');  
+		background: url('/static//assets/bg/contact-bg.svg');  
 	}
 	@media only screen and (min-width: 768px) {
 		label {
