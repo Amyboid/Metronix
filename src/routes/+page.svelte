@@ -7,9 +7,24 @@
 	import VoltasAc from '$lib/Section-Components/VoltasAc.svelte';
 	import WashMacine from '$lib/Section-Components/WashMacine.svelte';
 
-	let brandGroup1 = ['SAMSUNG', 'Haier', 'LG', 'godrej', 'whirlpool', 'VOLTAS'];
-	let brandGroup2 = ['DAIKIN', 'BLUESTAR', 'Aquagaurd', 'PHILIPS', 'KUTCHINA'];
-	let brandGroup3 = ['hindware', 'SONY', 'INTeX', 'Crompton', 'BAJAJ'];
+	let brands = [
+		'SAMSUNG',
+		'Haier',
+		'LG',
+		'godrej',
+		'whirlpool',
+		'VOLTAS',
+		'DAIKIN',
+		'BLUESTAR',
+		'Aquagaurd',
+		'PHILIPS',
+		'KUTCHINA',
+		'hindware',
+		'SONY',
+		'INTeX',
+		'Crompton',
+		'BAJAJ'
+	];
 </script>
 
 <!-- hero section -->
@@ -36,7 +51,7 @@
 				<span class="font-bold text-[var(--primary-background)]">Electronics</span> product
 			</span>
 		</div>
-		<div class="hero-left-bottom hidden h-[50%] flex-col p-6 md:flex">
+		<div class="hero-left-bottom hidden h-[50%] flex-col p-6 md:flex md:py-7">
 			<div class="w-full justify-center md:flex md:gap-8 lg:gap-32">
 				<div class="flex flex-col">
 					<span class="text-sm">Upto</span>
@@ -50,7 +65,7 @@
 					</span>
 				</div>
 			</div>
-			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-2">
+			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-1">
 				<span class="text-xl md:text-base"> All bank credit and debit card accepted </span>
 				<a class="text-2xl font-bold underline" href="/products/all">View all products</a>
 			</div>
@@ -92,33 +107,38 @@
 	</div>
 </section>
 
-<section class="homepage-brand-section mt-5 p-5">
-	<div class="w-[50%]">
-		<h1 class="text-center text-base tracking-wider sm:text-xl md:text-2xl">
+<section
+	class="my-5 flex h-auto w-full flex-col items-center justify-between gap-12 p-5 md:h-[70vh] md:gap-4"
+>
+	<div class="flex w-full flex-col items-center justify-center gap-1 sm:gap-2 md:w-[90%]">
+		<h1 class="text-center text-xl md:text-2xl">
 			We proudly offer a diverse selection of <span class="font-semibold text-blue-600"
 				>trusted</span
 			>
 			products from renowned <span class="font-semibold text-blue-600">brands</span>.
 		</h1>
+		<p class="w-[70%] p-2 text-center text-xs text-[#6d6d6d] sm:p-4 sm:text-sm md:w-[50%]">
+			We believe variety is key to meeting our customers' needs. Our diverse selection makes it easy
+			to find what you're looking for, from eco-friendly options to the latest innovations, ensuring
+			access to the best products on the market.
+		</p>
 	</div>
 
-	<div class="flex w-[50%] flex-col items-center justify-center border">
-		<ul class="brand-scroller relative h-[94px] w-[400px] overflow-hidden border-2 p-1">
-			{#each brandGroup1 as brand, index}
-				<li
-					class="brand-logo absolute left-[100%] h-8 w-40 p-6"
-					style="animation-delay: {(40 / brandGroup1.length) *
-						(index) *
-						- 1}s"
-				>
-					<img
-						class="h-full w-30 object-contain"
-						src={'/assets/brandLogo/' + brand.toLocaleLowerCase() + '.png'}
-						alt={brand}
-					/>
-				</li>
-			{/each}
-		</ul>
+	<div
+		class="grid min-w-[333px] grid-cols-4 place-items-center gap-1 sm:grid-cols-5 sm:gap-2 md:grid-cols-8 md:gap-6"
+	>
+		{#each brands as brand, i (i)}
+			<div
+				class="hover:bg-primary-background bg-primary-background-dark border-primary-background aspect-square w-20 rounded-sm border p-3 transition-all duration-200 md:w-24"
+			>
+				<img
+					class="h-full w-full object-contain"
+					src={'/assets/brandLogo/' + brand.toLowerCase() + '.png'}
+					alt=""
+					srcset=""
+				/>
+			</div>
+		{/each}
 	</div>
 </section>
 
@@ -126,7 +146,7 @@
 <section
 	class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
 >
-	<h1 class="mt-4 text-xl sm:text-2xl tracking-wide">Meta Electronics Best Sellers.</h1>
+	<h1 class="mt-4 text-xl sm:text-2xl">Meta Electronics Best Sellers.</h1>
 	<HaierFridge />
 	<LgOven />
 	<WashMacine />
@@ -139,8 +159,7 @@
 		<SamsungTv />
 
 		<KutchinaChimney />
-	</section> 
-	
+	</section>
 </section>
 
 <style>
@@ -161,71 +180,11 @@
 		line-height: 0.8;
 	}
 
-	.homepage-brand-section {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-		overflow: hidden;
-		height: 70vh;
-	}
-	.brand-scroller {
-		/* overflow: hidden;
-		-webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-		mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-		display: flex;
-		flex-direction: column;
-		gap: 40px;
-		padding-bottom: 16px;   */
-	}
-	/* .brand-scroller {
-		overflow: hidden;
-		-webkit-mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-		mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
-		display: flex;
-		flex-direction: column;
-		gap: 40px;
-		padding-bottom: 16px;  
-	}
-	.brand-scroller-inner{
-		display: flex;
-		gap: 16px;
-		animation: scroll 20s linear infinite;
-	}
-	@keyframes scroll{
-		0%{
-			transform: translate(-100%);
-		}
-	} */
-	.brand-scroller li {
-		background-color: var(--primary-background);
-	}
-
-	@keyframes horizontalScroll {
-		to {
-			left: -160px;
-		}
-	}
-	.brand-logo {
-		height: 80px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		animation: horizontalScroll 4s linear infinite;
-	}
-	.brand-logo img {
-		max-width: fit-content;
-	}
-
-	.homepage-grid-section { 
+	.homepage-grid-section {
 		grid-template-columns: repeat(1, 1fr);
 	}
-	
 
 	@media only screen and (min-width: 640px) {
-		
-
 		.hero {
 			height: 80vh;
 		}
@@ -243,10 +202,9 @@
 	}
 
 	@media only screen and (min-width: 768px) {
-		
 		.hero {
 			height: 80vh;
-			max-height: 550px;
+			max-height: 600px;
 			background: none;
 			min-width: 1024px;
 		}
@@ -272,10 +230,6 @@
 			background-repeat: no-repeat;
 		}
 
-		.homepage-brand-section {
-			flex-direction: row;
-			align-items: unset;
-		}
 		.homepage-grid-section {
 			padding: 0 16px;
 			grid-template-columns: repeat(2, minmax(580px, 1fr));
@@ -283,7 +237,6 @@
 	}
 
 	@media only screen and (min-width: 1024px) {
-		
 		.hero {
 			min-width: 1124px;
 		}
