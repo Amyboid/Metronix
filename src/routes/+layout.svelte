@@ -4,7 +4,7 @@
 	import Footer from '$lib/Components/Footer.svelte';
 	let navLinks = [
 		{ name: 'Home', link: '/' },
-		{ name: 'Products', link: '/products/all' },
+		{ name: 'Products', link: '/products/' },
 		{ name: 'AboutUs', link: '/about' }
 	];
 	let { children, data } = $props();
