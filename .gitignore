@@ -2,6 +2,7 @@ node_modules
 static
 rename.js
 categoryWiseData
+copyConnectDb.ts
 itemData.ts
 insertMockData.ts
 createUser.ts

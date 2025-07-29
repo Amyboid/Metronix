@@ -1,12 +1,10 @@
 import { PUBLIC_DB_URI } from "$env/static/public";
 import { connect } from 'mongoose';
-// import insertMockData from '../../../insertMockData'
 
 type connectionObj = {
     isConnected?: number
 }
 
-// const PUBLIC_DB_URI = process.env.PUBLIC_DB_URI
 if (!PUBLIC_DB_URI) {
     throw new Error('please define PUBLIC_DB_URI inside .env*');
 }
