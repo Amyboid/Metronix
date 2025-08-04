@@ -222,7 +222,7 @@
 			background: var(--primary-background-gradient);
 		}
 		.hero-right {
-			background: linear-gradient(rgba(0, 0, 0, 0.136)), url('/assets/bg/d.jpg');
+			background: linear-gradient(rgba(0, 0, 0, 0.136)), url('/src/lib/assets/bg/d.jpg');
 			/* filter: brightness(85%); */
 			background-size: cover;
 			background-position: center;

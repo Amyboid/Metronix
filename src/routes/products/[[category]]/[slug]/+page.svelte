@@ -72,7 +72,7 @@
 			class="hero-img flex items-center justify-center p-3 sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
 			{#if data.banner}
-				<enhanced:img class="w-[500px] md:w-[650px]" src={getImagePath(data.banner.src)}></enhanced:img>
+				<enhanced:img class="w-[500px] md:w-[650px]" src={getImagePath(data.banner.src)} alt={data.banner.src}></enhanced:img>
 			{/if}
 		</div>
 	</div>
