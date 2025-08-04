@@ -67,7 +67,7 @@
 			</div>
 			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-1">
 				<span class="text-xl md:text-base"> All bank credit and debit card accepted </span>
-				<a class="text-2xl font-bold underline" href="/products/all">View all products</a>
+				<a class="text-2xl font-bold underline" href="/products/">View all products</a>
 			</div>
 		</div>
 
@@ -100,7 +100,7 @@
 			class="mt-auto flex w-full flex-col items-center justify-between gap-6 text-[var(--neutral)] sm:gap-1 md:hidden"
 		>
 			<span class="text-base sm:text-base"> All bank credit and debit card accepted </span>
-			<a class="text-xl font-bold text-[var(--primary)] underline sm:text-2xl" href="/products/all"
+			<a class="text-xl font-bold text-[var(--primary)] underline sm:text-2xl" href="/products/"
 				>View all products</a
 			>
 		</div>
