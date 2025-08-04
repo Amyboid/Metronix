@@ -109,7 +109,6 @@
 		window.addEventListener('resize', updateSize);
 		return () => window.removeEventListener('resize', updateSize);
 	});
-
 </script>
 
 <section
@@ -143,15 +142,12 @@
 		<div
 			class="hero-img flex items-end justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
-			<picture>
-				<source srcset="/src/lib/assets/bg/big2.png" media="(min-width: 768px)"/>
-				<img
-					class="w-[500px] md:w-[650px]"
-					loading="lazy"
-					src="/src/lib/assets/bg/sm.png"
-					alt="products-img"
-				/>
-			</picture>
+			<enhanced:img
+				class="w-[500px] md:w-[650px]"
+				loading="lazy"
+				src="$lib/assets/bg/big2.png"
+				alt="products-img"
+			/>
 		</div>
 	</div>
 </section>
