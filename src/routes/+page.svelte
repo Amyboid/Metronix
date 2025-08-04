@@ -1,4 +1,5 @@
 <script>
+	// @ts-nocheck
 	import HaierFridge from '$lib/Section-Components/HaierFridge.svelte';
 	import KutchinaChimney from '$lib/Section-Components/KutchinaChimney.svelte';
 	import LgOven from '$lib/Section-Components/LgOven.svelte';
@@ -6,7 +7,7 @@
 	import SamsungTv from '$lib/Section-Components/SamsungTv.svelte';
 	import VoltasAc from '$lib/Section-Components/VoltasAc.svelte';
 	import WashMacine from '$lib/Section-Components/WashMacine.svelte';
-
+	import { getImagePath } from '$lib/utils/imageImports';
 	let brands = [
 		'SAMSUNG',
 		'Haier',
@@ -31,11 +32,10 @@
 <section
 	class="hero relative mb-4 flex w-full min-w-80 flex-col overflow-hidden p-0 md:flex-row-reverse"
 >
-	<img
-		class="absolute top-10 right-10 z-10 h-20 sm:h-30 md:left-10 md:h-40"
-		src="/assets/bg/gurantee-tag.png"
+	<enhanced:img
+		class="absolute top-10 right-10 z-10 h-20 w-20 sm:h-30 sm:w-30 md:left-10 md:h-40 md:w-40"
+		src="$lib/assets/bg/gurantee-tag.png"
 		alt="gurantee-tag"
-		srcset=""
 	/>
 
 	<div
@@ -131,11 +131,10 @@
 			<div
 				class="hover:bg-primary-background bg-primary-background-dark border-primary-background aspect-square w-20 rounded-sm border p-3 transition-all duration-200 md:w-24"
 			>
-				<img
+				<enhanced:img
 					class="h-full w-full object-contain"
-					src={'/assets/brandLogo/' + brand.toLowerCase() + '.png'}
-					alt=""
-					srcset=""
+					src={getImagePath('brandLogo/' + brand.toLocaleLowerCase())}
+					alt={brand.toLocaleLowerCase()}
 				/>
 			</div>
 		{/each}
@@ -165,7 +164,7 @@
 <style>
 	.hero {
 		height: 70vh;
-		background: url('/assets/bg/d.jpg');
+		background: url('$lib/assets/bg/d.jpg');
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;

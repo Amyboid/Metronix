@@ -3,6 +3,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { fade, fly } from 'svelte/transition';
 	import AdminProductForm from './AdminProductForm.svelte';
+	import { getImagePath } from '$lib/utils/imageImports';
 	let isFormOpen = $state(false);
 	let showConfirmation = $state(false);
 	let deleteErrorMessage: string | null = $state(null);
@@ -25,8 +26,7 @@
 </script>
 
 <div class="item-card flex h-[420px] w-full flex-col items-center justify-center gap-5 p-5">
-	<img class="h-[40%] object-contain" src={'/assets/' + item.src + '.png'} alt={item.name} />
-
+	<enhanced:img class="h-[145px] object-contain" src={getImagePath(item.src)} alt={item.name} />
 	<div class="relative flex h-[60%] w-full flex-col justify-around gap-2">
 		<!-- The form for updating item details -->
 
@@ -91,7 +91,6 @@
 						class="absolute top-2 right-2 flex cursor-pointer items-center rounded-md bg-[#d1cbbd] p-2 transition-all duration-200 ease-in hover:bg-[#c7bfae]"
 						onclick={() => {
 							showConfirmation = false;
-							
 						}}
 						aria-label="cancel"
 					>
@@ -99,7 +98,7 @@
 					</button>
 
 					{#if deleteErrorMessage}
-						<p class="w-full text-sm text-center text-[#6d6d6d]">
+						<p class="w-full text-center text-sm text-[#6d6d6d]">
 							{deleteErrorMessage}
 						</p>
 					{:else}
@@ -138,17 +137,19 @@
 	input {
 		margin-left: -8px;
 	}
-	
+
 	button {
 		border: none;
 		border-radius: 8px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
 	}
-	.edit-button, .delete-button {
+	.edit-button,
+	.delete-button {
 		background-color: #0bacc5;
 	}
-	.edit-button:hover,.delete-button:hover {
+	.edit-button:hover,
+	.delete-button:hover {
 		background-color: #0a98ae;
-	} 
+	}
 </style>

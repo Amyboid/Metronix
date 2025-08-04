@@ -20,9 +20,9 @@
 	</div>
 	<h1 class="home-haier-logo-text mt-4 text-8xl font-extrabold sm:hidden">Haier</h1>
 	<div class="frige-img relative z-10 sm:mt-16">
-		<img
+		<enhanced:img
 			class="z-30"
-			src="/assets/homePageImg/refrigerator.png"
+			src="$lib/assets/homePageImg/refrigerator.png"
 			alt="haier-refrigerator"
 			loading="lazy"
 		/>

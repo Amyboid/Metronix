@@ -1,10 +1,11 @@
 <script>
 	import ProductCard from '$lib/Components/ProductCard.svelte';
+	import { getImagePath } from '$lib/utils/imageImports';
 	import { error } from '@sveltejs/kit';
 	let { data } = $props();
 	const product = data.item;
-	const similarProducts = data.similarProducts; 
-	
+	const similarProducts = data.similarProducts;
+
 	export const load = () => {
 		error(404, 'Page Not Found\nhello');
 	};
@@ -88,9 +89,13 @@
 	</div>
 
 	<div
-		class="flex h-full w-full flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center md:w-[55%] md:flex-col md:justify-between md:h-auto"
+		class="flex h-full w-full flex-col justify-between gap-4 p-6 sm:flex-row sm:items-center md:h-auto md:w-[55%] md:flex-col md:justify-between"
 	>
-		<img class="h-[300px]" src={'/assets/' + product?.src + '.png'} alt={product?.name} srcset="" />
+		<enhanced:img
+			class="h-[300px] object-contain"
+			src={getImagePath(product?.src)}
+			alt={product?.name}
+		/>
 		<div
 			class="preview-img-box flex w-full justify-between gap-4 sm:flex-col sm:items-end md:flex-row md:justify-center"
 		>

@@ -5,7 +5,7 @@
 		<div
 			class="samsung-tv-img relative z-10 w-[300px] items-center sm:flex sm:w-[420px] md:w-[400px]"
 		>
-			<img class="z-30" src="/assets/homePageImg/samsung-tv.png" alt="samsung-tv" loading="lazy" />
+			<enhanced:img class="z-30" src="$lib/assets/homePageImg/samsung-tv.png" alt="samsung-tv" loading="lazy" />
 		</div>
 		<div class="z-10 flex flex-col items-center">
 			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Samsung tv</h1>

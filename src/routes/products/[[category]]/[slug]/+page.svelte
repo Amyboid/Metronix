@@ -1,6 +1,7 @@
 <script>
 	import ProductCard from '$lib/Components/ProductCard.svelte';
 	import { fetchProductsFiltered } from '$lib/data/products.js';
+	import { getImagePath } from '$lib/utils/imageImports';
 
 	let { data } = $props();
 	let items = $state(data.items);
@@ -70,15 +71,9 @@
 		<div
 			class="hero-img flex items-center justify-center p-3 sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
-			<picture>
-				<source srcset={'/assets/' + data.banner?.src + '.png'} media="(min-width: 768px)" />
-				<img
-					class="w-[500px] md:w-[650px]"
-					loading="lazy"
-					src={'/assets/' + data.banner?.src + '.png'}
-					alt="products-img"
-				/>
-			</picture>
+			{#if data.banner}
+				<enhanced:img class="w-[500px] md:w-[650px]" src={getImagePath(data.banner.src)}></enhanced:img>
+			{/if}
 		</div>
 	</div>
 </section>

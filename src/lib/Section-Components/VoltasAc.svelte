@@ -5,7 +5,7 @@
 		<div
 			class="voltas-ac-img relative z-10 w-[300px] items-center sm:flex sm:w-[420px] md:w-[450px]"
 		>
-			<img class="z-30" src="/assets/homePageImg/voltas-ac.png" alt="voltas-ac" loading="lazy" />
+			<enhanced:img class="z-30" src="$lib/assets/homePageImg/voltas-ac.png" alt="voltas-ac" loading="lazy" />
 		</div>
 		<div class="z-10 flex flex-col items-center">
 			<h1 class="z-30 text-center text-3xl font-semibold tracking-wider">Voltas ac</h1>

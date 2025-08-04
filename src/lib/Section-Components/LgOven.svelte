@@ -21,7 +21,7 @@
 	<h1 class="home-lg-logo-text mt-4 text-8xl font-extrabold sm:hidden">LG</h1>
 	<div class="oven-img relative z-10 mt-auto mb-6 sm:mb-5">
 		<div class="oven-img-shadow absolute z-20"></div>
-		<img class="z-30" src="/assets/homePageImg/big-lg-oven.png" alt="lg-oven" loading="lazy" />
+		<enhanced:img class="z-30" src="$lib/assets/homePageImg/big-lg-oven.png" alt="lg-oven" loading="lazy" />
 	</div>
 </section>
 

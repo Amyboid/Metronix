@@ -1,8 +1,9 @@
 <script>
-	// import { onMount } from 'svelte';
+	// @ts-nocheck
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 	import FuzzySearcher from '$lib/fuzzySearcher';
+	import { getImagePath } from '$lib/utils/imageImports';
 
 	let { data } = $props();
 	const { essentials, entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
@@ -108,6 +109,7 @@
 		window.addEventListener('resize', updateSize);
 		return () => window.removeEventListener('resize', updateSize);
 	});
+
 </script>
 
 <section
@@ -142,11 +144,11 @@
 			class="hero-img flex items-end justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
 			<picture>
-				<source srcset="/assets/bg/big2.png" media="(min-width: 768px)" />
+				<source srcset="src/lib/assets/bg/big2.png" media="(min-width: 768px)" />
 				<img
 					class="w-[500px] md:w-[650px]"
 					loading="lazy"
-					src="/assets/bg/sm.png"
+					src="src/lib/assets/bg/sm.png"
 					alt="products-img"
 				/>
 			</picture>
@@ -263,7 +265,10 @@
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
-								<img src={'/search/product/' + productIcon + '.png'} alt={productIcon} />
+								<enhanced:img
+									src={getImagePath('search/product/' + productIcon)}
+									alt={productIcon}
+								/>
 							</div>
 							<p class="text-center text-xs md:text-sm">{productIcon.split('-').join(' ')}</p>
 						</a>
@@ -284,10 +289,9 @@
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="category-icon h-32 w-32 cursor-pointer p-9 md:h-40 md:w-40 md:p-12">
-								<img
-									src={'/search/category/' + categoryIcon + '.png'}
+								<enhanced:img
+									src={getImagePath('search/category/' + categoryIcon)}
 									alt={categoryIcon}
-									srcset=""
 								/>
 							</div>
 							<p class="text-center text-xs md:text-sm">{categoryIcon.replaceAll('-', ' ')}</p>

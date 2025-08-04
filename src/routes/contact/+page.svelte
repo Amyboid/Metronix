@@ -72,7 +72,7 @@
 	</div>
 	<div class="flex flex-col gap-8 p-6 md:w-1/2 h-full">
 		<div class="contact-person-img md:bg-primary-background-gradient w-full h-1/2 rounded-lg pt-2">
-			<img class="object-contain w-full h-full max-h-[250px] md:max-h-auto" src="/assets/bg/contact.png" alt="">
+			<enhanced:img class="object-contain w-full h-full max-h-[250px] md:max-h-auto" src="$lib/assets/bg/contact.png" alt="contact-img"></enhanced:img>
 		</div>
 		<div class="flex flex-col gap-4 h-1/2">
 			{#each cardDetails as card}

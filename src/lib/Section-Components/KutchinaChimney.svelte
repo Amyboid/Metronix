@@ -2,9 +2,9 @@
 	<h1 class="home-grid-logo-text text-center text-6xl font-extrabold sm:text-7xl">KUTCHINA</h1>
 	<div class="grid-child-bottom-section flex w-full flex-col gap-5 sm:flex-row sm:gap-0">
 		<div class="kutchina-chimney-img relative z-10 items-center sm:flex justify-center h-[55%] md:h-[auto]">
-			<img
+			<enhanced:img
 				class="z-30"
-				src="/assets/homePageImg/kutchina-chimney.png"
+				src="$lib/assets/homePageImg/kutchina-chimney.png"
 				alt="kutchina-chimney"
 				loading="lazy"
 			/>

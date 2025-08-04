@@ -7,9 +7,9 @@
 	<div class="grid-child-bottom-section flex w-full flex-col gap-4 sm:flex-row sm:gap-6">
 		<div class="philips-ro-img relative z-10 flex justify-center items-center sm:flex h-[55%] md:h-[auto]">
 			<div class="ro-img-shadow absolute z-10"></div>
-			<img
+			<enhanced:img
 				class="z-30 h-full"
-				src="/assets/homePageImg/philips-ro.png"
+				src="$lib/assets/homePageImg/philips-ro.png"
 				alt="philips-white-ro"
 				loading="lazy"
 			/>

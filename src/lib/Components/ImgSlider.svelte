@@ -1,10 +1,11 @@
 <script>
+	import { getImagePath } from '$lib/utils/imageImports';
 	import { fade } from 'svelte/transition';
 
 	let { images } = $props();
 	let currentIndex = $state(0);
 	console.log('images', images);
-	
+
 	function prevImg() {
 		if (currentIndex == 0) currentIndex = images.length - 1;
 		else currentIndex = currentIndex - 1;
@@ -25,11 +26,15 @@
 				<div
 					class="img-slider-img flex h-[400px] w-full flex-col items-center justify-center gap-10 rounded-lg pr-5 pl-5 sm:h-[400px] md:h-[400px]"
 				>
-					<img class="h-[200px]" src={'/assets/' + image.src + '.png'} alt={image.name} srcset="" />
+					<enhanced:img
+						class="h-[200px] object-contain"
+						src={getImagePath(image.src)}
+						alt={image.name}
+					/>
 					<div class="flex flex-col items-center">
 						<a
 							class="min-h-16 text-center text-sm tracking-wider hover:underline md:text-base"
-							href={"/products/cart/" + image.src}>{image.name}</a
+							href={'/products/cart/' + image.src}>{image.name}</a
 						>
 						<div class="flex items-center">
 							<span class="icon-[bi--currency-rupee] -ml-1 h-[14px] w-[14px]"></span>
@@ -69,7 +74,7 @@
 				{#if currentIndex === index}
 					<span in:fade class="icon-[fluent-mdl2--location-dot]"></span>
 				{:else}
-					<span  class="icon-[bi--dot]"></span>
+					<span class="icon-[bi--dot]"></span>
 				{/if}
 			</button>
 		{/each}
@@ -86,9 +91,6 @@
 	.img-slider-img {
 		background: linear-gradient(to bottom, #dcd8cd80 0%, #dcd8cde1 60%, #dcd8cd80 100%);
 		/* background: var(--primary-background); */
-	}
-	img {
-		object-fit: contain;
 	}
 	.img-slider-btn:hover > * {
 		animation: squish 300ms ease-in-out;
@@ -122,7 +124,7 @@
 
 	.img-slider-dot-btn > * {
 		width: 30px;
-		height: 30px; 
+		height: 30px;
 		color: #00000076;
 	}
 	@media only screen and (min-width: 640px) {

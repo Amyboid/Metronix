@@ -13,7 +13,7 @@
 		
 	</div>
 	<div class="wash-machine-img mt-16">
-		<img src="/assets/homePageImg/wash-machine.png" alt="washing-machine" loading="lazy" />
+		<enhanced:img src="$lib/assets/homePageImg/wash-machine.png" alt="washing-machine" loading="lazy" />
 	</div>
 </section>
 
