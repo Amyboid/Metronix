@@ -1,18 +1,21 @@
 import { fetchProductsFiltered } from '$lib/data/products';
 import { error } from '@sveltejs/kit';
 
-export async function load({ fetch }) {
+export async function load({ fetch, url }) {
+
+    console.log('url from page.server.ts of /products', url);
+
     try {
         // Fetch 4 items for 'consumer-electronics' directly
-        const entertainmentEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'consumer-electronics', 1, 4);
+        const entertainmentEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'consumer-electronics', 1, 4, undefined, true);
         const entertainmentEssentials = entertainmentEssentialsResponse.products; // Access the 'products' array
 
         // Fetch 4 items for 'self-care-appliances' directly
-        const selfCareEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'self-care-appliances', 1, 4);
+        const selfCareEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'self-care-appliances', 1, 4, undefined, true);
         const selfCareEssentials = selfCareEssentialsResponse.products;
 
         // Fetch 4 items for 'kitchen-appliances' directly
-        const kitchenEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'kitchen-appliances', 1, 4);
+        const kitchenEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'kitchen-appliances', 1, 4, undefined, true);
         const kitchenEssentials = kitchenEssentialsResponse.products;
 
         return {

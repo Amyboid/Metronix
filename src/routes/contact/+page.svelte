@@ -28,7 +28,7 @@
 <section
 	class="mt-8 flex flex-col-reverse items-center justify-center gap-2 md:mt-12 md:w-[65%] md:flex-row md:gap-6 md:h-[80vh]"
 >
-	<div class="flex flex-col gap-8 p-6 md:w-1/2 h-full bg-[#dcd8cd36]">
+	<div class="flex flex-col gap-8 p-6 md:w-1/2 h-full bg-[#dcd8cd36] rounded-lg">
 		<div class="flex flex-col gap-2 border-b border-b-[var(--primary-background)]">
 			<h1 class="text-2xl sm:text-3xl">Let's Talk!</h1>
 			<p class="pb-3 text-sm text-[#6d6d6d] sm:text-base">
@@ -83,6 +83,9 @@
 </section>
 
 <style>
+	.contact-person-img{
+		background: url('$lib/assets/bg/contact-bg.svg');
+	}
 	.section-header {
 		border-bottom: 1px solid var(--primary-background);
 		border-top: 1px solid var(--primary-background);

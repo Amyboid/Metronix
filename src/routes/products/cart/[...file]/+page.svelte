@@ -16,7 +16,7 @@
 <section
 	class="flex min-h-[70vh] w-[90%] min-w-[300px] flex-col-reverse gap-4 pb-6 md:min-h-[85vh] md:w-[80%] md:min-w-[1125px] md:flex-row"
 >
-	<div class="flex flex-col justify-between gap-4 p-6 md:w-[45%] md:gap-4">
+	<div class="flex flex-col justify-between gap-4 p-3 md:w-[45%] md:gap-4">
 		<div
 			class="flex w-full flex-col gap-4 border-b border-b-[var(--primary-background)] pb-4 md:w-[65%]"
 		>
@@ -107,7 +107,7 @@
 	</div>
 </section>
 
-<section class="mb-6 flex w-[90%] min-w-[300px] flex-col gap-6 p-6 md:w-[80%] md:min-w-[1125px]">
+<section class="mb-6 flex w-[90%] min-w-[300px] flex-col gap-6 p-3 md:w-[80%] md:min-w-[1125px]">
 	<div class="product-info flex w-full items-center justify-between border">
 		<h1 class="text-2xl font-semibold">Product Information</h1>
 		<button
@@ -157,7 +157,7 @@
 </section>
 
 {#if similarProducts.length !== 0}
-	<section class="mb-12 flex w-[90%] min-w-[300px] flex-col gap-6 p-6 md:w-[80%] md:min-w-[1125px]">
+	<section class="mb-12 flex w-[90%] min-w-[300px] flex-col gap-6 p-3 md:w-[80%] md:min-w-[1125px]">
 		<div class="flex w-full items-center justify-center p-3">
 			<h1 class="text-2xl font-semibold tracking-wider sm:text-3xl">You Might Also Enjoy</h1>
 		</div>
@@ -170,10 +170,7 @@
 	</section>
 {/if}
 
-<style>
-	img {
-		object-fit: contain;
-	}
+<style> 
 	.preview-img {
 		background-color: var(--primary-background);
 		/* background-color: var(--accent); */

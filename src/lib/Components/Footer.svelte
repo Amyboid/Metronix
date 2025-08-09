@@ -64,12 +64,12 @@
 			<span> </span>
 		</div>
 	</div>
-	<div class="flex w-[90%] items-center justify-between md:w-[85%]">
+	<div class="flex w-[90%] items-center justify-between md:w-[85%] mb-2 md:mb-0">
 		<p class="text-center text-xs">
-			Copyright &copy; 2025 Meta electronics. All rights reserved.
+			Copyright &copy; 2025 Meta electronics. <span class="hidden md:inline">All rights reserved.</span>
 		</p>
 
-		<div class="social-media flex items-center gap-6">
+		<div class="social-media flex items-center gap-2 sm:gap-4 md:gap-6">
 			<span class="icon-[ri--twitter-x-line] h-4 w-4 md:h-5 md:w-5"></span>
 			<span class="icon-[uim--facebook-f] h-4 w-4 md:h-5 md:w-5"></span> 
 			<span class="icon-[fa--instagram] h-4 w-4 md:h-5 md:w-5"></span>

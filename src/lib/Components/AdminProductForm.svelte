@@ -15,7 +15,7 @@
 	let submissionError: string | null = $state(null);
 	let isSuccess = $state(false);
 	let imagePreviewUrl = $state(
-		initialProductData ? '/assets/' + initialProductData.src + '.png' : null
+		initialProductData ? 'src/lib/assets/' + initialProductData.src + '.png' : null
 	);
 	let selectedFile: File | null = $state(null);
 	let productName = $state(initialProductData?.name || 'Test Product Name');
@@ -119,6 +119,8 @@
 				const reader = new FileReader();
 				reader.onload = (e) => {
 					imagePreviewUrl = (e.target?.result as string) || null;
+					console.log('kll',imagePreviewUrl);
+					
 				};
 				reader.readAsDataURL(selectedFile);
 			}

@@ -67,7 +67,7 @@
 			</div>
 			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-1">
 				<span class="text-xl md:text-base"> All bank credit and debit card accepted </span>
-				<a class="text-2xl font-bold underline" href="/products/">View all products</a>
+				<a class="text-2xl font-bold underline" data-sveltekit-reload href="/products/">View all products</a>
 			</div>
 		</div>
 

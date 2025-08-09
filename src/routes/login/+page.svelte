@@ -132,11 +132,11 @@
 <div class="m-4 rounded-lg border border-[#d5d0c3] bg-[#e6e3db] p-4">
 	{#if role === 'Admin'}
 		<span class="text-left text-xs text-[#6d6d6d] sm:text-sm"
-			>😉 Ha ha!, you don't know my admin user. logged in as editor.</span
+			>😉 Ha ha!, you don't know my admin user credentials. logged in as editor to enjoy the UI.</span
 		>
 	{:else}
 		<span class="text-left text-xs text-[#6d6d6d] sm:text-sm"
-			>Logging in as an editor only show the ui, but it will not allow you to do CUD operations.</span
+			>Logging in as an editor only show you the UI, but it will not allow you to do <span class="font-bold">CUD</span> operations.</span
 		>
 	{/if}
 </div>

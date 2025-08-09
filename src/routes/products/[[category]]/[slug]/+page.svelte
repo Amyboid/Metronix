@@ -3,11 +3,14 @@
 	import { fetchProductsFiltered } from '$lib/data/products.js';
 	import { getImagePath } from '$lib/utils/imageImports';
 
+	console.log('came to category/slug client side');
+
 	let { data } = $props();
 	let items = $state(data.items);
 	let currentPage = $state(1);
 	let isLoading = $state(false);
 	let errorLoadingMore = $state();
+	console.log('img:: from', data.banner?.src);
 
 	const totalProducts = $derived(data.totalProducts);
 	const totalPages = $derived(data.totalPages);
@@ -31,7 +34,9 @@
 				filterType,
 				filterValue,
 				nextPage,
-				currentLimit
+				currentLimit,
+				undefined,
+				true
 			);
 
 			items = [...items, ...response.products];
@@ -72,7 +77,11 @@
 			class="hero-img flex items-center justify-center p-3 sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
 			{#if data.banner}
-				<enhanced:img class="w-[500px] md:w-[650px]" src={getImagePath(data.banner.src)} alt={data.banner.src}></enhanced:img>
+				<enhanced:img
+					class="w-[500px] md:w-[650px]"
+					src={getImagePath(data.banner.src)}
+					alt={data.banner.src}
+				></enhanced:img>
 			{/if}
 		</div>
 	</div>

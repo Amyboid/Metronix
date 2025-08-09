@@ -120,7 +120,7 @@
 	<button
 		class="border-primary-background bg-primary-background-dark flex cursor-pointer items-center gap-1 rounded-lg border p-1 px-2"
 		onclick={() => (showForm = !showForm)}
-		><span class="icon-[ic--round-plus]"></span> Add new</button
+		><span class="icon-[ic--round-plus]"></span> Add new product</button
 	>
 </div>
 

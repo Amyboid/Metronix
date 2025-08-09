@@ -25,6 +25,7 @@
 			{#if navLinks}
 				{#each navLinks as link}
 					<a
+						data-sveltekit-reload
 						onclick={handleHamburger}
 						class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest"
 						href={link.link}>{link.name}</a
@@ -32,6 +33,7 @@
 				{/each}
 				<button aria-label="contact" class="flex w-full items-center justify-center gap-3 p-2">
 					<a
+						data-sveltekit-reload
 						onclick={handleHamburger}
 						href="/contact"
 						class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest">Contact Us</a

@@ -1,31 +1,14 @@
 <script>
 	// @ts-nocheck
+
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
-	import FuzzySearcher from '$lib/fuzzySearcher';
 	import { getImagePath } from '$lib/utils/imageImports';
-
+	import { fetchSearchResult } from '$lib/data/products';
 	let { data } = $props();
-	const { essentials, entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
-	console.log('dataaaa', selfCareEssentials.length);
+	const { entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
 
-	// search options
-	const globalSearchOptions = {
-		includeScore: true,
-		threshold: 0.5,
-		keys: [
-			{
-				name: 'name',
-				weight: 0.7
-			},
-			{
-				name: 'category',
-				weight: 0.3
-			}
-		]
-	};
-
-	const globalSearch = new FuzzySearcher(essentials.products, globalSearchOptions);
+	let debounceTimer;
 	let searchQuery = $state('');
 	let isFocused = $state(false);
 	let searchinput = $state();
@@ -84,6 +67,16 @@
 	let showMore = $state(true);
 	let productIconRow = $state(0);
 	let categoryIconRow = $state(0);
+	let searchResult = $state([]);
+	let dummyResult = $state([]);
+	function handleSearch() {
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(async () => {
+			if (searchQuery) {
+				searchResult = await fetchSearchResult(fetch, searchQuery);
+			}
+		}, 500);
+	}
 
 	// Function to update size based on window width
 	function updateSize() {
@@ -129,7 +122,7 @@
 		</h3>
 		<a
 			class="flex items-center text-base tracking-wide text-blue-700 sm:text-left md:text-xl"
-			href="/#"
+			href="/products/fridge"
 		>
 			<p class="text-sm hover:underline sm:text-base">Shop godrej refrigerator</p>
 			<span class="icon-[cil--arrow-right] ml-2 h-9 w-4 md:h-6 md:w-6"></span>
@@ -192,6 +185,7 @@
 					placeholder="Search for product"
 					bind:this={searchinput}
 					bind:value={searchQuery}
+					oninput={handleSearch}
 					onfocus={() => (isFocused = true)}
 				/>
 				{#if searchQuery}
@@ -204,6 +198,8 @@
 					</button>
 				{/if}
 			</div>
+			<!-- search results  -->
+
 			{#if searchQuery && isFocused}
 				<div
 					class="search-result absolute top-[55px] w-[90%] overflow-scroll bg-[var(--neutral)] sm:w-full md:top-[60px]"
@@ -211,14 +207,14 @@
 					<p class="p-2 pl-3 text-xs text-[#9d9d9d] sm:text-sm md:p-3 md:text-sm">Search Results</p>
 					<!-- search results -->
 					<ul class="search-results mb-4">
-						{#if globalSearch.fuzzSearch(searchQuery)}
-							{#each globalSearch.fuzzSearch(searchQuery) as items}
-								<a href={'/products/cart/' + items.item.src}>
+						{#if searchResult}
+							{#each searchResult as item}
+								<a href={'/products/cart/' + item.src}>
 									<li
 										class="flex cursor-pointer items-center gap-2 p-2 pr-3 pl-3 text-xs transition-all hover:bg-[var(--primary-background)] hover:underline sm:text-sm md:pr-4 md:pl-4 md:text-sm"
 									>
-										<span class="icon-[basil--search-outline] h-3 w-3 md:h-4 md:w-4"></span>{items
-											.item.name}
+										<span class="icon-[basil--search-outline] h-3 w-3 md:h-4 md:w-4"
+										></span>{item.name}
 									</li>
 								</a>
 							{/each}
@@ -257,6 +253,7 @@
 				>
 					{#each productIcons as productIcon}
 						<a
+							data-sveltekit-reload
 							href={'/products/' + productIcon}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>

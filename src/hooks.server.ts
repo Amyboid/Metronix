@@ -31,4 +31,3 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     return response;
 };
- 

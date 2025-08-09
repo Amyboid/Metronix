@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import { fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import AdminProductForm from './AdminProductForm.svelte';
 	import { getImagePath } from '$lib/utils/imageImports';
 	let isFormOpen = $state(false);

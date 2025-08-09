@@ -44,7 +44,7 @@ let bannerData = [
         Type: 'tv',
         msg: 'Uncover fresh entertainment.'
     },
-     {
+    {
         src: 'banner/washing-machine',
         Type: 'washing-machine',
         msg: 'Get ultimate clean with our smart washers!'
@@ -76,14 +76,15 @@ const fetchProductsFiltered = async (
     fetch: typeof globalThis.fetch,
     filterType?: 'category' | 'productType',
     filterValue?: string,
-    page:number = 1,
+    page: number = 1,
     limit: number = 10,
-    excludeProductId?: string
+    excludeProductId?: string,
+    minimal?: boolean,
 ) => {
     try {
-        let url = `/api/products?page=${page}&limit=${limit}`; 
+        let url = `/api/products?page=${page}&limit=${limit}`;
 
-        if (filterType && filterValue){ 
+        if (filterType && filterValue) {
             if (filterType === 'category') {
                 url += `&category=${encodeURIComponent(filterValue)}`;
             } else if (filterType === 'productType') {
@@ -96,11 +97,13 @@ const fetchProductsFiltered = async (
         if (excludeProductId) {
             url += `&excludeId=${encodeURIComponent(excludeProductId)}`;
         }
+        if (minimal) {
+            url += '&minimal=true'
+        }
+        // console.log('url', url);
 
-        console.log('url', url);
-        
-        const response = await fetch(url); 
-        
+        const response = await fetch(url);
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`Failed to fetch products: ${response.status} - ${errorText}`);
@@ -108,8 +111,9 @@ const fetchProductsFiltered = async (
         }
 
         const productsData = await response.json();
-        // console.log(`Products for ${filterType} '${filterValue}':`, productsData); 
-        
+
+        // console.log(`Products response at product.ts`, productsData);
+
         return productsData;
     } catch (error) {
         console.error('Error in fetchProductsFiltered:', error);
@@ -120,9 +124,11 @@ const fetchProductsFiltered = async (
 const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: string) => {
     try {
         // Call the new dedicated API endpoint for fetching by src
+        // console.log('this is used for calling a single product..', productSource);
+
         const url = `/api/products/src/${encodeURIComponent(productSource)}`;
-        console.log('urrrrl', url);
-        
+        // console.log('urrrrl', url);
+
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -134,7 +140,7 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
             throw new Error(`Failed to fetch product: ${response.statusText}`);
         }
 
-        const product = await response.json(); 
+        const product = await response.json();
         return product;
     } catch (error) {
         console.error('Error in fetchProductBySrc:', error);
@@ -142,6 +148,24 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
     }
 };
 
+const fetchSearchResult = async (fetch: typeof globalThis.fetch, searchQuery: string) => {
+    console.log('fromm fetchSearchResult ', searchQuery);
+    const url = `/api/search?searchQuery=${encodeURIComponent(searchQuery)}`
 
-export { bannerData, fetchProductsFiltered, fetchProductBySrc }
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        if (response.status === 404) {
+            return null;
+        }
+        const errorText = await response.text();
+        console.error(`no items found`);
+        throw new Error(`no items found for this query`);
+    }
+    const result = (await response.json()).result 
+    
+    return result;
+}
+
+export { bannerData, fetchProductsFiltered, fetchProductBySrc, fetchSearchResult }
 

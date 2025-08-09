@@ -19,8 +19,7 @@ const connectToDatabase = async () => {
         let connectionInstance = await connect(PUBLIC_DB_URI);
         console.log('Database connected successfully', connectionInstance.connection.host);
         
-        connection.isConnected = connectionInstance.connections[0].readyState
-        // insertMockData()
+        connection.isConnected = connectionInstance.connections[0].readyState 
     } catch (error) {
         console.log("error connecting database", error);
     }

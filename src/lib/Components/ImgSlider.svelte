@@ -2,9 +2,9 @@
 	import { getImagePath } from '$lib/utils/imageImports';
 	import { fade } from 'svelte/transition';
 
-	let { images } = $props();
-	let currentIndex = $state(0);
-	console.log('images', images);
+	let { images } = $props(); 
+	
+	let currentIndex = $state(0); 
 
 	function prevImg() {
 		if (currentIndex == 0) currentIndex = images.length - 1;

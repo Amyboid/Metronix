@@ -5,7 +5,8 @@ import mongoose from "mongoose";
 
 
 export async function GET(requestEvent) {
-    const { url } = requestEvent;  
+    const { url } = requestEvent;
+    console.log('api called /api/products/server.ts', url.href);
     try {
         await connectToDatabase();
 
@@ -13,13 +14,14 @@ export async function GET(requestEvent) {
         const limit = parseInt(url.searchParams.get('limit') || '9');
         const categoryFilter = url.searchParams.get('category');
         const productTypeFilter = url.searchParams.get('productType');
-        const excludeId = url.searchParams.get('excludeId'); 
-        
-        console.log('liiiimit', limit);
-        
+        const excludeId = url.searchParams.get('excludeId');
+        const minimal = url.searchParams.get('minimal');
+
+        // console.log('excludedId and minimal:', excludeId, minimal);
+
         const skip = (page - 1) * limit;
-        console.log("skip", skip);
-        
+        // console.log("skip", skip);
+
         let query: any = {};
 
         if (categoryFilter) {
@@ -35,14 +37,25 @@ export async function GET(requestEvent) {
             }
             query._id = { $ne: excludeId }; // Add condition to exclude the product
         }
-        
 
-        console.log('query', query);
 
-        const products = await Product.find(query) // Apply the filter query
-            .skip(skip)
-            .limit(limit)
-            .lean(); // Use .lean() for better performance
+        // console.log('query', query);
+
+        let products;
+
+        if (minimal) {
+            products = await Product.find(query, 'src name price')
+                .skip(skip)
+                .limit(limit)
+                .lean();
+        }
+        else {
+            products = await Product.find(query)
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+        }
 
         const totalProducts = await Product.countDocuments(query);
 
