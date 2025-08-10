@@ -14,12 +14,12 @@
 <div
 	in:fade={{ duration: 300 }}
 	out:fade={{ duration: 300 }}
-	class="absolute top-14 right-0 z-10 h-[100vh] w-full bg-[#30303080] md:hidden"
+	class="absolute top-13 sm:top-16 right-0 z-10 h-[100vh] w-full bg-[#30303080] md:hidden"
 >
 	<div
 		in:fly={{ x: 50, duration: 300 }}
 		out:fly={{ x: 50, duration: 300 }}
-		class="hamburger-menu bg-primary-background absolute top-1 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
+		class="hamburger-menu bg-primary-background absolute top-1 sm:top-2 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
 	>
 		<div class="relative flex flex-col items-center gap-5 pb-14">
 			{#if navLinks}

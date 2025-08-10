@@ -92,7 +92,7 @@
 	});
 </script>
 
-<header class="section-header mt-2 flex h-24 w-full items-center pl-6 sm:h-30 md:mt-0 md:pl-[8%]">
+<header class="section-header mt-1 flex h-24 w-full items-center pl-6 sm:h-30 md:mt-0 md:pl-[8%]">
 	<h1 class="text-lg font-semibold md:text-xl">Manage your products.</h1>
 </header>
 

@@ -14,7 +14,7 @@
 </script>
 
 <section
-	class="flex min-h-[70vh] w-[90%] min-w-[300px] flex-col-reverse gap-4 pb-6 md:min-h-[85vh] md:w-[80%] md:min-w-[1125px] md:flex-row"
+	class="flex min-h-[70vh] w-[90%] min-w-[300px] flex-col-reverse gap-4 pb-6 md:min-h-[85vh] md:w-[80%] md:min-w-[1125px] md:flex-row md:pt-4"
 >
 	<div class="flex flex-col justify-between gap-4 p-3 md:w-[45%] md:gap-4">
 		<div

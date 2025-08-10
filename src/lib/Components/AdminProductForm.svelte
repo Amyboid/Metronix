@@ -12,7 +12,7 @@
 	let { form, initialProductData, closeForm }: AdminProductFormProps = $props();
 	let productImageInput = $state();
 	let submissionMessage: string | null = $state(null);
-	let submissionError: string | null = $state(null); 
+	let submissionError: string | null = $state(null);
 	let imagePreviewUrl = $state(
 		initialProductData ? 'src/lib/assets/' + initialProductData.src + '.png' : null
 	);
@@ -130,7 +130,9 @@
 		submissionError = null;
 	});
 	onDestroy(() => {
-		console.log('component has been destroyed');
+		if (imagePreviewUrl) {
+			URL.revokeObjectURL(imagePreviewUrl); 
+		}
 	});
 </script>
 

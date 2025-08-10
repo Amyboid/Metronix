@@ -1,5 +1,5 @@
 <script>
-	import ContactCard from "$lib/Components/ContactCard.svelte";
+	import ContactCard from '$lib/Components/ContactCard.svelte';
 
 	const cardDetails = [
 		{
@@ -16,23 +16,22 @@
 			icon: 'icon-[tabler--location-filled]',
 			title: 'Location',
 			content: 'Ranichak More, Haldia, Purba Medinipur district, West Bengal, India'
-		},
-
+		}
 	];
 </script>
 
-<header class="section-header mt-2 flex h-24 w-full items-center pl-6 sm:h-30 md:mt-0 md:pl-[8%]">
+<header class="section-header mt-1 flex h-24 w-full items-center pl-6 sm:h-30 md:mt-0 md:pl-[8%]">
 	<h1 class="text-lg font-semibold md:text-xl">Get in touch with Meta Electronics.</h1>
 </header>
 
 <section
-	class="mt-8 flex flex-col-reverse items-center justify-center gap-2 md:mt-12 md:w-[65%] md:flex-row md:gap-6 md:h-[80vh]"
+	class="mt-8 flex flex-col-reverse items-center justify-center gap-8 md:mt-12 md:h-[80vh] md:w-[65%] md:flex-row md:gap-6"
 >
-	<div class="flex flex-col gap-8 p-6 md:w-1/2 h-full bg-[#dcd8cd36] rounded-lg">
-		<div class="flex flex-col gap-2 border-b border-b-[var(--primary-background)]">
+	<div class="flex h-full flex-col gap-8 rounded-lg bg-[#dcd8cd36] p-6 md:w-1/2">
+		<div class="flex flex-col gap-1 sm:gap-2 border-b border-b-[var(--primary-background)]">
 			<h1 class="text-2xl sm:text-3xl">Let's Talk!</h1>
-			<p class="pb-3 text-sm text-[#6d6d6d] sm:text-base">
-				Get in touch with us using the enquiry form or contact details below.
+			<p class="pb-3 text-xs text-[#6d6d6d] sm:text-base">
+				Get in touch with us using the enquiry form or contact details provided.
 			</p>
 		</div>
 		<form class="flex flex-col gap-3 md:gap-5" action="">
@@ -62,6 +61,7 @@
 				></textarea>
 			</div>
 			<button
+				onclick={() => 'not implemented'}
 				type="submit"
 				class="bg-accent flex cursor-pointer items-center justify-center gap-2 rounded-lg p-3 text-sm transition-all duration-300 hover:bg-[#0a98ae] sm:text-lg"
 			>
@@ -70,20 +70,24 @@
 			</button>
 		</form>
 	</div>
-	<div class="flex flex-col gap-8 p-6 md:w-1/2 h-full">
-		<div class="contact-person-img md:bg-primary-background-gradient w-full h-1/2 rounded-lg pt-2">
-			<enhanced:img class="object-contain w-full h-full max-h-[250px] md:max-h-auto" src="$lib/assets/bg/contact.png" alt="contact-img"></enhanced:img>
+	<div class="flex h-full flex-col gap-8 p-6 md:w-1/2">
+		<div class="contact-person-img md:bg-primary-background-gradient h-1/2 w-full rounded-lg pt-2">
+			<enhanced:img
+				class="md:max-h-auto h-full max-h-[250px] w-full object-contain"
+				src="$lib/assets/bg/contact.png"
+				alt="contact-img"
+			></enhanced:img>
 		</div>
-		<div class="flex flex-col gap-4 h-1/2">
+		<div class="flex h-1/2 flex-col gap-4">
 			{#each cardDetails as card}
-				<ContactCard cardDetails={card}/>
-			{/each} 
+				<ContactCard cardDetails={card} />
+			{/each}
 		</div>
 	</div>
 </section>
 
 <style>
-	.contact-person-img{
+	.contact-person-img {
 		background: url('$lib/assets/bg/contact-bg.svg');
 	}
 	.section-header {

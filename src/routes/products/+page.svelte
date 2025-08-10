@@ -105,7 +105,7 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] p-0 sm:mb-18 sm:flex-row md:p-0"
+	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] pt-4 sm:p-0 sm:mb-18 sm:flex-row md:p-0"
 >
 	<div
 		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
@@ -403,18 +403,12 @@
 		cursor: pointer;
 	}
 
-	/* .main-section {
-		border: 5px solid plum;
-	} */
-
 	.hero {
 		height: 70vh;
 	}
 	.hero-img {
-		height: 100%;
-		/* width: 100%; */
-		overflow: hidden;
-		/* border: 1px solid plum; */
+		height: 100%; 
+		overflow: hidden; 
 	}
 
 	@media only screen and (min-width: 640px) {

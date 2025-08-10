@@ -46,10 +46,10 @@
 	<!-- left -->
 	<a data-sveltekit-reload href="/">
 		<div class="logo flex flex-col items-end">
-			<p class="text-2xl font-bold tracking-wider sm:text-3xl md:text-4xl md:tracking-widest">
+			<p class="text-xl font-bold tracking-wider sm:text-3xl md:text-3xl md:tracking-widest">
 				META
 			</p>
-			<p class="-mt-2 -mr-1 text-xs font-medium sm:text-sm md:text-base">electronics</p>
+			<p class="-mt-2 -mr-2 sm:-mr-1 text-xs font-medium sm:text-sm md:text-base">electronics</p>
 		</div>
 	</a>
 
@@ -117,16 +117,23 @@
 </nav>
 
 <style>
+	
+	.nav {
+		/* box-shadow: 0px 0px 8px 12px var(--neutral); */
+		background: hsla(44, 22%, 90%, 0.521);
+		backdrop-filter: blur(10px);
+	}
 	@media only screen and (min-width: 768px) {
 		.navlinks {
 			font-size: var(--text-base);
 		}
 		.contact-us-btn::after {
 			position: absolute;
-			right: 0;
+			right: 50%;
+			transform: translateX(50%);
 			bottom: 0;
 			content: '';
-			width: 100%;
+			width: 110%;
 			height: 6%;
 			background: var(--accent);
 			transition: all 0.2s;
@@ -137,7 +144,4 @@
 		}
 	}
 
-	.nav {
-		box-shadow: 0px 0px 8px 12px var(--neutral);
-	}
 </style>
