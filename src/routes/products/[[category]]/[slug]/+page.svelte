@@ -2,15 +2,12 @@
 	import ProductCard from '$lib/Components/ProductCard.svelte';
 	import { fetchProductsFiltered } from '$lib/data/products.js';
 	import { getImagePath } from '$lib/utils/imageImports';
-
-	console.log('came to category/slug client side');
-
+ 
 	let { data } = $props();
 	let items = $state(data.items);
 	let currentPage = $state(1);
 	let isLoading = $state(false);
-	let errorLoadingMore = $state();
-	console.log('img:: from', data.banner?.src);
+	let errorLoadingMore = $state(); 
 
 	const totalProducts = $derived(data.totalProducts);
 	const totalPages = $derived(data.totalPages);

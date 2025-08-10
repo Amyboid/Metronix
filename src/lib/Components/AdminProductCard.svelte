@@ -59,11 +59,8 @@
 			action="?/delete"
 			method="post"
 			use:enhance={() => {
-				return async ({ result, update }) => {
-					console.log('resstypee', result.type);
-
-					if (result.type === 'success') {
-						console.log('Product deleted successfully from server.');
+				return async ({ result, update }) => { 
+					if (result.type === 'success') { 
 						await invalidateAll();
 						handleDeleteToast();
 					} else if (result.type === 'failure') {

@@ -2,8 +2,7 @@ import { error } from '@sveltejs/kit';
 import { fetchProductsFiltered } from '$lib/data/products';
 import { bannerData } from '$lib/data/products';
 
-export async function load({ params, fetch, url }) {
-    console.log('came to category/slug server side', url);
+export async function load({ params, fetch, url }) { 
     const productTypeOrCategory = params.slug;
 
     let filterType: 'category' | 'productType';
@@ -23,9 +22,7 @@ export async function load({ params, fetch, url }) {
 
     let responseData;
     try { 
-        responseData = await fetchProductsFiltered(fetch, filterType, filterValue, page, limit, undefined, true);
-        console.log('responsedata from category/slug/loadfunc: ',responseData);
-        
+        responseData = await fetchProductsFiltered(fetch, filterType, filterValue, page, limit, undefined, true);        
     } catch (err) {
         console.error('Failed to load filtered products:', err);
         throw error(500, `Could not load products for ${filterType} ${filterValue}`);

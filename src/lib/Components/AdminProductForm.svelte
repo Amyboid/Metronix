@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { getContext } from 'svelte';
+	import { getContext, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { ProductType } from '$lib/models/ProductModel';
 
@@ -10,10 +10,9 @@
 		closeForm: () => void;
 	}
 	let { form, initialProductData, closeForm }: AdminProductFormProps = $props();
-
+	let productImageInput = $state();
 	let submissionMessage: string | null = $state(null);
-	let submissionError: string | null = $state(null);
-	let isSuccess = $state(false);
+	let submissionError: string | null = $state(null); 
 	let imagePreviewUrl = $state(
 		initialProductData ? 'src/lib/assets/' + initialProductData.src + '.png' : null
 	);
@@ -42,12 +41,8 @@
 			: [{ label: '', value: '' }]
 	);
 
-	console.log('SRCC', initialProductData?.src);
-
 	function addSpecification() {
-		console.log('beforeadd', specifications);
 		specifications = [...specifications, { label: '', value: '' }];
-		console.log('afteradd', specifications);
 	}
 
 	function removeSpecification(index: number) {
@@ -114,23 +109,28 @@
 	function handleImagePreview(e: Event) {
 		const input = e.target as HTMLInputElement;
 		if (input.files && input.files[0]) {
+			if (imagePreviewUrl) {
+				URL.revokeObjectURL(imagePreviewUrl);
+			}
+
 			selectedFile = input.files[0];
 			if (selectedFile) {
-				const reader = new FileReader();
-				reader.onload = (e) => {
-					imagePreviewUrl = (e.target?.result as string) || null;
-					console.log('kll',imagePreviewUrl);
-					
-				};
-				reader.readAsDataURL(selectedFile);
+				imagePreviewUrl = URL.createObjectURL(selectedFile);
 			}
-		} else {
-			imagePreviewUrl = '/assets/' + initialProductData?.src || null;
-			selectedFile = null;
 		}
 	}
+	function handleClearImage() {
+		// ts-ignore
+		productImageInput.value = null;
+		imagePreviewUrl = null;
+		selectedFile = null;
+	}
+
 	$effect(() => {
 		submissionError = null;
+	});
+	onDestroy(() => {
+		console.log('component has been destroyed');
 	});
 </script>
 
@@ -162,7 +162,6 @@
 					}
 
 					return async ({ result, update }) => {
-						console.log('result::', result);
 						if (result.type == 'success') {
 							submissionMessage = result.data?.message as string;
 							// setTimeout(() => {
@@ -202,7 +201,7 @@
 							accept=".png"
 							required={initialProductData ? false : true}
 							onchange={handleImagePreview}
-							bind:value={selectedFile}
+							bind:this={productImageInput}
 						/>
 						{#if imagePreviewUrl}
 							<div
@@ -217,10 +216,7 @@
 							<button
 								class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-[#6d6d6d] transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
 								type="button"
-								onclick={() => {
-									imagePreviewUrl = null;
-									selectedFile = null;
-								}}>Clear Image</button
+								onclick={handleClearImage}>Clear Image</button
 							>
 						{/if}
 					</div>

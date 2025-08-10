@@ -52,9 +52,7 @@
 			error = '';
 
 			return async ({ result, update }) => {
-				loading = false;
-				console.log('result type', result.type);
-
+				loading = false; 
 				if (result.type === 'redirect') {
 					goto('/admin');
 				} else if (result.type === 'error') {

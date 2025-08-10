@@ -99,8 +99,7 @@ const fetchProductsFiltered = async (
         }
         if (minimal) {
             url += '&minimal=true'
-        }
-        // console.log('url', url);
+        } 
 
         const response = await fetch(url);
 
@@ -110,9 +109,7 @@ const fetchProductsFiltered = async (
             throw new Error(`Failed to fetch products: ${response.statusText}`);
         }
 
-        const productsData = await response.json();
-
-        // console.log(`Products response at product.ts`, productsData);
+        const productsData = await response.json(); 
 
         return productsData;
     } catch (error) {
@@ -126,9 +123,7 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
         // Call the new dedicated API endpoint for fetching by src
         // console.log('this is used for calling a single product..', productSource);
 
-        const url = `/api/products/src/${encodeURIComponent(productSource)}`;
-        // console.log('urrrrl', url);
-
+        const url = `/api/products/src/${encodeURIComponent(productSource)}`; 
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -148,8 +143,7 @@ const fetchProductBySrc = async (fetch: typeof globalThis.fetch, productSource: 
     }
 };
 
-const fetchSearchResult = async (fetch: typeof globalThis.fetch, searchQuery: string) => {
-    console.log('fromm fetchSearchResult ', searchQuery);
+const fetchSearchResult = async (fetch: typeof globalThis.fetch, searchQuery: string) => { 
     const url = `/api/search?searchQuery=${encodeURIComponent(searchQuery)}`
 
 

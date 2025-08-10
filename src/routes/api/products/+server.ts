@@ -17,10 +17,7 @@ export async function GET(requestEvent) {
         const excludeId = url.searchParams.get('excludeId');
         const minimal = url.searchParams.get('minimal');
 
-        // console.log('excludedId and minimal:', excludeId, minimal);
-
-        const skip = (page - 1) * limit;
-        // console.log("skip", skip);
+        const skip = (page - 1) * limit; 
 
         let query: any = {};
 
@@ -38,8 +35,7 @@ export async function GET(requestEvent) {
             query._id = { $ne: excludeId }; // Add condition to exclude the product
         }
 
-
-        // console.log('query', query);
+ 
 
         let products;
 

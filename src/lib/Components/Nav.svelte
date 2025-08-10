@@ -19,9 +19,7 @@
 		 * @param {{ target: Node | null; }} event
 		 */
 		function handleClick(event) {
-			if (!element.contains(event.target)) {
-				console.log('clicked outside');
-
+			if (!element.contains(event.target)) { 
 				callback();
 			}
 		}

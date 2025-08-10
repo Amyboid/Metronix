@@ -22,7 +22,7 @@ function getImageSrc(productImage: File, category: string, productType: string) 
 	}
 	console.log(`Received file: ${productImage.name}, type: ${productImage.type}, size: ${productImage.size} bytes`);
 	const uniqueFilename = `${uuidv4()}${path.extname(productImage.name)}`;
-	const uploadDir = path.join('static', 'assets', mapToDir[category], productType)
+	const uploadDir = path.join('src', 'lib', 'assets', mapToDir[category], productType)
 	const filePath = path.join(process.cwd(), uploadDir, uniqueFilename);
 	let imageSrc = `${mapToDir[category]}/${productType}/${removeExtension(uniqueFilename)}`
 
@@ -34,7 +34,7 @@ function getImageSrc(productImage: File, category: string, productType: string) 
 }
 
 export const actions = {
-	create: async ({ request, locals }) => { 
+	create: async ({ request, locals }) => {
 		const userRole = locals.user?.role;
 		if (userRole === 'Editor') {
 			return fail(401,
@@ -45,8 +45,7 @@ export const actions = {
 			)
 		}
 
-		const formData = await request.formData()
-		console.log("formdata: ", formData.entries());
+		const formData = await request.formData() 
 
 		const name = formData.get('name') as string;
 		const priceString = formData.get('price') as string;
@@ -198,7 +197,7 @@ export const actions = {
 		if (isNaN(inStock) || inStock < 0) {
 			return fail(400, { inStock, message: 'Valid stock quantity is required.' });
 		}
-		
+
 		const productImage = formData.get('productImage');
 		if (productImage instanceof File && productImage.size > 0) {
 			const imageType = productImage.type;
@@ -307,7 +306,8 @@ export const actions = {
 		const formData = await request.formData();
 		const itemId = formData.get('id')
 		const imgSrc = formData.get('imgSrc') as string
-		const ImageToDelete = path.join(process.cwd(), 'static', 'assets', imgSrc) + '.png';
+		const ImageToDelete = path.join(process.cwd(), 'src', 'lib', 'assets', imgSrc) + '.png';
+		console.log('deleteImgPa:', ImageToDelete);
 
 		try {
 			const deletedProduct = await Product.findByIdAndDelete(itemId)
