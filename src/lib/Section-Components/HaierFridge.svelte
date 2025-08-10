@@ -11,7 +11,10 @@
 		<div class="z-30 mt-1 flex items-center text-sm sm:text-xl md:text-2xl">
 			<span class="mr-2">Get Fresh Vegetables</span>
 		</div>
-		<a href="/products/fridge">
+		<a
+		data-sveltekit-preload-data="tap"
+		data-sveltekit-reload
+		 href="/products/fridge">
 			<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 				>Visit Now</button

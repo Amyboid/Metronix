@@ -21,7 +21,7 @@
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-xl md:text-lg">
 				<span class="mr-2">Wellness in every drop.</span>
 			</div>
-			<a href="/products/ro">
+			<a data-sveltekit-preload-data="off" data-sveltekit-reload href="/products/ro">
 				<button
 					class="visit-btn-light mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 					>Visit Now</button

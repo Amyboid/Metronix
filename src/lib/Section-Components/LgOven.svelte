@@ -11,7 +11,7 @@
 			<span class="icon-[bi--currency-rupee] h-4 w-4 sm:ml-1 md:h-5 md:w-5"></span>
 			<span class=""> 12,000 </span>
 		</div>
-		<a href="/products/oven"> 
+		<a data-sveltekit-preload-data="off" data-sveltekit-reload href="/products/oven"> 
 			<button
 			class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 			>Visit Now</button

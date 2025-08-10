@@ -26,7 +26,7 @@
 	{/if}
 </div>
 <main
-	class="scroll-smooth overflow-x-hidden relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[50px] sm:pt-[60px] md:pt-[70px]"
+	class="scroll-smooth overflow-x-hidden relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[65px] sm:pt-[73px] md:pt-[80px]"
 >
 	{@render children()}
 	<Footer />

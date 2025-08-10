@@ -12,7 +12,7 @@
 			<div class="z-30 mt-1 flex items-center text-sm sm:text-lg">
 				<span class="mr-2 text-center">Endless Viewing Pleasure.</span>
 			</div>
-			<a href="/products/ac"> 
+			<a data-sveltekit-preload-data="off" data-sveltekit-reload href="/products/ac"> 
 				<button
 				class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 				>Visit Now</button

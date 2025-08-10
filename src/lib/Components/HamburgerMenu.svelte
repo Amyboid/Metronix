@@ -14,7 +14,7 @@
 <div
 	in:fade={{ duration: 300 }}
 	out:fade={{ duration: 300 }}
-	class="absolute top-13 sm:top-16 right-0 z-10 h-[100vh] w-full bg-[#30303080] md:hidden"
+	class="absolute top-16 sm:top-18 right-0 z-10 h-[100vh] w-full bg-[#30303080] md:hidden"
 >
 	<div
 		in:fly={{ x: 50, duration: 300 }}

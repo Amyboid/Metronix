@@ -4,7 +4,7 @@
 		<div class="mt-2 flex items-center gap-1 text-sm sm:text-xl">
 			<span> Fully Automated & Budget Friendly </span>
 		</div>
-		<a href="/products/washing-machine"> 
+		<a data-sveltekit-preload-data="off" data-sveltekit-reload href="/products/washing-machine"> 
 			<button
 			class="visit-btn-dark mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2 tracking-wider sm:mt-10 sm:pr-4 sm:pl-4 md:tracking-widest"
 			>Visit Now</button

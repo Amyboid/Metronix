@@ -41,12 +41,12 @@
 </script>
 
 <nav
-	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-[var(--neutral)] p-4 pt-2 pb-2 md:px-12"
+	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-[var(--neutral)] px-4 py-3 md:px-12"
 >
 	<!-- left -->
 	<a data-sveltekit-reload href="/">
 		<div class="logo flex flex-col items-end">
-			<p class="text-xl font-bold tracking-wider sm:text-3xl md:text-3xl md:tracking-widest">
+			<p class="text-2xl font-bold tracking-wider sm:text-3xl md:text-3xl md:tracking-widest">
 				META
 			</p>
 			<p class="-mt-2 -mr-2 sm:-mr-1 text-xs font-medium sm:text-sm md:text-base">electronics</p>
