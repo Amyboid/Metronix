@@ -15,11 +15,13 @@
 	let submissionMessage: string | null = $state(null);
 	let submissionError: string | null = $state(null);
 	// './assets/' + initialProductData.src + '.png'
-	let currentImage = getImagePath(initialProductData.src).sources.avif.split(',')[1].split(' ')[1]
-	console.log(currentImage);
-	
+	let currentImage;
+	if (initialProductData) {
+		currentImage = getImagePath(initialProductData.src).sources.avif.split(',')[1].split(' ')[1];
+	}
+
 	let imagePreviewUrl = $state(initialProductData ? currentImage : null);
-		
+
 	let selectedFile: File | null = $state(null);
 	let productName = $state(initialProductData?.name || 'Test Product Name');
 	let productPrice: number | undefined = $state(initialProductData?.price || 99.99);
@@ -123,6 +125,7 @@
 			}
 		}
 	}
+	
 	function handleClearImage() {
 		// ts-ignore
 		productImageInput.value = null;
@@ -213,7 +216,6 @@
 							<div
 								class="my-3 flex h-[250px] w-[300px] items-center justify-center rounded-lg bg-[#d1cbbd] p-4 sm:h-[300px] md:w-[350px]"
 							>
-
 								<img class="h-[90%] object-contain" src={imagePreviewUrl} alt="" />
 							</div>
 						{/if}
