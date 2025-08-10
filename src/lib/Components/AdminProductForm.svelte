@@ -3,6 +3,7 @@
 	import { getContext, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import type { ProductType } from '$lib/models/ProductModel';
+	import { getImagePath } from '$lib/utils/imageImports';
 
 	interface AdminProductFormProps {
 		form?: any;
@@ -13,9 +14,12 @@
 	let productImageInput = $state();
 	let submissionMessage: string | null = $state(null);
 	let submissionError: string | null = $state(null);
-	let imagePreviewUrl = $state(
-		initialProductData ? 'src/lib/assets/' + initialProductData.src + '.png' : null
-	);
+	// './assets/' + initialProductData.src + '.png'
+	let currentImage = getImagePath(initialProductData.src).sources.avif.split(',')[1].split(' ')[1]
+	console.log(currentImage);
+	
+	let imagePreviewUrl = $state(initialProductData ? currentImage : null);
+		
 	let selectedFile: File | null = $state(null);
 	let productName = $state(initialProductData?.name || 'Test Product Name');
 	let productPrice: number | undefined = $state(initialProductData?.price || 99.99);
@@ -131,7 +135,7 @@
 	});
 	onDestroy(() => {
 		if (imagePreviewUrl) {
-			URL.revokeObjectURL(imagePreviewUrl); 
+			URL.revokeObjectURL(imagePreviewUrl);
 		}
 	});
 </script>
@@ -209,6 +213,7 @@
 							<div
 								class="my-3 flex h-[250px] w-[300px] items-center justify-center rounded-lg bg-[#d1cbbd] p-4 sm:h-[300px] md:w-[350px]"
 							>
+
 								<img class="h-[90%] object-contain" src={imagePreviewUrl} alt="" />
 							</div>
 						{/if}

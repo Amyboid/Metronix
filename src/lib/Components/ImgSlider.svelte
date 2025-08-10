@@ -33,6 +33,7 @@
 					/>
 					<div class="flex flex-col items-center">
 						<a
+							data-sveltekit-reload
 							class="min-h-16 text-center text-sm tracking-wider hover:underline md:text-base"
 							href={'/products/cart/' + image.src}>{image.name}</a
 						>
