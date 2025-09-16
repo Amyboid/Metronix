@@ -36,10 +36,10 @@
 	},
 	"dependencies": {
 		"@sveltejs/enhanced-img": "^0.7.0",
+		"@tanstack/svelte-query": "^5.83.1",
 		"@types/bcrypt": "^6.0.0",
 		"bcrypt": "^6.0.0",
 		"dotenv": "^17.2.0",
-		"fuse.js": "^7.1.0",
 		"mongodb": "^6.17.0",
 		"mongoose": "^8.15.2",
 		"uuid": "^11.1.0"
