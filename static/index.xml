@@ -1,0 +1,8 @@
+<OpenSearchDescription
+  xmlns="http://a9.com/-/spec/opensearch/1.1/"
+  xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>Search with meta</ShortName>
+  <Description>Meta electronics</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Url type="text/html" template="http://localhost:5173/search?q={searchTerms}"/>
+</OpenSearchDescription>
