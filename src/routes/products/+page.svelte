@@ -5,11 +5,13 @@
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 	import { getImagePath } from '$lib/utils/imageImports';
 	import { fetchSearchResult } from '$lib/data/products';
+	import { page } from '$app/state';
 	let { data } = $props();
 	const { entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
-
+	
 	let debounceTimer;
 	let searchQuery = $state('');
+	searchQuery = page.url.searchParams.get('q');
 	let isFocused = $state(false);
 	let searchinput = $state();
 	let clearSearch = () => {
@@ -69,6 +71,7 @@
 	let categoryIconRow = $state(0);
 	let searchResult = $state([]);
 	let dummyResult = $state([]);
+	
 	function handleSearch() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
@@ -105,7 +108,7 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] pt-4 sm:p-0 sm:mb-18 sm:flex-row md:p-0"
+	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] pt-4 sm:mb-18 sm:flex-row sm:p-0 md:p-0"
 >
 	<div
 		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
@@ -407,8 +410,8 @@
 		height: 70vh;
 	}
 	.hero-img {
-		height: 100%; 
-		overflow: hidden; 
+		height: 100%;
+		overflow: hidden;
 	}
 
 	@media only screen and (min-width: 640px) {
