@@ -143,14 +143,14 @@
 
 <!-- meta electronics best sellers -->
 <section
-	class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-4 overflow-x-hidden"
+	class="best-sellers-section flex w-full min-w-80 flex-col items-center gap-3 overflow-x-hidden"
 >
 	<h1 class="mt-4 text-xl sm:text-2xl">Meta Electronics Best Sellers.</h1>
 	<HaierFridge />
 	<LgOven />
 	<WashMacine />
 
-	<section class="homepage-grid-section grid w-full gap-4">
+	<section class="homepage-grid-section grid w-full gap-3 md:px-3">
 		<VoltasAc />
 
 		<PhilipsRo />
@@ -230,7 +230,6 @@
 		}
 
 		.homepage-grid-section {
-			padding: 0 16px;
 			grid-template-columns: repeat(2, minmax(580px, 1fr));
 		}
 	}

@@ -41,7 +41,7 @@
 </script>
 
 <nav
-	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-[var(--neutral)] px-4 py-3 md:px-12"
+	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-neutral px-4 py-3 md:px-12"
 >
 	<!-- left -->
 	<a data-sveltekit-reload href="/">
@@ -117,11 +117,10 @@
 </nav>
 
 <style>
-	
 	.nav {
 		/* box-shadow: 0px 0px 8px 12px var(--neutral); */
-		background: hsla(44, 22%, 90%, 0.521);
-		backdrop-filter: blur(10px);
+		background: lch(92.02% 4.25 95.06 / 0.521);
+		backdrop-filter: blur(50px);
 	}
 	@media only screen and (min-width: 768px) {
 		.navlinks {
