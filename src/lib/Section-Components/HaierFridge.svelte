@@ -25,7 +25,7 @@
 	<div class="frige-img relative z-10 sm:mt-16">
 		<enhanced:img
 			class="z-30"
-			src="$lib/assets/homePageImg/refrigerator.png"
+			src="$lib/assets/landing-page/refrigerator.png"
 			alt="haier-refrigerator"
 			loading="lazy"
 		/>

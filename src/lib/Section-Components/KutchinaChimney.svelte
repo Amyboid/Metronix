@@ -4,7 +4,7 @@
 		<div class="kutchina-chimney-img relative z-10 items-center sm:flex justify-center h-[55%] md:h-[auto]">
 			<enhanced:img
 				class="z-30"
-				src="$lib/assets/homePageImg/kutchina-chimney.png"
+				src="$lib/assets/landing-page/kutchina-chimney.png"
 				alt="kutchina-chimney"
 				loading="lazy"
 			/>

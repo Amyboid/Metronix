@@ -9,7 +9,7 @@
 			<div class="ro-img-shadow absolute z-10"></div>
 			<enhanced:img
 				class="z-30 h-full"
-				src="$lib/assets/homePageImg/philips-ro.png"
+				src="$lib/assets/landing-page/philips-ro.png"
 				alt="philips-white-ro"
 				loading="lazy"
 			/>
