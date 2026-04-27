@@ -1,31 +1,49 @@
-@import url('./colors.css');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 @plugin "@iconify/tailwind4";
 
-:root {
-	font-family: 'Inter', serif;
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-::selection {
-	background: var(--primary);
+@theme {
+  /* --- 1. BRAND & ACTION --- */
+  --color-brand: #eddea4;
+  --color-primary: #0bacc5;
+  --color-primary-hover: #0a98ae;
+  --color-link: #1d4ed8;
+  --color-link-hover: #1e40af;
+
+  /* --- 2. NEUTRALS & SURFACES --- */
+  --color-neutral: #f1efe9;
+  --color-surface: #e6e3db;
+  --color-surface-hover: #e0dcd2;
+  --color-canvas: #d9d5c9;
+  
+  /* --- 3. TEXT (Copy) --- */
+  --color-copy: #6d6d6d;            /* Main text */
+  --color-copy-light: #9d9d9d;      /* Secondary text */
+  
+  /* --- 4. BORDERS --- */
+  --color-strong: #6d6d6d;          /* Darker, defined borders */
+  --color-subtle: #d5d0c3;          /* Light, decorative lines */
+  --color-subtle-hover: hsl(43, 18%, 75%);
+  
+  /* --- 5. UTILITY --- */
+  --color-danger: #ef4444;
+  --color-glass: #dcd8cd36;
+  --color-accent-ghost: #0bacc504;
+  
+
+  --font-inter: 'Inter', serif;
 }
 
-@theme {
-	--color-neutral: #f1efe9;
-	--color-primary: #eddea4;
-	--color-primary-gradient: linear-gradient(to bottom, hsl(48, 66%, 79%), hsl(49, 64%, 75%));
-	--color-primary-background: #dcd8cd;
-	--color-primary-background-dark: #dcd8cd36;
-	--color-primary-background-gradient: linear-gradient(to bottom, #dbd7cc 60%, #c6c2b9);
-	--color-primary-background-gradient-light: linear-gradient(
-		to bottom,
-		#dcd8cd80 0%,
-		#dcd8cde1 60%,
-		#dcd8cd80 100%
-	);
-	--color-accent: #0bacc5;
-	--font-inter: 'Inter', serif;
+/* --- GLOBAL STYLES --- */
+:root {
+  font-family: var(--font-inter);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Custom Selection Color using your brand color */
+::selection {
+  background: var(--color-brand);
+  color: var(--color-copy);
 }
