@@ -41,15 +41,15 @@
 </script>
 
 <nav
-	class="nav fixed top-0 left-0 flex w-full min-w-80 items-center justify-between bg-neutral px-4 py-3 md:px-12"
+	class="nav sticky top-0 left-0 z-100 flex w-full min-w-80 items-center justify-between bg-neutral px-4 h-nav md:px-12"
 >
 	<!-- left -->
 	<a data-sveltekit-reload href="/">
 		<div class="logo flex flex-col items-end">
-			<p class="text-2xl font-bold tracking-wider sm:text-3xl md:text-3xl md:tracking-widest">
+			<p class="text-2xl font-bold tracking-wider sm:text-2xl md:tracking-widest">
 				META
 			</p>
-			<p class="-mt-2 -mr-2 sm:-mr-1 text-xs font-medium sm:text-sm md:text-base">electronics</p>
+			<p class="-mt-2 -mr-2 sm:-mr-1 text-xs font-medium sm:text-sm">electronics</p>
 		</div>
 	</a>
 
@@ -69,7 +69,7 @@
 				<button
 					onclick={() => (showAdminProfile = true)}
 					aria-label="profile"
-					class="border-primary-background bg-primary-background-dark h-8 w-8 cursor-pointer rounded-full border p-1"
+					class="border-surface bg-surface-dark h-8 w-8 cursor-pointer rounded-full border p-1"
 					disabled={showAdminProfile}
 				>
 					<span class="icon-[solar--user-bold-duotone] h-full w-full"></span>
@@ -80,7 +80,7 @@
 						in:fly={{ x: 50, duration: 300 }}
 						out:fly={{ x: 50, duration: 300 }}
 						use:clickOutside={() => (showAdminProfile = false)}
-						class="bg-primary-background absolute top-15 right-12 flex h-24 w-48 flex-col justify-between rounded-lg p-4 px-4"
+						class="bg-surface absolute top-15 right-12 flex h-24 w-48 flex-col justify-between rounded-lg p-4 px-4"
 					>
 						<div>
 							<h1 class="capitalize">
@@ -118,28 +118,13 @@
 
 <style>
 	.nav {
-		/* box-shadow: 0px 0px 8px 12px var(--neutral); */
-		background: lch(92.02% 4.25 95.06 / 0.521);
+		/* box-shadow: 0px 0px 8px 12px var(--color-neutral); */
+		/* background: var(--color-neutral); */
 		backdrop-filter: blur(50px);
 	}
 	@media only screen and (min-width: 768px) {
 		.navlinks {
-			font-size: var(--text-base);
-		}
-		.contact-us-btn::after {
-			position: absolute;
-			right: 50%;
-			transform: translateX(50%);
-			bottom: 0;
-			content: '';
-			width: 110%;
-			height: 6%;
-			background: var(--accent);
-			transition: all 0.2s;
-			z-index: -1;
-		}
-		.contact-us-btn:hover::after {
-			height: 40%;
+			font-size: var(--text-sm);
 		}
 	}
 

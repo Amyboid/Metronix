@@ -18,15 +18,14 @@
 
 </script>
 
-<div class="relative z-100 h-max w-full">
-	{#if !user}
-		<Nav {navLinks} adminProfile={null} />
-	{:else}
-		<Nav navLinks={null} {adminProfile}/>
-	{/if}
-</div>
+{#if !user}
+	<Nav {navLinks} adminProfile={null} />
+{:else}
+	<Nav navLinks={null} {adminProfile}/>
+{/if}
+
 <main
-	class="scroll-smooth overflow-x-hidden relative flex min-h-[100vh] w-full flex-col items-center bg-[var(--neutral)] pt-[65px] sm:pt-[73px] md:pt-[80px]"
+	class="scroll-smooth relative flex min-h-[100vh] w-full flex-col items-center bg-neutral"
 >
 	{@render children()}
 	<Footer />
