@@ -1,34 +1,37 @@
-import { fetchProductsFiltered } from '$lib/data/products';
+import { db } from '$lib/server/db';
+import { pageSections } from '$lib/server/db/schema';
 import { error } from '@sveltejs/kit';
+import { asc, eq } from 'drizzle-orm';
 
-export async function load({ fetch, url }) {
-
-    console.log('url from page.server.ts of /products', url);
+export async function load({ setHeaders }) {
+    // 1. Set Caching: 
+    // public: allows CDNs/Browsers to cache
+    // max-age: browser cache (1 hour)
+    // s-maxage: CDN/Server cache (1 day)
+    setHeaders({
+        'cache-control': 'public, max-age=3600, s-maxage=86400'
+    });
+    console.log("request to /products/+page.server.ts");
 
     try {
-        let url = `/api/products`;
-        
-        const response = await fetch(url);
-        // // Fetch 4 items for 'consumer-electronics' directly
-        // const entertainmentEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'consumer-electronics', 1, 4, undefined, true);
-        // const entertainmentEssentials = entertainmentEssentialsResponse.products; // Access the 'products' array
+        // 2. The Streaming Promise
+        const layoutPromise = db.query.pageSections.findMany({
+            where: eq(pageSections.pageName, 'products_home'),
+            orderBy: [asc(pageSections.order)]
+        }).catch(err => {
+            // Internal error handling for the stream
+            console.error('Streaming Drizzle Error:', err);
+            return []; // Return empty array so the UI doesn't crash
+        });
 
-        // // Fetch 4 items for 'self-care-appliances' directly
-        // const selfCareEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'self-care-appliances', 1, 4, undefined, true);
-        // const selfCareEssentials = selfCareEssentialsResponse.products;
-
-        // // Fetch 4 items for 'kitchen-appliances' directly
-        // const kitchenEssentialsResponse = await fetchProductsFiltered(fetch, 'category', 'kitchen-appliances', 1, 4, undefined, true);
-        // const kitchenEssentials = kitchenEssentialsResponse.products;
-
-        // return {
-        //     entertainmentEssentials,
-        //     selfCareEssentials,
-        //     kitchenEssentials
-        // };
-
+        return {
+            streamed: {
+                layout: layoutPromise
+            }
+        };
     } catch (err) {
-        console.error('Error loading categorized products:', err);
-        throw error(500, `Could not load essential product categories: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        // This catch handles critical failures before the stream starts
+        console.error('Critical Load Error:', err);
+        throw error(500, 'Could not initialize page layout');
     }
 }

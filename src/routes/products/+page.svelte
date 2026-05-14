@@ -4,11 +4,15 @@
 	import { fade, fly } from 'svelte/transition';
 	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 	import { getImagePath } from '$lib/utils/imageImports';
-	import { fetchSearchResult } from '$lib/data/products';
+	import { fetchSearchResult } from '$lib/mockData/data/products.js';
 	import { page } from '$app/state';
+
+	// NEW: Import the LazySection component
+	import LazySection from '$lib/Components/LazySection.svelte';
+
+	// Get the layout data from +page.server.ts
 	let { data } = $props();
-	const { entertainmentEssentials, selfCareEssentials, kitchenEssentials } = data;
-	
+
 	let debounceTimer;
 	let searchQuery = $state('');
 	searchQuery = page.url.searchParams.get('q');
@@ -45,33 +49,12 @@
 		'Self-Care-Appliances'
 	];
 
-	let productData = [
-		{
-			heading: 'Entertainment Essentials',
-			images: entertainmentEssentials.length > 2 ? entertainmentEssentials : null,
-			msg: 'entertainment essentials',
-			link: 'consumer-electronics'
-		},
-		{
-			heading: 'Self-Care Essentials',
-			images: selfCareEssentials.length > 2 ? selfCareEssentials : null,
-			msg: 'self-care essentials',
-			link: 'self-care-appliances'
-		},
-		{
-			heading: 'Kitchen Essentials',
-			images: kitchenEssentials.length > 2 ? kitchenEssentials : null,
-			msg: 'kitchen essentials',
-			link: 'kitchen-appliances'
-		}
-	];
-
 	let showMore = $state(true);
 	let productIconRow = $state(0);
 	let categoryIconRow = $state(0);
 	let searchResult = $state([]);
 	let dummyResult = $state([]);
-	
+
 	function handleSearch() {
 		clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(async () => {
@@ -81,7 +64,7 @@
 		}, 500);
 	}
 
-	// Function to update size based on window width
+	// Function to update size of (browse by [icon] section) based on window width
 	function updateSize() {
 		const width = window.innerWidth;
 		if (width >= 1024) {
@@ -108,7 +91,7 @@
 </script>
 
 <section
-	class="hero mb-12 flex w-full min-w-80 flex-col bg-[var(--primary-background)] pt-4 sm:mb-18 sm:flex-row sm:p-0 md:p-0"
+	class="hero bg-surface mb-12 flex w-full min-w-80 flex-col pt-4 sm:mb-18 sm:flex-row sm:p-0 md:p-0"
 >
 	<div
 		class="hero-left z-20 flex h-[40%] w-full flex-col items-center justify-center sm:h-full sm:w-[40%] sm:items-baseline sm:pb-4 sm:pl-6 md:p-8 md:pl-[8%]"
@@ -124,7 +107,7 @@
 			Get washing machine, Samsung tv, fridge and many more.
 		</h3>
 		<a
-			class="flex items-center text-base tracking-wide text-blue-700 sm:text-left md:text-xl"
+			class="text-link flex items-center text-base tracking-wide sm:text-left md:text-xl"
 			href="/products/fridge"
 		>
 			<p class="text-sm hover:underline sm:text-base">Shop godrej refrigerator</p>
@@ -132,9 +115,8 @@
 		</a>
 	</div>
 	<div
-		class="hero-right z-10 flex h-[60%] w-full justify-center sm:h-full sm:w-[60%] sm:pr-6 md:justify-end md:pr-[8%]"
+		class="hero-right bg-surface z-10 flex h-[60%] w-full justify-center sm:h-full sm:w-[60%] sm:pr-6 md:justify-end md:pr-[8%]"
 	>
-		<!-- todo : shadow on images for desktop only  -->
 		<div
 			class="hero-img flex items-end justify-center sm:items-center sm:pb-10 md:justify-end md:p-0"
 		>
@@ -147,6 +129,7 @@
 		</div>
 	</div>
 </section>
+
 <section
 	class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0"
 >
@@ -167,7 +150,6 @@
 			Find the perfect product for you.
 		</h1>
 
-		<!-- search box -->
 		<div class="search-box relative z-50 flex w-full flex-col items-center">
 			<div class="relative flex w-full items-center justify-center">
 				<button
@@ -179,7 +161,7 @@
 					></span>
 				</button>
 				<input
-					class="search-input h-[55px] w-[90%] rounded-lg bg-[var(--neutral)] text-base outline-none focus:bg-[var(--neutral)] sm:h-[55px] sm:w-full md:h-[60px] {searchQuery &&
+					class="search-input bg-neutral focus:bg-neutral h-[55px] w-[90%] rounded-lg text-base outline-none sm:h-[55px] sm:w-full md:h-[60px] {searchQuery &&
 					isFocused
 						? 'remove-border'
 						: 'block'}"
@@ -201,20 +183,20 @@
 					</button>
 				{/if}
 			</div>
-			<!-- search results  -->
 
 			{#if searchQuery && isFocused}
 				<div
-					class="search-result absolute top-[55px] w-[90%] overflow-scroll bg-[var(--neutral)] sm:w-full md:top-[60px]"
+					class="search-result bg-neutral absolute top-[55px] w-[90%] overflow-scroll sm:w-full md:top-[60px]"
 				>
-					<p class="p-2 pl-3 text-xs text-[#9d9d9d] sm:text-sm md:p-3 md:text-sm">Search Results</p>
-					<!-- search results -->
+					<p class="text-copy-light p-2 pl-3 text-xs sm:text-sm md:p-3 md:text-sm">
+						Search Results
+					</p>
 					<ul class="search-results mb-4">
 						{#if searchResult}
 							{#each searchResult as item}
-								<a href={'/products/cart/' + item.src}>
+								<a href={'/products/details/' + item.src}>
 									<li
-										class="flex cursor-pointer items-center gap-2 p-2 pr-3 pl-3 text-xs transition-all hover:bg-[var(--primary-background)] hover:underline sm:text-sm md:pr-4 md:pl-4 md:text-sm"
+										class="hover:bg-surface flex cursor-pointer items-center gap-2 p-2 pr-3 pl-3 text-xs transition-all hover:underline sm:text-sm md:pr-4 md:pl-4 md:text-sm"
 									>
 										<span class="icon-[basil--search-outline] h-3 w-3 md:h-4 md:w-4"
 										></span>{item.name}
@@ -229,6 +211,7 @@
 			{/if}
 		</div>
 	</section>
+
 	<section class="w-[90%] md:w-[85%]">
 		<ul class="product-nav flex w-full items-center justify-center gap-20">
 			{#each buttons as button}
@@ -262,7 +245,7 @@
 						>
 							<div class="product-icon w-32 cursor-pointer p-9 md:w-40 md:p-12">
 								<enhanced:img
-									src={getImagePath('search/product/' + productIcon)}
+									src={getImagePath('search-icon/product/' + productIcon)}
 									alt={productIcon}
 								/>
 							</div>
@@ -281,12 +264,13 @@
 				>
 					{#each categoryIcons as categoryIcon}
 						<a
-							href={'/products/category/' + categoryIcon.toLowerCase()}
+							data-sveltekit-reload
+							href={'/products/' + categoryIcon.toLowerCase()}
 							class="flex h-[160px] flex-col items-center gap-2 md:h-[192px]"
 						>
 							<div class="category-icon h-32 w-32 cursor-pointer p-9 md:h-40 md:w-40 md:p-12">
 								<enhanced:img
-									src={getImagePath('search/category/' + categoryIcon)}
+									src={getImagePath('search-icon/category/' + categoryIcon)}
 									alt={categoryIcon}
 								/>
 							</div>
@@ -300,7 +284,7 @@
 				onclick={() => (showMore = !showMore)}
 			>
 				<div class="relative -top-5">
-					<p class="flex items-center gap-1 text-blue-700">
+					<p class="text-link flex items-center gap-1">
 						Show
 						{#if showMore}
 							more
@@ -314,28 +298,15 @@
 			</button>
 		</div>
 	</section>
-
-	{#each productData as product}
-		{#if product.images}
-			<section
-				class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%]"
-			>
-				<h1
-					class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
-				>
-					{product.heading}
-				</h1>
-				<ImgSlider images={product.images} />
-				<a
-					class="-mt-1 flex items-center tracking-wide sm:text-left"
-					href={'/products/category/' + product.link}
-				>
-					<p class="text-blue-700 hover:underline">shop all {product.msg}</p>
-					<span class="icon-[cil--arrow-right] ml-2 h-4 w-4 text-blue-700"></span>
-				</a>
-			</section>
-		{/if}
-	{/each}
+	{#await data.streamed.layout}
+		<p class="text-copy-light">Loading...</p>
+	{:then layout}
+		{#each layout as sectionBlueprint}
+			<LazySection {sectionBlueprint} />
+		{/each}
+	{:catch error}
+		<p class="text-copy-light py-10 text-center">Unable to load page sections. Please refresh.</p>
+	{/await}
 </section>
 
 <style>
@@ -349,9 +320,6 @@
 		border-bottom-right-radius: 0;
 	}
 
-	.hero-right {
-		background: linear-gradient(to bottom, #dcd8cd 0%, #efefef 100%);
-	}
 	.find-product-section input:focus {
 		border-color: #1447e6;
 	}
@@ -369,7 +337,7 @@
 	}
 	.product-icon,
 	.category-icon {
-		border: 1px solid var(--primary-background);
+		border: 1px solid var(--color-subtle);
 		border-radius: 8px;
 	}
 	.show-less-product,
@@ -378,14 +346,14 @@
 	}
 
 	.product-nav {
-		border-bottom: 1px solid var(--primary-background);
+		border-bottom: 1px solid var(--color-subtle);
 	}
 	.show-more-btn {
-		border-top: 1px solid var(--primary-background);
+		border-top: 1px solid var(--color-subtle);
 	}
 	.show-more-btn div {
 		padding: 0 10px;
-		background-color: var(--neutral);
+		background-color: var(--color-neutral);
 	}
 	.nav-btn {
 		position: relative;
@@ -418,9 +386,7 @@
 		.hero {
 			height: 50vh;
 		}
-		.hero-right {
-			background: linear-gradient(to right, #dcd8cd 0%, #efefef 100%);
-		}
+
 		.hero-img {
 			width: 100%;
 			height: 100%;
@@ -450,10 +416,7 @@
 			width: 722px;
 			height: 100%;
 		}
-		/* .hero-right {
-			background: linear-gradient(to left, #dcd8cd 0%, #dcd8cd 50%, #efefef 100%); 
-			background: white;
-		} */
+
 		.find-product-section input {
 			padding: 8px 64px;
 		}
