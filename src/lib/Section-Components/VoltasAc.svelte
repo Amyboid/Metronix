@@ -32,6 +32,6 @@
 	}
 	.gradient-bg-section {
 		background: linear-gradient(59deg, rgba(255, 207, 48, 1) 0%, rgba(253, 45, 225, 1) 100%);
-        background: var(--primary-background); 
+        background: var(--color-surface-hover); 
 	}
 </style>

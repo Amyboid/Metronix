@@ -1,5 +1,5 @@
 <footer
-	class="mt-12 flex w-full flex-col items-center justify-center gap-4 bg-[var(--primary-background)] p-2 md:p-6 md:pt-6"
+	class="mt-12 flex w-full flex-col items-center justify-center gap-4 bg-surface p-2 md:p-6 md:pt-6"
 >
 	<div
 		class="flex w-[90%] flex-col items-center justify-center gap-2 border-b border-b-[#6d6d6d] md:w-[85%] md:gap-6"
@@ -34,7 +34,7 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-6 text-justify text-xs text-[#6d6d6d]">
+		<div class="flex flex-col gap-6 text-justify text-xs text-copy">
 			<span>
 				Trade-in values depend on the condition, model, and specifications of your device. Not all
 				devices qualify for credit, and you must be of legal age to participate. The trade-in value
@@ -95,6 +95,6 @@
 		transition: all 0.2s;
 	}
 	.social-media span:hover {
-		color: var(--accent);
+		color: var(--color-primary);
 	}
 </style>

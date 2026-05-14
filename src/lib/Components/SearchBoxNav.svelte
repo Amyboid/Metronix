@@ -11,7 +11,7 @@
 <div
 	in:fly={{ y: -50, duration: 500 }}
 	out:fade
-	class="absolute top-0 left-0 z-10 h-[100vh] w-full bg-[#0bacc504] backdrop-blur-sm md:top-24"
+	class="absolute top-0 left-0 z-10 h-screen w-full bg-accent-ghost backdrop-blur-sm md:top-24"
 >
 	<div class="search-box grid h-max min-h-[30%] w-full gap-3 p-11 md:min-h-[50%]">
 		<div class="search-input flex w-full items-center justify-center">
@@ -30,7 +30,7 @@
 		</div>
 		{#if text}
 			<div class="search-result w-full overflow-scroll p-2">
-				<p class="mb-2 text-xs text-[#9d9d9d] sm:text-sm md:text-sm">Relavant results</p>
+				<p class="mb-2 text-xs text-copy-light sm:text-sm md:text-sm">Relavant results</p>
 				<ul class="m-0 list-none overflow-scroll p-0 text-xs sm:text-sm md:text-sm">
 					{text}
 				</ul>
@@ -38,7 +38,7 @@
 		{/if}
 		{#if !text}
 			<div transition:fade class="quick-links w-full p-2">
-				<p class=" mb-2 text-xs text-[#9d9d9d] sm:text-sm md:text-sm">Quick Links</p>
+				<p class=" mb-2 text-xs text-copy-light sm:text-sm md:text-sm">Quick Links</p>
 				<ul class="m-0 list-none p-0 text-xs sm:text-sm md:text-sm">
 					<li class="flex items-center">
 						<span class="icon-[stash--arrow-right-light] mr-2"></span>Explore new fridge
@@ -95,6 +95,6 @@
 	}
 
 	.search-box {
-		background-color: var(--neutral);
+		background-color: var(--color-neutral);
 	}
 </style>

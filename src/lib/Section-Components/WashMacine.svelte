@@ -1,4 +1,4 @@
-<section class="homepage-section washing-machine-section">
+<section class="homepage-section bg-brand">
 	<div class="mt-6 flex w-full flex-col items-center sm:mt-10">
 		<h1 class="text-3xl font-semibold tracking-wider sm:text-5xl md:text-6xl">Washing Machines</h1>
 		<div class="mt-2 flex items-center gap-1 text-sm sm:text-xl">
@@ -25,9 +25,6 @@
 		color: black;
 	}
 
-	.washing-machine-section {
-		background: var(--primary-gradient);
-	}
 	.wash-machine-img {
 		width: 250px;
 	}

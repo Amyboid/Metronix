@@ -1,4 +1,4 @@
-<section class="homepage-section light-bg-section relative">
+<section class="homepage-section  text-black bg-surface-hover relative">
 	<h1 class="home-grid-logo-text text-center text-6xl font-extrabold sm:text-7xl">KUTCHINA</h1>
 	<div class="grid-child-bottom-section flex w-full flex-col gap-5 sm:flex-row sm:gap-0">
 		<div class="kutchina-chimney-img relative z-10 items-center sm:flex justify-center h-[55%] md:h-[auto]">
@@ -31,7 +31,7 @@
 		color: black;
 	}
 	.light-bg-section {
-		background-color: var(--primary-background);
+		background-color: var(--color-surface);
 		color: black;
 	}
 	.grid-child-bottom-section {

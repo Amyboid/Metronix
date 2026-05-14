@@ -19,7 +19,7 @@
 	<div
 		in:fly={{ x: 50, duration: 300 }}
 		out:fly={{ x: 50, duration: 300 }}
-		class="hamburger-menu bg-primary-background absolute top-1 sm:top-2 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
+		class="hamburger-menu bg-surface absolute top-1 sm:top-2 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
 	>
 		<div class="relative flex flex-col items-center gap-5 pb-14">
 			{#if navLinks}
@@ -40,7 +40,7 @@
 					>
 				</button>
 			{:else}
-				<span class="text-sm text-[#6d6d6d]">Role: {adminProfile.role}</span>
+				<span class="text-sm text-copy">Role: {adminProfile.role}</span>
 				<h1 class="capitalize">
 					{adminProfile.username}
 				</h1>

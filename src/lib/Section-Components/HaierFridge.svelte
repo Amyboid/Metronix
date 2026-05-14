@@ -12,7 +12,7 @@
 			<span class="mr-2">Get Fresh Vegetables</span>
 		</div>
 		<a
-		data-sveltekit-preload-data="tap"
+		
 		data-sveltekit-reload
 		 href="/products/fridge">
 			<button
@@ -49,7 +49,7 @@
 	.home-haier-logo-text {
 		margin-bottom: -40px;
 		user-select: none;
-		color: var(--accent);
+		color: var(--color-primary);
 		text-shadow:
 			-1px -1px 0 #f1efe961,
 			1px 1px 0 #f1efe961;

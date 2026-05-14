@@ -9,7 +9,7 @@
 	<div class="flex">
 		<a href="/">
 			<button
-			class="bg-accent mt-6 flex cursor-pointer items-center justify-center rounded-lg p-3 px-4 sm:mt-10 sm:px-4 text-xs sm:text-sm"
+			class="bg-primary mt-6 flex cursor-pointer items-center justify-center rounded-lg p-3 px-4 sm:mt-10 sm:px-4 text-xs sm:text-sm"
 			>
 			BACK TO HOME
 		</button>

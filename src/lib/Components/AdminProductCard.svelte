@@ -81,7 +81,7 @@
 				<div
 					in:fade={{ duration: 100 }}
 					out:fade={{ duration: 100 }}
-					class="border-primary-background bg-primary-background absolute bottom-[10%] left-[50%] flex h-auto w-[95%] -translate-x-[50%] flex-col gap-1 rounded-lg border p-4 pt-12"
+					class="border-surface bg-surface absolute bottom-[10%] left-[50%] flex h-auto w-[95%] -translate-x-[50%] flex-col gap-1 rounded-lg border p-4 pt-12"
 				>
 					<button
 						type="button"
@@ -95,12 +95,12 @@
 					</button>
 
 					{#if deleteErrorMessage}
-						<p class="w-full text-center text-sm text-[#6d6d6d]">
+						<p class="w-full text-center text-sm text-copy">
 							{deleteErrorMessage}
 						</p>
 					{:else}
 						<h1 class="text-sm">Are you sure you want to delete this item?</h1>
-						<h3 class="text-xs text-[#6d6d6d]">This action is irreversible.</h3>
+						<h3 class="text-xs text-copy">This action is irreversible.</h3>
 						<button
 							onclick={() => {
 								showConfirmation = false;
@@ -127,8 +127,8 @@
 
 <style>
 	.item-card {
-		border-right: 1px solid var(--primary-background);
-		border-bottom: 1px solid var(--primary-background);
+		border-right: 1px solid var(--color-surface);
+		border-bottom: 1px solid var(--color-surface);
 	}
 
 	input {

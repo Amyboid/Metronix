@@ -1,4 +1,4 @@
-<section class="homepage-section oven-section">
+<section class="homepage-section bg-surface-hover">
 	<div class="relative z-10 mt-6 flex flex-col items-center sm:mt-10">
 		<h1 class="home-lg-logo-text z-20 mt-3 hidden font-extrabold sm:absolute sm:block sm:text-9xl">
 			LG
@@ -27,11 +27,6 @@
 
 <style>
 	@import url('./styles.css');
-
-	.oven-section {
-		background: var(--primary-background-gradient);
-	}
-
 	/* mt-6 flex cursor-pointer items-center justify-center rounded-lg p-2  */
 	.visit-btn-dark {
 		border: 1px solid black;
@@ -39,10 +34,10 @@
 	}
 	.home-lg-logo-text {
 		user-select: none;
-		color: var(--primary-background);
+		color: var(--color-surface-hover);
 		text-shadow:
-			-1px -1px 0 var(--neutral),
-			1px 1px 0 var(--neutral);
+			-1px -1px 0 var(--color-neutral),
+			1px 1px 0 var(--color-neutral);
 	}
 	.oven-img {
 		width: 270px;
@@ -57,11 +52,6 @@
 	}
 
 	@media only screen and (min-width: 640px) {
-		
-
-		.oven-section {
-			background: var(--primary-background);
-		}
 		.oven-img {
 			width: 400px;
 		}
@@ -71,8 +61,8 @@
 		.home-lg-logo-text {
 			top: -20%;
 			text-shadow:
-				-2px -2px 0 var(--neutral),
-				2px 2px 0 var(--neutral);
+				-2px -2px 0 var(--color-neutral),
+				2px 2px 0 var(--color-neutral);
 		}
 	}
 

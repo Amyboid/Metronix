@@ -48,7 +48,7 @@
 				Original<span class="font-bold"></span> quality
 			</span>
 			<span class="w-[70%] tracking-wide md:text-4xl lg:text-5xl">
-				<span class="font-bold text-[var(--primary-background)]">Electronics</span> product
+				<span class="font-bold text-surface">Electronics</span> product
 			</span>
 		</div>
 		<div class="hero-left-bottom hidden h-[50%] flex-col p-6 md:flex md:py-7">
@@ -67,15 +67,15 @@
 			</div>
 			<div class="mt-auto w-full flex-col items-center justify-between gap-6 md:flex lg:gap-1">
 				<span class="text-xl md:text-base"> All bank credit and debit card accepted </span>
-				<a class="text-2xl font-bold underline" data-sveltekit-preload-data="tap" data-sveltekit-reload href="/products/">View all products</a>
+				<a class="text-2xl font-bold underline"  data-sveltekit-reload href="/products/">View all products</a>
 			</div>
 		</div>
 
 		<div class="flex h-[50%] flex-col items-center justify-center gap-1 p-6 md:hidden">
-			<span class="w-[100%] text-center text-xl tracking-wide sm:w-[50%] sm:text-3xl">
+			<span class="w-full text-center text-xl tracking-wide sm:w-[50%] sm:text-3xl">
 				Original<span class="font-bold"></span> quality
 			</span>
-			<span class="w-[100%] text-center text-3xl tracking-wide sm:w-[50%] sm:text-4xl">
+			<span class="w-full text-center text-3xl tracking-wide sm:w-[50%] sm:text-4xl">
 				<span class="font-bold">Electronics</span> product
 			</span>
 		</div>
@@ -83,9 +83,9 @@
 	<div
 		class="hero-right relative flex h-[50%] w-full flex-col justify-center p-4 pt-8 pb-8 sm:h-[50%] sm:pt-6 sm:pb-6 md:h-full md:w-[50%]"
 	>
-		<div class="flex w-full justify-center gap-8 text-[var(--neutral)] sm:gap-32 md:hidden">
+		<div class="flex w-full justify-center gap-8 text-neutral sm:gap-32 md:hidden">
 			<div class="flex flex-col">
-				<span class="text-sm text-[var(--primary)] sm:text-base">Upto</span>
+				<span class="text-sm text-brand sm:text-base">Upto</span>
 				<span class="text-4xl font-bold sm:text-[3rem]">70% <br /> OFF!</span>
 			</div>
 			<div class="flex items-end justify-end gap-2">
@@ -97,10 +97,10 @@
 			</div>
 		</div>
 		<div
-			class="mt-auto flex w-full flex-col items-center justify-between gap-6 text-[var(--neutral)] sm:gap-1 md:hidden"
+			class="mt-auto flex w-full flex-col items-center justify-between gap-6 text-neutral sm:gap-1 md:hidden"
 		>
 			<span class="text-base sm:text-base"> All bank credit and debit card accepted </span>
-			<a class="text-xl font-bold text-[var(--primary)] underline sm:text-2xl" data-sveltekit-preload-data="tap" data-sveltekit-reload href="/products/"
+			<a class="text-xl font-bold text-brand underline sm:text-2xl"  data-sveltekit-reload href="/products/"
 				>View all products</a
 			>
 		</div>
@@ -117,7 +117,7 @@
 			>
 			products from renowned <span class="font-semibold text-blue-600">brands</span>.
 		</h1>
-		<p class="w-[70%] p-2 text-center text-xs text-[#6d6d6d] sm:p-4 sm:text-sm md:w-[50%]">
+		<p class="w-[70%] p-2 text-center text-xs text-copy sm:p-4 sm:text-sm md:w-[50%]">
 			We believe variety is key to meeting our customers' needs. Our diverse selection makes it easy
 			to find what you're looking for, from eco-friendly options to the latest innovations, ensuring
 			access to the best products on the market.
@@ -129,11 +129,11 @@
 	>
 		{#each brands as brand, i (i)}
 			<div
-				class="hover:bg-primary-background bg-primary-background-dark border-primary-background aspect-square w-20 rounded-sm border p-3 transition-all duration-200 md:w-24"
+				class="hover:bg-surface-hover bg-surface border-subtle aspect-square w-20 rounded-sm border p-3 transition-all duration-200 md:w-24"
 			>
 				<enhanced:img
 					class="h-full w-full object-contain"
-					src={getImagePath('brandLogo/' + brand.toLocaleLowerCase())}
+					src={getImagePath('brand-logo/' + brand.toLocaleLowerCase())}
 					alt={brand.toLocaleLowerCase()}
 				/>
 			</div>
@@ -219,7 +219,7 @@
 			color: white;
 		}
 		.hero-left-bottom {
-			background: var(--primary-background-gradient);
+			background: var(--color-surface-hover);
 		}
 		.hero-right {
 			background: linear-gradient(rgba(0, 0, 0, 0.136)), url('/src/lib/assets/bg/d.jpg');

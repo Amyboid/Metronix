@@ -14,7 +14,7 @@
 				loading="lazy"
 			/>
 		</div>
-		<div class="z-10 flex flex-col items-center text-[var(--primary-background)] h-[45%] md:h-[auto]">
+		<div class="z-10 flex flex-col items-center text-[var(--color-surface)] h-[45%] md:h-[auto]">
 			<h1 class="z-30 text-3xl font-semibold tracking-wider sm:text-4xl md:text-4xl">
 				Water Purifier
 			</h1>
@@ -35,8 +35,8 @@
 	@import url('./styles.css');
 
 	.visit-btn-light {
-		border: 1px solid var(--primary-background);
-		color: var(--primary-background);
+		border: 1px solid var(--color-surface);
+		color: var(--color-surface);
 	}
 	.dark-bg-section {
 		background-color: black;

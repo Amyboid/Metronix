@@ -33,7 +33,7 @@
 	}
 	.product-card-img {
 		background: linear-gradient(to bottom, #dcd8cd80 0%, #dcd8cde1 60%, #dcd8cd80 100%);
-		/* background: var(--primary-background); */
+		/* background: var(--color-surface); */
 	} 
  
 </style>

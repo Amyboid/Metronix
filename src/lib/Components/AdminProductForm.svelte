@@ -149,7 +149,7 @@
 	out:fade={{ duration: 100 }}
 >
 	<div
-		class="product-form-container bg-primary-background relative max-w-full rounded-lg p-6 pt-12 md:min-w-[700px] md:px-20 md:pt-20"
+		class="product-form-container bg-surface relative max-w-full rounded-lg p-6 pt-12 md:min-w-[700px] md:px-20 md:pt-20"
 	>
 		<button
 			class="absolute top-4 right-4 flex cursor-pointer items-center rounded-md bg-[#d1cbbd] p-2 transition-all duration-200 ease-in hover:bg-[#c7bfae] md:top-6 md:right-6 md:p-2"
@@ -223,7 +223,7 @@
 						<!-- clear image button -->
 						{#if selectedFile || imagePreviewUrl}
 							<button
-								class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-[#6d6d6d] transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
+								class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-copy transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
 								type="button"
 								onclick={handleClearImage}>Clear Image</button
 							>
@@ -282,7 +282,7 @@
 
 				<div class="">
 					<span class="w-full text-base md:text-lg">Specifications</span>
-					<div class="flex items-center gap-2 rounded-lg text-xs text-[#6d6d6d]">
+					<div class="flex items-center gap-2 rounded-lg text-xs text-copy">
 						<span class="icon-[simple-line-icons--info] h-3 w-3"></span>
 						<span>Enter as "Label: Value" pairs.</span>
 					</div>
@@ -319,7 +319,7 @@
 										aria-label="remove"
 									>
 										<span
-											class="icon-[material-symbols--delete-outline-rounded] h-5 w-5 text-[#6d6d6d]"
+											class="icon-[material-symbols--delete-outline-rounded] h-5 w-5 text-copy"
 										></span>
 									</button>
 								{/if}
@@ -327,7 +327,7 @@
 						{/each}
 					</div>
 					<button
-						class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-[#6d6d6d] transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
+						class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-copy transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
 						type="button"
 						onclick={addSpecification}><span class="icon-[ic--round-plus]"></span> Add new</button
 					>
@@ -335,7 +335,7 @@
 
 				<div class="">
 					<label for="inTheBox" class="">Items In The Box</label>
-					<div class="flex items-center gap-2 rounded-lg text-xs text-[#6d6d6d]">
+					<div class="flex items-center gap-2 rounded-lg text-xs text-copy">
 						<span class="icon-[simple-line-icons--info] h-3 w-3"></span>
 						<span>Enter items, one per line or comma-separated.</span>
 					</div>
@@ -346,7 +346,7 @@
 
 				<div>
 					<label for="offers">Offers</label>
-					<div class="flex items-center gap-2 rounded-lg text-xs text-[#6d6d6d]">
+					<div class="flex items-center gap-2 rounded-lg text-xs text-copy">
 						<span class="icon-[simple-line-icons--info] h-3 w-3"></span>
 						<span>Enter offers, one per line or comma-separated.</span>
 					</div>
@@ -368,7 +368,7 @@
 									aria-label="remove"
 								>
 									<span
-										class="icon-[material-symbols--delete-outline-rounded] h-5 w-5 text-[#6d6d6d]"
+										class="icon-[material-symbols--delete-outline-rounded] h-5 w-5 text-copy"
 									></span>
 								</button>
 							</div>
@@ -376,7 +376,7 @@
 					</div>
 
 					<button
-						class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-[#6d6d6d] transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
+						class="mt-1 ml-auto flex cursor-pointer items-center gap-1 rounded-lg bg-[#d1cbbd] p-1 px-2 text-xs text-copy transition-all duration-200 ease-in hover:bg-[#c7bfae] md:text-sm"
 						type="button"
 						onclick={addOffer}><span class="icon-[ic--round-plus]"></span> Add new</button
 					>
@@ -388,7 +388,7 @@
 				>
 			</form>
 		{:else}
-			<div class="rounded-lg bg-[#e6e3db] p-2 text-center text-sm capitalize">
+			<div class="rounded-lg bg-surface-muted p-2 text-center text-sm capitalize">
 				{submissionMessage}
 			</div>
 		{/if}
