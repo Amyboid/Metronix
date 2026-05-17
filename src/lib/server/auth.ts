@@ -1,96 +1,47 @@
-// import bcrypt from 'bcrypt';
-// import connectToDatabase from './connectDatabase';
-// import User from '$lib/models/UserModel';
-// import Session from '$lib/models/SessionModel';
-// import mongoose from 'mongoose';
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { admin } from 'better-auth/plugins';
+import { sveltekitCookies } from 'better-auth/svelte-kit';
+import { getRequestEvent } from '$app/server';
+import { db } from '$lib/server/db';
+import * as schema from '$lib/server/db/schema';
+import { ac, adminRole, superAdminRole } from '$lib/server/permissions';
 
-// export async function hashPassword(password: string): Promise<string> {
-//     const saltRounds = 10;
-//     return bcrypt.hash(password, saltRounds);
-// }
+export const auth = betterAuth({
+	database: drizzleAdapter(db, {
+		provider: 'pg',
+		schema: {
+			user: schema.user,
+			session: schema.session,
+			account: schema.account,
+			verification: schema.verification,
+		},
+	}),
 
-// export async function comparePassword(password: string, hash: string): Promise<boolean> {
-//     return bcrypt.compare(password, hash);
-// }
+	emailAndPassword: {
+		enabled: true,
+		autoSignIn: true,
+	},
 
-// export async function findUserByUsername(username: string) {
-//     await connectToDatabase();
-//     const user = await User.findOne({ username })
+	session: {
+		expiresIn: 60 * 60 * 24,
+		updateAge: 60 * 60,
+		cookieCache: {
+			enabled: true,
+			maxAge: 60 * 5,
+		},
+	},
 
-//     if (user) {
-//         return {
-//             id: user._id.toString(),
-//             username: user.username,
-//             passwordHash: user.password,
-//             role: user.role
-//         }
-//     }
-
-//     return null;
-// }
-
-// export async function createSession(userId: string, userRole: string) {
-//     const sessionId = crypto.randomUUID()
-//     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000 * 7)
-
-//     await Session.create(
-//         {
-//             sessionId,
-//             userId: new mongoose.Types.ObjectId(userId),
-//             userRole,
-//             expiresAt,
-//         }
-//     );
-
-//     return sessionId;
-// }
-
-// export async function verifySession(sessionId: string) {
-//     await connectToDatabase();
-//     const session = await Session.findOne({ sessionId }).populate('userId');
-
-//     if (!session || session.expiresAt < new Date()) {
-//         if (session && session.expiresAt < new Date()) {
-//             await invalidateSession(sessionId);
-//         }
-//         return null;
-//     }
-
-//     const userDoc = session.userId as any;
-
-//     if (userDoc) {
-//         return {
-//             id: userDoc._id.toString(),
-//             username: userDoc.username,
-//             role: userDoc.role
-//         };
-//     }
-//     return null;
-// }
-
-// export async function invalidateSession(sessionId: string) {
-//     await connectToDatabase(); // Ensure DB connection before query
-//     await Session.deleteOne({ sessionId });
-// }
-
-
-// export async function createInitialAdminUser(username: string, passwordPlain: string, role: string) {
-//     const existingUser = await User.findOne({ username });
-//     console.log(existingUser);
-
-//     if (existingUser) {
-//         console.warn(`User "${username}" already exists.`);
-//         return existingUser;
-//     }
-
-//     const hashedPassword = await hashPassword(passwordPlain);
-//     const newUser = await User.create(
-//         {
-//             username,
-//             password: hashedPassword,
-//             role
-//         }
-//     )
-//     console.log(`Admin user "${username}" created successfully.`);
-//     return newUser;
-// }
+	plugins: [
+		admin({
+			ac,
+			roles: {
+				admin: adminRole,
+				super_admin: superAdminRole,
+			},
+			defaultRole: 'admin',
+			adminRoles: ['admin', 'super_admin'],
+		}),
+		sveltekitCookies(getRequestEvent), // ← must be last
+	],
+});

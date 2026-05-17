@@ -1,33 +1,24 @@
-import { redirect, type Handle } from '@sveltejs/kit';
-import { PUBLIC_AUTH_COOKIE_NAME } from '$env/static/public';
-import { verifySession, invalidateSession } from '$lib/server/auth';
+import { auth } from '$lib/server/auth';
+import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { building } from '$app/environment';
 
-export const handle: Handle = async ({ event, resolve }) => {
-    const sessionId = event.cookies.get(PUBLIC_AUTH_COOKIE_NAME);
-    console.log('sessionId from hook', sessionId);
+export async function handle({ event, resolve }) {
+	// Always fetch session and populate locals — svelteKitHandler doesn't do this automatically
+	const session = await auth.api.getSession({
+		headers: event.request.headers,
+	});
 
-    if (sessionId) { 
-        const user = await verifySession(sessionId);
-        if (user) {
-            event.locals.user = user;
-        } else {
-            console.log('delete session cookie...'); 
-            event.cookies.delete(PUBLIC_AUTH_COOKIE_NAME, { path: '/' });
-            event.locals.user = null;
-        }
-    } else {
-        event.locals.user = null;
-    }
+	if (session) {
+		event.locals.user = session.user;
+		event.locals.session = session.session;
+	}
 
-    const protectedPaths = ['/admin']; // Any path starting with /admin is protected
+	// Guard all /admin/* routes except the login page itself
+	if (event.url.pathname.startsWith('/admin') && event.url.pathname !== '/admin') {
+		if (!session) {
+			return Response.redirect(new URL('/admin', event.url), 302);
+		}
+	}
 
-    const isProtectedRoute = protectedPaths.some(path => event.url.pathname.startsWith(path));
-
-    if (isProtectedRoute && !event.locals.user) {
-        throw redirect(302, '/login');
-    }
-
-    const response = await resolve(event);
-
-    return response;
-};
+	return svelteKitHandler({ event, resolve, auth, building });
+}
