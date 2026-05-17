@@ -30,10 +30,6 @@
 		border: 1px solid black;
 		color: black;
 	}
-	.light-bg-section {
-		background-color: var(--color-surface);
-		color: black;
-	}
 	.grid-child-bottom-section {
 		align-items: center;
 		justify-content: center;

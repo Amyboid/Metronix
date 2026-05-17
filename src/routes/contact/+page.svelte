@@ -28,9 +28,9 @@
 	class="mt-8 flex flex-col-reverse items-center justify-center gap-8 md:mt-12 md:h-[80vh] md:w-[65%] md:flex-row md:gap-6"
 >
 	<div class="flex h-full flex-col gap-8 rounded-lg bg-[#dcd8cd36] p-6 md:w-1/2">
-		<div class="flex flex-col gap-1 sm:gap-2 border-b border-b-[var(--primary-background)]">
+		<div class="flex flex-col gap-1 sm:gap-2 border-b border-b-[var(--color-surface)]">
 			<h1 class="text-2xl sm:text-3xl">Let's Talk!</h1>
-			<p class="pb-3 text-xs text-[#6d6d6d] sm:text-base">
+			<p class="pb-3 text-xs text-copy sm:text-base">
 				Get in touch with us using the enquiry form or contact details provided.
 			</p>
 		</div>
@@ -71,7 +71,7 @@
 		</form>
 	</div>
 	<div class="flex h-full flex-col gap-8 p-6 md:w-1/2">
-		<div class="contact-person-img md:bg-primary-background-gradient h-1/2 w-full rounded-lg pt-2">
+		<div class="contact-person-img md:bg-surface-gradient h-1/2 w-full rounded-lg pt-2">
 			<enhanced:img
 				class="md:max-h-auto h-full max-h-[250px] w-full object-contain"
 				src="$lib/assets/bg/contact.png"
@@ -91,8 +91,8 @@
 		background: url('$lib/assets/bg/contact-bg.svg');
 	}
 	.section-header {
-		border-bottom: 1px solid var(--primary-background);
-		border-top: 1px solid var(--primary-background);
+		border-bottom: 1px solid var(--color-surface);
+		border-top: 1px solid var(--color-surface);
 		background-color: #dcd8cd36;
 	}
 	.formfield {

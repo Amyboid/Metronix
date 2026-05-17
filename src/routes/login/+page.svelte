@@ -40,7 +40,7 @@
 <div class="login-container min-w-[90%] p-6 md:min-w-[400px]">
 	<h1 class="w-full text-center text-base">Admin Login</h1>
 	{#if error}
-		<p class="error-message rounded-lg border border-blue-700 p-3 text-sm text-blue-700">{error}</p>
+		<p class="error-message rounded-lg border border-link p-3 text-sm text-link">{error}</p>
 	{/if}
 	<form
 		method="POST"
@@ -93,7 +93,7 @@
 				</button>
 			</div>
 		</div>
-		<div class="role-section flex gap-2 rounded-lg bg-[#e6e3db] p-2">
+		<div class="role-section flex gap-2 rounded-lg bg-surface-muted p-2">
 			<button
 				type="button"
 				class="role-button w-1/2 rounded-md px-6 py-2 transition-colors duration-200"
@@ -127,13 +127,13 @@
 	</form>
 </div>
 
-<div class="m-4 rounded-lg border border-[#d5d0c3] bg-[#e6e3db] p-4">
+<div class="m-4 rounded-lg border border-subtle bg-surface-muted p-4">
 	{#if role === 'Admin'}
-		<span class="text-left text-xs text-[#6d6d6d] sm:text-sm"
+		<span class="text-left text-xs text-copy sm:text-sm"
 			>😉 Ha ha!, you don't know my admin user credentials. logged in as editor to enjoy the UI.</span
 		>
 	{:else}
-		<span class="text-left text-xs text-[#6d6d6d] sm:text-sm"
+		<span class="text-left text-xs text-copy sm:text-sm"
 			>Logging in as an editor only show you the UI, but it will not allow you to do <span class="font-bold">CUD</span> operations.</span
 		>
 	{/if}
@@ -143,7 +143,7 @@
 	.login-container {
 		margin: 40px auto;
 		border-radius: var(--radius-lg);
-		background-color: var(--color-primary-background);
+		background-color: var(--color-surface);
 		font-family: 'Inter', sans-serif;
 	}
 	form > div:has:not(.role-section) {
