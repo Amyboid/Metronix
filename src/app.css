@@ -30,8 +30,11 @@
   --color-glass: #dcd8cd36;
   --color-accent-ghost: #0bacc504;
   
-
+/* Font Family  */
   --font-inter: 'Inter', serif;
+  /* Default Heights  */
+  --spacing-nav: 60px;
+
 }
 
 /* --- GLOBAL STYLES --- */
