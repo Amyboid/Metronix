@@ -141,6 +141,7 @@
 							autocomplete="email"
 							required
 							class="field-input"
+							value="admin@example.com"
 						/>
 					</div>
 
@@ -158,6 +159,7 @@
 								autocomplete="current-password"
 								required
 								class="field-input pr-11"
+								value="changeme123"
 							/>
 							<button
 								type="button"

@@ -105,6 +105,7 @@ export const categories = pgTable("categories", {
   name: text("name").notNull(),
   bannerPath: text("banner_path"),
   bannerMsg: text("banner_msg"),
+  bannerFileId: text("banner_file_id"),
 });
 
 export const productTypes = pgTable("product_types", {
@@ -112,6 +113,7 @@ export const productTypes = pgTable("product_types", {
   name: text("name").notNull(),
   bannerPath: text("banner_path"),
   bannerMsg: text("banner_msg"),
+  bannerFileId: text("banner_file_id"),
 });
 
 // --- 2. BRANDS TABLE ---
@@ -120,6 +122,7 @@ export const brands = pgTable("brands", {
   slug: text("slug").primaryKey(),          // e.g. "samsung", "lg"
   name: text("name").notNull(),             // e.g. "Samsung", "LG"
   logoPath: text("logo_path"),                  // e.g. "brand-logo/samsung"
+  logoFileId: text("logo_file_id"),
 });
 
 // --- 3. MASTER PRODUCT TABLE ---
@@ -249,6 +252,7 @@ export const pageSections = pgTable("page_section", {
       ctaText?: string;
     }>()
     .notNull(),
+    isActive: boolean('is_active').default(true).notNull(),
 });
 
 // --- 7. AUDIT LOGS ---
@@ -269,7 +273,12 @@ export const auditLogs = pgTable("audit_logs", {
   index("audit_created_idx").on(table.createdAt),
 ]);
 
-// --- 8. RELATIONSHIPS ---
+// --- 8. SETTINGS TABLE ---
+export const settings = pgTable('settings', {
+    key:   text('key').primaryKey(),
+    value: text('value').notNull(),
+});
+// --- 9. RELATIONSHIPS ---
 
 export const brandRelations = relations(brands, ({ many }) => ({
   products: many(products),

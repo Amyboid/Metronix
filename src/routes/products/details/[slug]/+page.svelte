@@ -54,7 +54,7 @@
 	const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMsg}`;
 
 	function img(path: string) {
-		return `${base}/assets/${path}.png`;
+		return `${base}/${path}`;
 	}
 
 	let activeColorName = $derived(

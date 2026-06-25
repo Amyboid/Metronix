@@ -7,7 +7,7 @@
 	const base = env.PUBLIC_ASSET_BASE_URL || '';
 
 	function img(path: string) {
-		return `${base}/assets/${path}.png`;
+		return `${base}/${path}`;
 	}
 	let { data } = $props();
 

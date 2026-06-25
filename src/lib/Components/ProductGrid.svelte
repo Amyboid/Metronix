@@ -43,7 +43,7 @@
 		>
 			<img
 				class="h-50 {filterOpen ? 'md:h-50' : 'md:h-80'} object-contain"
-				src="{base}/assets/{item.mainImagePath}.png"
+				src="{base}/{item.mainImagePath}"
 				alt={item.name}
 			/>
 			<div class="flex flex-col items-center">

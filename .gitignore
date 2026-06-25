@@ -1,12 +1,14 @@
 node_modules
 # static
 rename.js
-categoryWiseData
+createfiles.sh
+categoryWiseData*
+seed.ts
+mockData*
 copyConnectDb.ts
 itemData.ts
 insertMockData.ts
 createUser.ts
-
 # Output
 .output
 .vercel

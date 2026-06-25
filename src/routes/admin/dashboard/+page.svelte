@@ -7,6 +7,7 @@
 	// Lazy-loaded tab components — import placeholders until real components exist
 	// Replace these with actual imports as you build each section
 	import OverviewTab from '$lib/Components/admin/overview/OverviewTab.svelte';
+	import CatalogTab from '$lib/Components/admin/catalog/CatalogTab.svelte';
 
 	export let data: PageData;
 
@@ -66,10 +67,7 @@
 		</div>
 
 	{:else if currentView.tab === 'catalog'}
-		<div class="placeholder">
-			<h2>Catalog — {currentView.section}</h2>
-			<p>Build <code>CatalogTab.svelte</code></p>
-		</div>
+		<CatalogTab />
 
 	{:else if currentView.tab === 'locations'}
 		<div class="placeholder">

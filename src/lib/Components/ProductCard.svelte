@@ -22,7 +22,7 @@
 			<!-- Main image -->
 			<img
 				class="h-50 object-contain"
-				src="{base}/assets/{product.mainImagePath}.png"
+				src="{base}/{product.mainImagePath}"
 				alt={product.name}
 			/>
 
