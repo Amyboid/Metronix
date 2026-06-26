@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { adminNav, type AdminView } from '$lib/stores/adminNav';
 
-	export let collapsed = false;
-	const dispatch = createEventDispatcher();
+	let { collapsed = false, onToggle }: { collapsed?: boolean; onToggle: () => void } = $props();
 
 	const tabs: {
 		id: AdminView['tab'];
@@ -49,7 +47,7 @@
 		}
 	];
 
-	$: currentTab = $adminNav.tab;
+	const currentTab = $derived($adminNav.tab);
 </script>
 
 <nav
@@ -62,7 +60,7 @@
 				<button
 					class="nav-item"
 					class:active={currentTab === tab.id}
-					on:click={() => adminNav.navigate(tab.defaultView)}
+					onclick={() => adminNav.navigate(tab.defaultView)}
 					aria-current={currentTab === tab.id ? 'page' : undefined}
 					title={collapsed ? tab.label : undefined}
 				>
@@ -75,8 +73,8 @@
 		{/each}
 	</ul>
 
-	<div class="px-3 py-2 border-t border-subtle shrink-0">
-		<button class="flex items-center justify-center w-9 h-9 mx-auto bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" on:click={() => dispatch('toggle')} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+	<div class="flex justify-end px-3 py-2 border-t border-subtle shrink-0">
+		<button class="flex items-center justify-center w-9 h-9 bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" onclick={onToggle} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
 			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class:rotated={collapsed}>
 				<polyline points="11 17 6 12 11 7"/>
 				<polyline points="18 17 13 12 18 7"/>

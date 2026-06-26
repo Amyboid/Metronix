@@ -4,10 +4,9 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import { onMount } from 'svelte';
 
-	export let adminEmail: string = '';
-	export let storeName: string = 'Admin Panel';
+	const { adminEmail = '', storeName = 'Admin Panel' } = $props();
 
-	let collapsed = false;
+	let collapsed = $state(false);
 
 	onMount(() => {
 		collapsed = localStorage.getItem('adminNavCollapsed') === 'true';
@@ -33,7 +32,7 @@
 			{#if adminEmail}
 				<span class="truncate max-w-[200px] text-[0.8125rem] text-copy-light">{adminEmail}</span>
 			{/if}
-			<button class="logout-btn" on:click={handleSignOut} aria-label="Sign out">
+			<button class="logout-btn" onclick={handleSignOut} aria-label="Sign out">
 				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 					<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
 					<polyline points="16 17 21 12 16 7"/>
@@ -46,7 +45,7 @@
 
 	<div class="flex flex-1 w-full min-h-0">
 		<aside class="left-nav-wrap" class:collapsed aria-label="Sidebar">
-			<LeftNav {collapsed} on:toggle={toggleCollapse} />
+			<LeftNav {collapsed} onToggle={toggleCollapse} />
 		</aside>
 
 		<div class="content-col" class:collapsed>
@@ -79,7 +78,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0 24px 0 244px;
+		padding: 0 24px;
 		height: var(--spacing-nav);
 		min-height: var(--spacing-nav);
 		border-bottom: 1px solid var(--color-subtle);

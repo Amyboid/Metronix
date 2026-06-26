@@ -253,7 +253,7 @@
 
 <!-- ── Delete modal ───────────────────────────────────────────────────────────── -->
 {#if deleteTarget && (deleteChecking || deleteConfirming)}
-	<div class="fixed inset-0 z-[200] bg-black/35 backdrop-blur-[2px] flex items-center justify-center p-6" on:click|self={closeDeleteModal} on:keydown={(e) => { if (e.key === 'Escape') closeDeleteModal(); }} role="dialog" tabindex="-1" aria-modal="true">
+	<div class="fixed inset-0 z-[200] bg-black/35 backdrop-blur-[2px] flex items-center justify-center p-6" onclick={(e) => { if (e.target === e.currentTarget) closeDeleteModal(); }} onkeydown={(e) => { if (e.key === 'Escape') closeDeleteModal(); }} role="dialog" tabindex="-1" aria-modal="true">
 		<div class="bg-neutral border border-subtle rounded-xl p-6 w-full max-w-[480px] flex flex-col gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
 			{#if deleteChecking}
 				<p class="text-sm text-copy m-0">Checking linked products…</p>
@@ -273,17 +273,17 @@
 						</span>
 					</div>
 					<div class="flex gap-2 justify-end flex-wrap">
-						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" on:click={closeDeleteModal}>Cancel</button>
-						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border border-subtle bg-surface text-copy cursor-pointer transition-colors hover:bg-canvas"   on:click={() => confirmDelete(false)}>Delete brand only</button>
-						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  on:click={() => confirmDelete(true)}>
+						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" onclick={closeDeleteModal}>Cancel</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border border-subtle bg-surface text-copy cursor-pointer transition-colors hover:bg-canvas"   onclick={() => confirmDelete(false)}>Delete brand only</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  onclick={() => confirmDelete(true)}>
 							Force delete + {deleteProductCount} product{deleteProductCount !== 1 ? 's' : ''}
 						</button>
 					</div>
 				{:else}
 					<p class="text-sm text-copy m-0">This brand has no linked products and will be permanently deleted.</p>
 					<div class="flex gap-2 justify-end flex-wrap">
-						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" on:click={closeDeleteModal}>Cancel</button>
-						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  on:click={() => confirmDelete(false)}>Delete</button>
+						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" onclick={closeDeleteModal}>Cancel</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  onclick={() => confirmDelete(false)}>Delete</button>
 					</div>
 				{/if}
 			{/if}
@@ -298,7 +298,7 @@
 			<h2 class="text-base font-bold text-gray-900 mb-0.5">Brands</h2>
 			<p class="text-[13px] text-copy-light m-0">Manage brands, slugs and logo images.</p>
 		</div>
-		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-primary bg-transparent text-primary cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-primary hover:text-white" on:click={() => showAdd ? cancelAdd() : (showAdd = true)}>
+		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-primary bg-transparent text-primary cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-primary hover:text-white" onclick={() => showAdd ? cancelAdd() : (showAdd = true)}>
 			{showAdd ? 'Cancel' : '+ Add Brand'}
 		</button>
 	</div>
@@ -329,10 +329,10 @@
 							</svg>
 							{addPending ? 'Replace Logo' : 'Upload Logo'}
 						{/if}
-						<input type="file" accept="image/*" class="hidden" on:change={handleAddUpload} disabled={addUploading} />
+						<input type="file" accept="image/*" class="hidden" onchange={handleAddUpload} disabled={addUploading} />
 					</label>
 					{#if addPending}
-						<button class="font-inter text-xs py-[5px] px-2.5 rounded-md border border-[#fca5a5] bg-transparent text-danger cursor-pointer transition-colors hover:bg-[#fef2f2]" on:click={() => { if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl); addPending = null; }}>
+						<button class="font-inter text-xs py-[5px] px-2.5 rounded-md border border-[#fca5a5] bg-transparent text-danger cursor-pointer transition-colors hover:bg-[#fef2f2]" onclick={() => { if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl); addPending = null; }}>
 							Remove
 						</button>
 					{/if}
@@ -346,7 +346,7 @@
 					<input
 						class="font-inter text-[13px] py-[7px] px-2.5 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border focus:border-primary"
 						bind:value={addName}
-						on:input={() => { addSlug = nameToSlug(addName); }}
+						oninput={() => { addSlug = nameToSlug(addName); }}
 						placeholder="e.g. Samsung"
 					/>
 				</label>
@@ -358,7 +358,7 @@
 
 			{#if addError}<p class="text-xs text-danger">{addError}</p>{/if}
 			<div class="flex justify-end">
-				<button class="font-inter text-[13px] font-semibold py-[7px] px-[18px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" on:click={addItem} disabled={addSaving || addUploading}>
+				<button class="font-inter text-[13px] font-semibold py-[7px] px-[18px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onclick={addItem} disabled={addSaving || addUploading}>
 					{addSaving ? 'Saving…' : 'Create Brand'}
 				</button>
 			</div>
@@ -420,26 +420,26 @@
 										{/if}
 										<input
 											type="file" accept="image/*" class="hidden"
-											on:change={(e) => handleEditUpload(e, item.slug)}
+											onchange={(e) => handleEditUpload(e, item.slug)}
 											disabled={ed.uploading}
 										/>
 									</label>
 									<button
 										class="text-xs py-[5px] px-2 rounded-[5px] border border-primary text-primary bg-transparent cursor-pointer inline-flex items-center justify-center transition-colors ml-1"
-										on:click={() => saveEdit(item)}
+										onclick={() => saveEdit(item)}
 										disabled={savingSlug === item.slug || ed.uploading}
 										title="Save"
 									>
 										{savingSlug === item.slug ? '…' : '✓'}
 									</button>
-									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" on:click={() => cancelEdit(item.slug)} title="Cancel">✕</button>
+									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" onclick={() => cancelEdit(item.slug)} title="Cancel">✕</button>
 								</td>
 							{:else}
 								<!-- View row -->
 								<td class="py-2 px-3.5 text-copy border-b border-subtle">{item.name}</td>
 								<td class="py-2 px-3.5 text-copy border-b border-subtle"></td>
 								<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
-									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" on:click={() => startEdit(item)} title="Edit" aria-label="Edit">
+									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" onclick={() => startEdit(item)} title="Edit" aria-label="Edit">
 										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 											<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
 											<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -447,7 +447,7 @@
 									</button>
 									<button
 										class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1"
-										on:click={() => startDelete(item)}
+										onclick={() => startDelete(item)}
 										disabled={deletingSlug === item.slug}
 										title="Delete"
 									>
@@ -477,7 +477,7 @@
 
 		{#if hasMore}
 			<div class="flex justify-center pt-1">
-				<button class="font-inter text-[13px] font-medium py-2 px-6 rounded-lg border border-subtle bg-surface text-copy cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" on:click={() => load(false)} disabled={loadingMore}>
+				<button class="font-inter text-[13px] font-medium py-2 px-6 rounded-lg border border-subtle bg-surface text-copy cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" onclick={() => load(false)} disabled={loadingMore}>
 					{loadingMore ? 'Loading…' : `Load more (${total - items.length} remaining)`}
 				</button>
 			</div>

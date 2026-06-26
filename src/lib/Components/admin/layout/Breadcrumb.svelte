@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { adminNav, getBreadcrumbs, getParentView } from '$lib/stores/adminNav';
 
-	$: crumbs = getBreadcrumbs($adminNav);
-	$: parentView = getParentView($adminNav);
+	const crumbs = $derived(getBreadcrumbs($adminNav));
+	const parentView = $derived(getParentView($adminNav));
 </script>
 
 <div class="flex items-center gap-3 px-6 py-2.5 min-h-[44px] border-b border-subtle bg-neutral">
 	{#if parentView}
 		<button
 			class="flex items-center gap-1.5 bg-transparent border-none cursor-pointer font-inter text-[0.8125rem] font-medium text-copy px-2 py-1 rounded-md transition-colors hover:bg-surface hover:text-[#1a1a1a] whitespace-nowrap"
-			on:click={() => parentView && adminNav.navigate(parentView)}
+			onclick={() => parentView && adminNav.navigate(parentView)}
 			aria-label="Go back"
 		>
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -28,7 +28,7 @@
 			{#if crumb.view}
 				<button
 					class="font-inter text-[0.8125rem] bg-transparent border-none cursor-pointer p-0 text-primary font-medium underline underline-offset-2 decoration-transparent transition-[text-decoration-color] hover:decoration-primary"
-					on:click={() => crumb.view && adminNav.navigate(crumb.view)}
+					onclick={() => crumb.view && adminNav.navigate(crumb.view)}
 				>{crumb.label}</button>
 			{:else}
 				<span class="font-inter text-[0.8125rem] text-copy font-semibold" aria-current="page">{crumb.label}</span>

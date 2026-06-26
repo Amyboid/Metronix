@@ -6,9 +6,9 @@
 
 	type CatalogSection = 'categories' | 'product-types' | 'brands';
 
-	$: currentSection = ($adminNav.tab === 'catalog'
+	const currentSection = $derived(($adminNav.tab === 'catalog'
 		? $adminNav.section
-		: 'categories') as CatalogSection;
+		: 'categories') as CatalogSection);
 
 	function setSection(s: CatalogSection) {
 		adminNav.navigate({ tab: 'catalog', section: s });
@@ -29,7 +29,7 @@
 				aria-selected={currentSection === pill.id}
 				class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none bg-transparent text-copy cursor-pointer transition-colors whitespace-nowrap"
 				class:active-pill={currentSection === pill.id}
-				on:click={() => setSection(pill.id)}
+				onclick={() => setSection(pill.id)}
 			>
 				{pill.label}
 			</button>
