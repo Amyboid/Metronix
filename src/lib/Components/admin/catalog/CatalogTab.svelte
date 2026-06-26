@@ -21,21 +21,21 @@
 	];
 </script>
 
-<div class="catalog-tab">
-	<div class="pill-nav" role="tablist" aria-label="Catalog sections">
+<div class="flex flex-col gap-6">
+	<div class="flex gap-1.5 bg-surface border border-subtle rounded-[10px] p-1 w-fit" role="tablist" aria-label="Catalog sections">
 		{#each pills as pill}
 			<button
 				role="tab"
 				aria-selected={currentSection === pill.id}
-				class="pill"
-				class:active={currentSection === pill.id}
+				class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none bg-transparent text-copy cursor-pointer transition-colors whitespace-nowrap"
+				class:active-pill={currentSection === pill.id}
 				on:click={() => setSection(pill.id)}
 			>
 				{pill.label}
 			</button>
 		{/each}
 	</div>
-	<div class="section-body">
+	<div class="flex-1">
 		{#if currentSection === 'categories'}
 			<CategoriesSection />
 		{:else if currentSection === 'product-types'}
@@ -47,23 +47,9 @@
 </div>
 
 <style>
-	.catalog-tab { display: flex; flex-direction: column; gap: 24px; }
-
-	.pill-nav {
-		display: flex; gap: 6px;
-		background: var(--color-surface); border: 1px solid var(--color-subtle);
-		border-radius: 10px; padding: 4px; width: fit-content;
+	.active-pill {
+		background: var(--color-neutral);
+		color: #1a1a1a;
+		box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 	}
-
-	.pill {
-		font-family: var(--font-inter), sans-serif;
-		font-size: 0.8125rem; font-weight: 500;
-		padding: 6px 16px; border-radius: 7px; border: none;
-		background: transparent; color: var(--color-copy);
-		cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap;
-	}
-	.pill:hover:not(.active) { background: var(--color-surface-hover); color: #1a1a1a; }
-	.pill.active { background: var(--color-neutral); color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-
-	.section-body { flex: 1; }
 </style>

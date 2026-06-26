@@ -1,49 +1,16 @@
 <script>
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
-	import LogoutButton from './LogoutButton.svelte';
 	import { fly } from 'svelte/transition';
 
-	const { navLinks, adminProfile } = $props();
+	const { navLinks } = $props();
 	let hamburger = $state({ show: false });
-	let showAdminProfile = $state(false);
 	setContext('hamburger', hamburger);
-
-	/**
-	 * @param {HTMLDivElement} element
-	 * @param {{ (): void; }} callback
-	 */
-
-	function clickOutside(element, callback) {
-		/**
-		 * @param {{ target: Node | null; }} event
-		 */
-		function handleClick(event) {
-			if (!element.contains(event.target)) { 
-				callback();
-			}
-		}
-
-		// @ts-ignore
-		document.body.addEventListener('click', handleClick, true);
-
-		return {
-			// @ts-ignore
-			update(newCallback) {
-				callback = newCallback;
-			},
-			destroy() {
-				// @ts-ignore
-				document.body.removeEventListener('click', handleClick, true);
-			}
-		};
-	}
 </script>
 
 <nav
 	class="nav sticky top-0 left-0 z-100 flex w-full min-w-80 items-center justify-between bg-neutral px-4 h-nav md:px-12"
 >
-	<!-- left -->
 	<a data-sveltekit-reload href="/">
 		<div class="logo flex flex-col items-end">
 			<p class="text-2xl font-bold tracking-wider sm:text-2xl md:tracking-widest">
@@ -53,79 +20,38 @@
 		</div>
 	</a>
 
-	<!-- right -->
 	<div class="nav-right flex items-center gap-4">
-		<!-- nav-links -->
 		<div class="navlinks hidden gap-8 md:flex md:items-center">
-			{#if navLinks}
-				{#each navLinks as link}
-					<a data-sveltekit-reload href={link.link}>{link.name}</a>
-				{/each}
-				<button class="contact-us-btn relative hidden cursor-pointer items-center md:flex">
-					<a data-sveltekit-reload href="/contact">ContactUs</a>
-				</button>
-			{:else}
-				<h1>{adminProfile.role}</h1>
-				<button
-					onclick={() => (showAdminProfile = true)}
-					aria-label="profile"
-					class="border-surface bg-surface-dark h-8 w-8 cursor-pointer rounded-full border p-1"
-					disabled={showAdminProfile}
-				>
-					<span class="icon-[solar--user-bold-duotone] h-full w-full"></span>
-				</button>
-
-				{#if showAdminProfile}
-					<div
-						in:fly={{ x: 50, duration: 300 }}
-						out:fly={{ x: 50, duration: 300 }}
-						use:clickOutside={() => (showAdminProfile = false)}
-						class="bg-surface absolute top-15 right-12 flex h-24 w-48 flex-col justify-between rounded-lg p-4 px-4"
-					>
-						<div>
-							<h1 class="capitalize">
-								{adminProfile.username}
-							</h1>
-						</div>
-						<div class="bg-neutral rounded-lg">
-							<LogoutButton />
-						</div>
-					</div>
-				{/if}
-			{/if}
+			{#each navLinks as link}
+				<a data-sveltekit-reload href={link.link}>{link.name}</a>
+			{/each}
+			<button class="contact-us-btn relative hidden cursor-pointer items-center md:flex">
+				<a data-sveltekit-reload href="/contact">ContactUs</a>
+			</button>
 		</div>
-		<!-- hamburger or cancel button-->
 		<button
-			onclick={() => {
-				hamburger.show = !hamburger.show;
-			}}
+			onclick={() => { hamburger.show = !hamburger.show; }}
 			aria-label="hamburger"
 			class="flex items-center justify-center md:hidden"
 		>
 			{#if !hamburger.show}
 				<span class="icon-[cil--hamburger-menu] h-5 w-5 transition-all sm:h-6 sm:w-6"></span>
-			{/if}
-			{#if hamburger.show}
+			{:else}
 				<span class="icon-[ix--cancel] h-5 w-5 transition-all sm:h-6 sm:w-6"></span>
 			{/if}
 		</button>
 	</div>
 
 	{#if hamburger.show}
-		<HamburgerMenu {navLinks} {adminProfile} />
+		<HamburgerMenu {navLinks} />
 	{/if}
 </nav>
 
 <style>
 	.nav {
-		/* box-shadow: 0px 0px 8px 12px var(--color-neutral); */
-		/* background: var(--color-neutral); */
 		backdrop-filter: blur(50px);
 	}
 	@media only screen and (min-width: 768px) {
-		.navlinks {
-			font-size: var(--text-sm);
-		}
+		.navlinks { font-size: var(--text-sm); }
 	}
-
 </style>

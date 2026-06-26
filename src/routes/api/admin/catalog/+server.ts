@@ -2,9 +2,9 @@
 import { env } from '$env/dynamic/private';
 import { writeAuditLog } from '$lib/server/audit';
 import { db } from '$lib/server/db';
-import { brands, categories, products, productTypes, productVariants } from '$lib/server/db/schema';
+import { brands, categories, products, productTypes } from '$lib/server/db/schema';
 import { error, json } from '@sveltejs/kit';
-import { asc, count, eq } from 'drizzle-orm';
+import { asc, count, desc, eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 const CHUNK = 5;
@@ -27,28 +27,6 @@ async function deleteIKFile(fileId: string | null) {
     } catch (e) {
         console.error('[catalog] IK delete failed for fileId', fileId);
     }
-}
-
-async function deleteIKFiles(fileIds: (string | null)[]) {
-    const valid = fileIds.filter(Boolean) as string[];
-    if (!valid.length) return;
-    await Promise.allSettled(valid.map(deleteIKFile));
-}
-
-// Collect all IK fileIds for a product and its variants
-async function collectProductFileIds(productId: string): Promise<string[]> {
-    const [prod] = await db.select().from(products).where(eq(products.id, productId)).limit(1);
-    const variants = await db.select().from(productVariants).where(eq(productVariants.productId, productId));
-
-    const ids: (string | null)[] = [
-        prod?.mainImageFileId ?? null,
-        prod?.heroDesktopFileId ?? null,
-        prod?.heroMobileFileId ?? null,
-        ...(prod?.galleryFileIds ?? []),
-        ...variants.flatMap(v => [v.mainImageFileId ?? null, ...(v.galleryFileIds ?? [])]),
-    ];
-
-    return ids.filter(Boolean) as string[];
 }
 
 // ─── GET ──────────────────────────────────────────────────────────────────────
@@ -97,7 +75,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
         const rows = await db
             .select()
             .from(brands)
-            .orderBy(asc(brands.name))
+            .orderBy(desc(brands.createdAt), asc(brands.slug))
             .limit(CHUNK)
             .offset(offset);
 
@@ -109,7 +87,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
         const rows = await db
             .select()
             .from(categories)
-            .orderBy(asc(categories.name))
+            .orderBy(desc(categories.createdAt), asc(categories.slug))
             .limit(CHUNK)
             .offset(offset);
 
@@ -121,7 +99,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
         const rows = await db
             .select()
             .from(productTypes)
-            .orderBy(asc(productTypes.name))
+            .orderBy(desc(productTypes.createdAt), asc(productTypes.slug))
             .limit(CHUNK)
             .offset(offset);
 
@@ -229,17 +207,22 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 
     if (!slug) throw error(400, 'Missing slug');
 
-    if (section === 'brand') {
-        const { name, logoPath, logoFileId } = body;
-        const existing = await db.select().from(brands).where(eq(brands.slug, slug)).limit(1);
-        if (!existing.length) throw error(404, 'Brand not found');
+	if (section === 'brand') {
+		const { name, logoPath, logoFileId } = body;
+		const existing = await db.select().from(brands).where(eq(brands.slug, slug)).limit(1);
+		if (!existing.length) throw error(404, 'Brand not found');
 
-        const updateData: Record<string, any> = {};
-        if (name       !== undefined) updateData.name       = name;
-        if (logoPath   !== undefined) updateData.logoPath   = logoPath;
-        if (logoFileId !== undefined) updateData.logoFileId = logoFileId;
+		const updateData: Record<string, any> = {};
+		if (name       !== undefined) updateData.name       = name;
+		if (logoPath   !== undefined) updateData.logoPath   = logoPath;
+		if (logoFileId !== undefined) updateData.logoFileId = logoFileId;
 
-        await db.update(brands).set(updateData).where(eq(brands.slug, slug));
+		// Delete old IK file if replaced
+		if (logoFileId !== undefined && logoFileId !== existing[0].logoFileId) {
+			await deleteIKFile(existing[0].logoFileId);
+		}
+
+		await db.update(brands).set(updateData).where(eq(brands.slug, slug));
 
         await writeAuditLog({
             adminId:    admin.id,
@@ -253,18 +236,23 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
         return json({ ok: true });
     }
 
-    if (section === 'category') {
-        const { name, bannerPath, bannerMsg, bannerFileId } = body;
-        const existing = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
-        if (!existing.length) throw error(404, 'Category not found');
+	if (section === 'category') {
+		const { name, bannerPath, bannerMsg, bannerFileId } = body;
+		const existing = await db.select().from(categories).where(eq(categories.slug, slug)).limit(1);
+		if (!existing.length) throw error(404, 'Category not found');
 
-        const updateData: Record<string, any> = {};
-        if (name         !== undefined) updateData.name         = name;
-        if (bannerPath   !== undefined) updateData.bannerPath   = bannerPath;
-        if (bannerMsg    !== undefined) updateData.bannerMsg    = bannerMsg;
-        if (bannerFileId !== undefined) updateData.bannerFileId = bannerFileId;
+		const updateData: Record<string, any> = {};
+		if (name         !== undefined) updateData.name         = name;
+		if (bannerPath   !== undefined) updateData.bannerPath   = bannerPath;
+		if (bannerMsg    !== undefined) updateData.bannerMsg    = bannerMsg;
+		if (bannerFileId !== undefined) updateData.bannerFileId = bannerFileId;
 
-        await db.update(categories).set(updateData).where(eq(categories.slug, slug));
+		// Delete old IK file if replaced
+		if (bannerFileId !== undefined && bannerFileId !== existing[0].bannerFileId) {
+			await deleteIKFile(existing[0].bannerFileId);
+		}
+
+		await db.update(categories).set(updateData).where(eq(categories.slug, slug));
 
         await writeAuditLog({
             adminId:    admin.id,
@@ -278,18 +266,23 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
         return json({ ok: true });
     }
 
-    if (section === 'product-type') {
-        const { name, bannerPath, bannerMsg, bannerFileId } = body;
-        const existing = await db.select().from(productTypes).where(eq(productTypes.slug, slug)).limit(1);
-        if (!existing.length) throw error(404, 'Product type not found');
+	if (section === 'product-type') {
+		const { name, bannerPath, bannerMsg, bannerFileId } = body;
+		const existing = await db.select().from(productTypes).where(eq(productTypes.slug, slug)).limit(1);
+		if (!existing.length) throw error(404, 'Product type not found');
 
-        const updateData: Record<string, any> = {};
-        if (name         !== undefined) updateData.name         = name;
-        if (bannerPath   !== undefined) updateData.bannerPath   = bannerPath;
-        if (bannerMsg    !== undefined) updateData.bannerMsg    = bannerMsg;
-        if (bannerFileId !== undefined) updateData.bannerFileId = bannerFileId;
+		const updateData: Record<string, any> = {};
+		if (name         !== undefined) updateData.name         = name;
+		if (bannerPath   !== undefined) updateData.bannerPath   = bannerPath;
+		if (bannerMsg    !== undefined) updateData.bannerMsg    = bannerMsg;
+		if (bannerFileId !== undefined) updateData.bannerFileId = bannerFileId;
 
-        await db.update(productTypes).set(updateData).where(eq(productTypes.slug, slug));
+		// Delete old IK file if replaced
+		if (bannerFileId !== undefined && bannerFileId !== existing[0].bannerFileId) {
+			await deleteIKFile(existing[0].bannerFileId);
+		}
+
+		await db.update(productTypes).set(updateData).where(eq(productTypes.slug, slug));
 
         await writeAuditLog({
             adminId:    admin.id,
@@ -325,21 +318,11 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
             if (!existing.length) throw error(404, 'Brand not found');
 
             if (force) {
-                // Collect all product IDs for this brand
                 const linkedProducts = await db
                     .select({ id: products.id })
                     .from(products)
                     .where(eq(products.brand, slug));
 
-                // Collect + delete all IK images for each product
-                const allFileIds: string[] = [];
-                for (const p of linkedProducts) {
-                    const ids = await collectProductFileIds(p.id);
-                    allFileIds.push(...ids);
-                }
-                await deleteIKFiles(allFileIds);
-
-                // Delete all linked products (cascade handles variants/availability)
                 for (const p of linkedProducts) {
                     await db.delete(products).where(eq(products.id, p.id));
                 }
@@ -373,13 +356,6 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
                     .from(products)
                     .where(eq(products.categorySlug, slug));
 
-                const allFileIds: string[] = [];
-                for (const p of linkedProducts) {
-                    const ids = await collectProductFileIds(p.id);
-                    allFileIds.push(...ids);
-                }
-                await deleteIKFiles(allFileIds);
-
                 for (const p of linkedProducts) {
                     await db.delete(products).where(eq(products.id, p.id));
                 }
@@ -410,13 +386,6 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
                     .select({ id: products.id })
                     .from(products)
                     .where(eq(products.productType, slug));
-
-                const allFileIds: string[] = [];
-                for (const p of linkedProducts) {
-                    const ids = await collectProductFileIds(p.id);
-                    allFileIds.push(...ids);
-                }
-                await deleteIKFiles(allFileIds);
 
                 for (const p of linkedProducts) {
                     await db.delete(products).where(eq(products.id, p.id));

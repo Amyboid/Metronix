@@ -23,7 +23,7 @@
 	let showAdd      = false;
 	let addSlug      = '';
 	let addName      = '';
-	let addPending:  { fileId: string; filePath: string } | null = null;
+	let addPending:  { file: File; previewUrl: string } | null = null;
 	let addUploading = false;
 	let addSaving    = false;
 	let addError     = '';
@@ -33,7 +33,7 @@
 		name:       string;
 		logoPath:   string | null;
 		logoFileId: string | null;
-		pending:    { fileId: string; filePath: string } | null;
+		pending:    { file: File; previewUrl: string } | null;
 		uploading:  boolean;
 	};
 
@@ -80,19 +80,17 @@
 	});
 
 	// ── Add ───────────────────────────────────────────────────────────────────
-	async function handleAddUpload(e: Event) {
+	function handleAddUpload(e: Event) {
 		const file = (e.target as HTMLInputElement).files?.[0];
 		if (!file) return;
-		addUploading = true; addError = '';
-		try {
-			const r  = await uploadToIK(file, 'assets/brand-logo');
-			addPending = { fileId: r.fileId, filePath: r.filePath };
-		} catch (err: any) { addError = err.message ?? 'Upload failed'; }
-		finally { addUploading = false; }
+		addError = '';
+		if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl);
+		addPending = { file, previewUrl: URL.createObjectURL(file) };
 	}
 
-	async function cancelAdd() {
-		if (addPending) { await deleteFromIK(addPending.fileId); addPending = null; }
+	function cancelAdd() {
+		if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl);
+		addPending = null;
 		addName = ''; addSlug = ''; addError = '';
 		showAdd = false;
 	}
@@ -101,27 +99,42 @@
 		if (!addName.trim()) { addError = 'Name is required'; return; }
 		if (!addSlug.trim()) { addError = 'Slug is required'; return; }
 		addSaving = true; addError = '';
+		let uploadedFileId: string | null = null;
 		try {
+			let logoPath: string | null = null;
+			let logoFileId: string | null = null;
+			if (addPending) {
+				addUploading = true;
+				const r = await uploadToIK(addPending.file, 'assets/brand-logo');
+				uploadedFileId = r.fileId;
+				logoPath = r.filePath;
+				logoFileId = r.fileId;
+				addUploading = false;
+			}
 			const res = await fetch('/api/admin/catalog', {
 				method: 'POST', headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					section:   'brand',
 					slug:      addSlug.trim(),
 					name:      addName.trim(),
-					logoPath:  addPending?.filePath ?? null,
-					logoFileId: addPending?.fileId  ?? null,
+					logoPath,
+					logoFileId,
 				}),
 			});
 			if (!res.ok) {
 				const b = await res.json().catch(() => ({ message: 'Create failed' }));
 				throw new Error(b.message ?? 'Create failed');
 			}
+			if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl);
 			addPending = null;
 			addName = ''; addSlug = '';
 			showAdd = false;
 			await load();
-		} catch (err: any) { addError = err.message ?? 'Create failed'; }
-		finally { addSaving = false; }
+		} catch (err: any) {
+			if (uploadedFileId) await deleteFromIK(uploadedFileId);
+			addError = err.message ?? 'Create failed';
+		}
+		finally { addSaving = false; addUploading = false; }
 	}
 
 	// ── Edit ──────────────────────────────────────────────────────────────────
@@ -142,38 +155,42 @@
 		editing = rest; rowError = { ...rowError, [slug]: '' };
 	}
 
-	async function cancelEdit(slug: string) {
+	function cancelEdit(slug: string) {
 		const ed = editing[slug];
-		if (ed?.pending) await deleteFromIK(ed.pending.fileId);
+		if (ed?.pending?.previewUrl) URL.revokeObjectURL(ed.pending.previewUrl);
 		closeEdit(slug);
 	}
 
-	async function handleEditUpload(e: Event, slug: string) {
+	function handleEditUpload(e: Event, slug: string) {
 		const file = (e.target as HTMLInputElement).files?.[0];
 		if (!file) return;
 		const ed = editing[slug]; if (!ed) return;
-		// Delete any previous pending (not yet saved) upload
-		if (ed.pending) await deleteFromIK(ed.pending.fileId);
-		editing[slug] = { ...ed, uploading: true }; editing = { ...editing };
-		try {
-			const r = await uploadToIK(file, 'assets/brand-logo');
-			editing[slug] = { ...editing[slug], pending: { fileId: r.fileId, filePath: r.filePath }, uploading: false };
-		} catch (err: any) {
-			rowError[slug] = err.message ?? 'Upload failed';
-			editing[slug] = { ...editing[slug], uploading: false };
-		}
-		editing = { ...editing }; rowError = { ...rowError };
+		if (ed.pending?.previewUrl) URL.revokeObjectURL(ed.pending.previewUrl);
+		const previewUrl = URL.createObjectURL(file);
+		editing[slug] = { ...ed, pending: { file, previewUrl } };
+		editing = { ...editing };
 	}
 
 	async function saveEdit(item: Brand) {
 		const ed = editing[item.slug]; if (!ed) return;
 		savingSlug = item.slug; rowError[item.slug] = '';
 
-		const finalPath   = ed.pending ? ed.pending.filePath : ed.logoPath;
-		const finalFileId = ed.pending ? ed.pending.fileId   : ed.logoFileId;
+		let finalPath   = ed.logoPath;
+		let finalFileId = ed.logoFileId;
+		let uploadedFileId: string | null = null;
 
-		// If replacing an existing saved logo, delete the old one from IK
-		if (ed.pending && ed.logoFileId) await deleteFromIK(ed.logoFileId);
+		if (ed.pending) {
+			try {
+				const r = await uploadToIK(ed.pending.file, 'assets/brand-logo');
+				uploadedFileId = r.fileId;
+				finalPath   = r.filePath;
+				finalFileId = r.fileId;
+			} catch (err: any) {
+				rowError[item.slug] = err.message ?? 'Upload failed';
+				rowError = { ...rowError }; savingSlug = '';
+				return;
+			}
+		}
 
 		try {
 			const res = await fetch('/api/admin/catalog', {
@@ -186,7 +203,11 @@
 					logoFileId: finalFileId ?? null,
 				}),
 			});
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) {
+				if (uploadedFileId) await deleteFromIK(uploadedFileId);
+				throw new Error(await res.text());
+			}
+			if (ed.pending?.previewUrl) URL.revokeObjectURL(ed.pending.previewUrl);
 			await load(); closeEdit(item.slug);
 		} catch (err: any) {
 			rowError[item.slug] = err.message ?? 'Save failed';
@@ -232,14 +253,14 @@
 
 <!-- ── Delete modal ───────────────────────────────────────────────────────────── -->
 {#if deleteTarget && (deleteChecking || deleteConfirming)}
-	<div class="modal-backdrop" on:click|self={closeDeleteModal} role="dialog" aria-modal="true">
-		<div class="modal">
+	<div class="fixed inset-0 z-[200] bg-black/35 backdrop-blur-[2px] flex items-center justify-center p-6" on:click|self={closeDeleteModal} on:keydown={(e) => { if (e.key === 'Escape') closeDeleteModal(); }} role="dialog" tabindex="-1" aria-modal="true">
+		<div class="bg-neutral border border-subtle rounded-xl p-6 w-full max-w-[480px] flex flex-col gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
 			{#if deleteChecking}
-				<p class="modal-body">Checking linked products…</p>
+				<p class="text-sm text-copy m-0">Checking linked products…</p>
 			{:else}
-				<h3 class="modal-title">Delete "{deleteTarget.name}"?</h3>
+				<h3 class="text-base font-bold text-gray-900 m-0">Delete "{deleteTarget.name}"?</h3>
 				{#if deleteProductCount > 0}
-					<div class="modal-warning">
+					<div class="flex gap-2.5 items-start bg-[#fff7ed] border border-[#fed7aa] rounded-lg p-3.5 text-[13px] text-[#92400e]">
 						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
 							<line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -251,18 +272,18 @@
 							This cannot be undone.
 						</span>
 					</div>
-					<div class="modal-actions">
-						<button class="btn-modal-cancel" on:click={closeDeleteModal}>Cancel</button>
-						<button class="btn-modal-soft"   on:click={() => confirmDelete(false)}>Delete brand only</button>
-						<button class="btn-modal-force"  on:click={() => confirmDelete(true)}>
+					<div class="flex gap-2 justify-end flex-wrap">
+						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" on:click={closeDeleteModal}>Cancel</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border border-subtle bg-surface text-copy cursor-pointer transition-colors hover:bg-canvas"   on:click={() => confirmDelete(false)}>Delete brand only</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  on:click={() => confirmDelete(true)}>
 							Force delete + {deleteProductCount} product{deleteProductCount !== 1 ? 's' : ''}
 						</button>
 					</div>
 				{:else}
-					<p class="modal-body">This brand has no linked products and will be permanently deleted.</p>
-					<div class="modal-actions">
-						<button class="btn-modal-cancel" on:click={closeDeleteModal}>Cancel</button>
-						<button class="btn-modal-force"  on:click={() => confirmDelete(false)}>Delete</button>
+					<p class="text-sm text-copy m-0">This brand has no linked products and will be permanently deleted.</p>
+					<div class="flex gap-2 justify-end flex-wrap">
+						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" on:click={closeDeleteModal}>Cancel</button>
+						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors"  on:click={() => confirmDelete(false)}>Delete</button>
 					</div>
 				{/if}
 			{/if}
@@ -271,36 +292,36 @@
 {/if}
 
 <!-- ── Main ──────────────────────────────────────────────────────────────────── -->
-<div class="section">
-	<div class="section-header">
+<div class="flex flex-col gap-5">
+	<div class="flex items-start justify-between gap-3">
 		<div>
-			<h2 class="section-title">Brands</h2>
-			<p class="section-sub">Manage brands, slugs and logo images.</p>
+			<h2 class="text-base font-bold text-gray-900 mb-0.5">Brands</h2>
+			<p class="text-[13px] text-copy-light m-0">Manage brands, slugs and logo images.</p>
 		</div>
-		<button class="btn-add" on:click={() => showAdd ? cancelAdd() : (showAdd = true)}>
+		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-primary bg-transparent text-primary cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-primary hover:text-white" on:click={() => showAdd ? cancelAdd() : (showAdd = true)}>
 			{showAdd ? 'Cancel' : '+ Add Brand'}
 		</button>
 	</div>
 
-	{#if listError}<div class="banner-error">{listError}</div>{/if}
+	{#if listError}<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{listError}</div>{/if}
 
 	<!-- ── Add form ── -->
 	{#if showAdd}
-		<div class="add-form">
-			<h3 class="form-title">New Brand</h3>
+		<div class="bg-surface border border-subtle rounded-[10px] px-5 py-[18px] flex flex-col gap-3.5">
+			<h3 class="text-sm font-bold text-gray-900 m-0">New Brand</h3>
 
-			<div class="image-picker-row">
-				<div class="logo-preview-box">
+			<div class="flex gap-3.5 items-start flex-wrap">
+				<div class="w-20 h-20 shrink-0 border border-subtle rounded-lg overflow-hidden bg-white flex items-center justify-center">
 					{#if addPending}
-						<img src={ikUrl(addPending.filePath, ikEndpoint, 'w-120,h-120,fo-auto') ?? addPending.filePath} alt="Logo preview" />
+						<img class="w-full h-full object-contain" src={addPending.previewUrl} alt="Logo preview" />
 					{:else}
-						<span class="preview-placeholder">No logo</span>
+						<span class="text-[11px] text-copy-light text-center py-1">No logo</span>
 					{/if}
 				</div>
-				<div class="image-picker-controls">
-					<label class="upload-btn" class:uploading={addUploading}>
+				<div class="flex flex-col gap-2 justify-center">
+					<label class="inline-flex items-center gap-[5px] font-inter text-xs font-semibold py-1.5 px-3 rounded-md border border-subtle bg-neutral text-copy cursor-pointer whitespace-nowrap transition-colors" class:uploading={addUploading}>
 						{#if addUploading}
-							<span class="spinner"></span> Uploading…
+							<span class="inline-block w-2.5 h-2.5 border-2 border-subtle border-t-primary rounded-full animate-[spin_0.7s_linear_infinite]"></span> Uploading…
 						{:else}
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 								<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -308,36 +329,36 @@
 							</svg>
 							{addPending ? 'Replace Logo' : 'Upload Logo'}
 						{/if}
-						<input type="file" accept="image/*" style="display:none" on:change={handleAddUpload} disabled={addUploading} />
+						<input type="file" accept="image/*" class="hidden" on:change={handleAddUpload} disabled={addUploading} />
 					</label>
 					{#if addPending}
-						<button class="btn-remove-img" on:click={async () => { await deleteFromIK(addPending!.fileId); addPending = null; }}>
+						<button class="font-inter text-xs py-[5px] px-2.5 rounded-md border border-[#fca5a5] bg-transparent text-danger cursor-pointer transition-colors hover:bg-[#fef2f2]" on:click={() => { if (addPending?.previewUrl) URL.revokeObjectURL(addPending.previewUrl); addPending = null; }}>
 							Remove
 						</button>
 					{/if}
-					<span class="upload-hint">PNG with transparency recommended</span>
+					<span class="text-[11px] text-copy-light">PNG with transparency recommended</span>
 				</div>
 			</div>
 
-			<div class="form-row two-col">
-				<label class="field">
-					<span class="label">Name <span class="req">*</span></span>
+			<div class="flex gap-3 flex-wrap two-col">
+				<label class="flex flex-col gap-[5px]">
+					<span class="text-xs font-semibold text-copy uppercase tracking-[0.04em]">Name <span class="text-danger">*</span></span>
 					<input
-						class="input"
+						class="font-inter text-[13px] py-[7px] px-2.5 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border focus:border-primary"
 						bind:value={addName}
 						on:input={() => { addSlug = nameToSlug(addName); }}
 						placeholder="e.g. Samsung"
 					/>
 				</label>
-				<label class="field">
-					<span class="label">Slug <span class="req">*</span></span>
-					<input class="input" bind:value={addSlug} placeholder="auto-generated" />
+				<label class="flex flex-col gap-[5px]">
+					<span class="text-xs font-semibold text-copy uppercase tracking-[0.04em]">Slug <span class="text-danger">*</span></span>
+					<input class="font-inter text-[13px] py-[7px] px-2.5 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border focus:border-primary" bind:value={addSlug} placeholder="auto-generated" />
 				</label>
 			</div>
 
-			{#if addError}<p class="inline-error">{addError}</p>{/if}
-			<div class="form-actions">
-				<button class="btn-save" on:click={addItem} disabled={addSaving || addUploading}>
+			{#if addError}<p class="text-xs text-danger">{addError}</p>{/if}
+			<div class="flex justify-end">
+				<button class="font-inter text-[13px] font-semibold py-[7px] px-[18px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" on:click={addItem} disabled={addSaving || addUploading}>
 					{addSaving ? 'Saving…' : 'Create Brand'}
 				</button>
 			</div>
@@ -346,48 +367,50 @@
 
 	<!-- ── Table ── -->
 	{#if loading}
-		<div class="shimmer-list">
-			{#each Array(5) as _}<div class="shimmer-row"></div>{/each}
+		<div class="flex flex-col gap-2 w-full">
+			{#each Array(5) as _}<div class="w-full h-12 rounded-lg shimmer"></div>{/each}
 		</div>
 	{:else if items.length === 0}
-		<div class="empty">No brands yet. Add one above.</div>
+		<div class="py-8 text-center text-sm text-copy-light border border-dashed border-subtle rounded-[10px]">No brands yet. Add one above.</div>
 	{:else}
-		<div class="table-wrap">
-			<table class="table">
+		<div class="border border-subtle rounded-[10px] overflow-hidden overflow-x-auto">
+			<table class="w-full border-collapse text-[13px]">
 				<thead>
 					<tr>
-						<th class="th-logo">Logo</th>
-						<th>Slug</th>
-						<th>Name</th>
-						<th class="th-actions">Actions</th>
+						<th class="py-2.5 px-3.5 text-left text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap w-20">Logo</th>
+						<th class="py-2.5 px-3.5 text-left text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap">Slug</th>
+						<th class="py-2.5 px-3.5 text-left text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap">Name</th>
+						<th class="py-2.5 px-3.5 text-left text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap w-0 p-0"></th>
+						<th class="py-2.5 px-3.5 text-right text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each items as item (item.slug)}
 						{@const ed = editing[item.slug]}
-						{@const displayPath = ed ? (ed.pending?.filePath ?? ed.logoPath) : item.logoPath}
+						{@const displayPath = ed ? (ed.pending?.previewUrl ?? ed.logoPath) : item.logoPath}
 						<tr class:editing-row={!!ed}>
 
 							<!-- Logo thumbnail -->
-							<td class="td-logo">
+							<td class="w-20 py-2 px-3.5 text-copy border-b border-subtle">
 								{#if displayPath}
-									<div class="logo-thumb">
-										<img src={logoThumb(displayPath) ?? ''} alt={item.name} />
+									<div class="w-16 h-9 rounded-[5px] overflow-hidden bg-canvas border border-subtle flex items-center justify-center">
+										<img class="w-full h-full object-cover" src={displayPath.startsWith('blob:') ? displayPath : (logoThumb(displayPath) ?? '')} alt={item.name} />
 									</div>
 								{:else}
-									<div class="logo-empty">—</div>
+									<div class="w-16 h-9 rounded-[5px] border border-dashed border-subtle flex items-center justify-center text-xs text-copy-light">—</div>
 								{/if}
 							</td>
 
-							<td class="td-slug"><code>{item.slug}</code></td>
+							<td class="py-2 px-3.5 text-copy border-b border-subtle"><code class="font-mono text-xs text-copy-light">{item.slug}</code></td>
 
 							{#if ed}
 								<!-- Editing row -->
-								<td><input class="input inline" bind:value={ed.name} placeholder="Brand name" /></td>
-								<td class="td-actions">
-									<label class="upload-btn small" class:uploading={ed.uploading} title="Upload new logo">
+								<td class="py-2 px-3.5 text-copy border-b border-subtle"><input class="font-inter text-[13px] py-[5px] px-2 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border min-w-[100px] focus:border-primary" bind:value={ed.name} placeholder="Brand name" /></td>
+								<td class="py-2 px-3.5 text-copy border-b border-subtle"></td>
+								<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
+									<label class="inline-flex items-center gap-[5px] font-inter text-xs font-semibold py-1 px-2.5 rounded-md border border-subtle bg-neutral text-copy cursor-pointer whitespace-nowrap transition-colors" class:uploading={ed.uploading} title="Upload new logo">
 										{#if ed.uploading}
-											<span class="spinner"></span>
+											<span class="inline-block w-2.5 h-2.5 border-2 border-subtle border-t-primary rounded-full animate-[spin_0.7s_linear_infinite]"></span>
 										{:else}
 											<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 												<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -396,33 +419,34 @@
 											{ed.pending ? 'Replace' : 'Logo'}
 										{/if}
 										<input
-											type="file" accept="image/*" style="display:none"
+											type="file" accept="image/*" class="hidden"
 											on:change={(e) => handleEditUpload(e, item.slug)}
 											disabled={ed.uploading}
 										/>
 									</label>
 									<button
-										class="btn-icon save"
+										class="text-xs py-[5px] px-2 rounded-[5px] border border-primary text-primary bg-transparent cursor-pointer inline-flex items-center justify-center transition-colors ml-1"
 										on:click={() => saveEdit(item)}
 										disabled={savingSlug === item.slug || ed.uploading}
 										title="Save"
 									>
 										{savingSlug === item.slug ? '…' : '✓'}
 									</button>
-									<button class="btn-icon cancel" on:click={() => cancelEdit(item.slug)} title="Cancel">✕</button>
+									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" on:click={() => cancelEdit(item.slug)} title="Cancel">✕</button>
 								</td>
 							{:else}
 								<!-- View row -->
-								<td>{item.name}</td>
-								<td class="td-actions">
-									<button class="btn-icon edit" on:click={() => startEdit(item)} title="Edit">
+								<td class="py-2 px-3.5 text-copy border-b border-subtle">{item.name}</td>
+								<td class="py-2 px-3.5 text-copy border-b border-subtle"></td>
+								<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
+									<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1" on:click={() => startEdit(item)} title="Edit" aria-label="Edit">
 										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
 											<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
 											<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
 										</svg>
 									</button>
 									<button
-										class="btn-icon delete"
+										class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1"
 										on:click={() => startDelete(item)}
 										disabled={deletingSlug === item.slug}
 										title="Delete"
@@ -443,7 +467,7 @@
 						</tr>
 						{#if rowError[item.slug]}
 							<tr class="error-row">
-								<td colspan="4"><span class="inline-error">{rowError[item.slug]}</span></td>
+								<td colspan="5"><span class="text-xs text-danger">{rowError[item.slug]}</span></td>
 							</tr>
 						{/if}
 					{/each}
@@ -452,8 +476,8 @@
 		</div>
 
 		{#if hasMore}
-			<div class="load-more-row">
-				<button class="btn-load-more" on:click={() => load(false)} disabled={loadingMore}>
+			<div class="flex justify-center pt-1">
+				<button class="font-inter text-[13px] font-medium py-2 px-6 rounded-lg border border-subtle bg-surface text-copy cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed" on:click={() => load(false)} disabled={loadingMore}>
 					{loadingMore ? 'Loading…' : `Load more (${total - items.length} remaining)`}
 				</button>
 			</div>
@@ -462,182 +486,11 @@
 </div>
 
 <style>
-	.section { display: flex; flex-direction: column; gap: 20px; }
-	.section-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-	.section-title { font-size: 1rem; font-weight: 700; color: #1a1a1a; margin: 0 0 2px; }
-	.section-sub   { font-size: 0.8125rem; color: var(--color-copy-light); margin: 0; }
-
-	.btn-add {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 600;
-		padding: 7px 14px; border-radius: 7px; border: 1px solid var(--color-primary);
-		background: transparent; color: var(--color-primary); cursor: pointer;
-		white-space: nowrap; transition: background 0.15s, color 0.15s; flex-shrink: 0;
-	}
-	.btn-add:hover { background: var(--color-primary); color: #fff; }
-
-	/* Add form */
-	.add-form { background: var(--color-surface); border: 1px solid var(--color-subtle); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
-	.form-title { font-size: 0.875rem; font-weight: 700; color: #1a1a1a; margin: 0; }
-	.form-row { display: flex; gap: 12px; flex-wrap: wrap; }
-	.two-col > .field { flex: 1 1 200px; }
-	.field { display: flex; flex-direction: column; gap: 5px; }
-	.label { font-size: 0.75rem; font-weight: 600; color: var(--color-copy); text-transform: uppercase; letter-spacing: 0.04em; }
-	.req { color: var(--color-danger); }
-
-	.input {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem;
-		padding: 7px 10px; border: 1px solid var(--color-subtle); border-radius: 6px;
-		background: var(--color-neutral); color: #1a1a1a; outline: none;
-		transition: border-color 0.15s; width: 100%; box-sizing: border-box;
-	}
-	.input:focus  { border-color: var(--color-primary); }
-	.input.inline { padding: 5px 8px; min-width: 100px; }
-
-	.form-actions { display: flex; justify-content: flex-end; }
-	.btn-save {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 600;
-		padding: 7px 18px; border-radius: 7px; border: none;
-		background: var(--color-primary); color: #fff; cursor: pointer; transition: background 0.15s;
-	}
-	.btn-save:hover:not(:disabled) { background: var(--color-primary-hover); }
-	.btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
-
-	/* Image picker (logo variant — square) */
-	.image-picker-row { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
-	.logo-preview-box {
-		width: 80px; height: 80px; flex-shrink: 0;
-		border: 1px solid var(--color-subtle); border-radius: 8px;
-		overflow: hidden; background: #fff;
-		display: flex; align-items: center; justify-content: center;
-	}
-	.logo-preview-box img { width: 100%; height: 100%; object-fit: contain; }
-	.preview-placeholder  { font-size: 0.7rem; color: var(--color-copy-light); text-align: center; padding: 4px; }
-	.image-picker-controls { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-	.upload-hint { font-size: 0.7rem; color: var(--color-copy-light); }
-
-	.upload-btn {
-		display: inline-flex; align-items: center; gap: 5px;
-		font-family: var(--font-inter), sans-serif; font-size: 0.75rem; font-weight: 600;
-		padding: 6px 12px; border-radius: 6px; border: 1px solid var(--color-subtle);
-		background: var(--color-neutral); color: var(--color-copy);
-		cursor: pointer; white-space: nowrap; transition: background 0.15s, border-color 0.15s;
-	}
-	.upload-btn:hover:not(.uploading) { background: var(--color-canvas); border-color: var(--color-subtle-hover); }
-	.upload-btn.uploading { opacity: 0.6; cursor: not-allowed; }
-	.upload-btn.small     { padding: 4px 10px; font-size: 0.75rem; }
-
-	.btn-remove-img {
-		font-family: var(--font-inter), sans-serif; font-size: 0.75rem;
-		padding: 5px 10px; border-radius: 6px; border: 1px solid #fca5a5;
-		background: transparent; color: var(--color-danger); cursor: pointer; transition: background 0.12s;
-	}
-	.btn-remove-img:hover { background: #fef2f2; }
-
-	/* Table */
-	.table-wrap { border: 1px solid var(--color-subtle); border-radius: 10px; overflow: hidden; overflow-x: auto; }
-	.table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
-	.table thead { background: var(--color-surface); }
-	.table th {
-		padding: 10px 14px; text-align: left; font-size: 0.6875rem; font-weight: 700;
-		text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-copy-light);
-		border-bottom: 1px solid var(--color-subtle); white-space: nowrap;
-	}
-	.th-logo    { width: 68px; }
-	.th-actions { text-align: right; }
-
-	.table td { padding: 8px 14px; color: var(--color-copy); border-bottom: 1px solid var(--color-subtle); vertical-align: middle; }
-	.table tbody tr:last-child td { border-bottom: none; }
-	.table tbody tr:hover:not(.editing-row):not(.error-row) { background: var(--color-surface); }
-	.editing-row td { background: var(--color-accent-ghost, #f8f7f4); }
-	.error-row td   { padding: 4px 14px 8px; }
-
-	.td-logo { width: 68px; }
-	.td-slug code { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--color-copy-light); }
-	.td-actions { text-align: right; white-space: nowrap; }
-
-	.logo-thumb {
-		width: 44px; height: 44px; border-radius: 6px; overflow: hidden;
-		background: #fff; border: 1px solid var(--color-subtle);
-		display: flex; align-items: center; justify-content: center;
-	}
-	.logo-thumb img { width: 100%; height: 100%; object-fit: contain; }
-	.logo-empty {
-		width: 44px; height: 44px; border-radius: 6px;
-		border: 1px dashed var(--color-subtle);
-		display: flex; align-items: center; justify-content: center;
-		font-size: 0.75rem; color: var(--color-copy-light);
-	}
-
-	/* Buttons */
-	.btn-icon {
-		font-size: 0.75rem; padding: 5px 8px; border-radius: 5px;
-		border: 1px solid var(--color-subtle); background: transparent; cursor: pointer;
-		color: var(--color-copy); display: inline-flex; align-items: center; justify-content: center;
-		transition: background 0.12s, border-color 0.12s, color 0.12s; margin-left: 4px;
-	}
-	.btn-icon.save   { border-color: var(--color-primary); color: var(--color-primary); }
-	.btn-icon.save:hover   { background: var(--color-primary); color: #fff; }
-	.btn-icon.cancel:hover { background: var(--color-canvas); }
-	.btn-icon.edit:hover   { background: var(--color-surface); border-color: var(--color-subtle-hover); }
-	.btn-icon.delete { color: var(--color-danger); border-color: transparent; }
-	.btn-icon.delete:hover { background: #fef2f2; border-color: #fca5a5; }
-	.btn-icon:disabled { opacity: 0.4; cursor: not-allowed; }
-
-	/* Load more */
-	.load-more-row { display: flex; justify-content: center; padding-top: 4px; }
-	.btn-load-more {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 500;
-		padding: 8px 24px; border-radius: 8px; border: 1px solid var(--color-subtle);
-		background: var(--color-surface); color: var(--color-copy); cursor: pointer; transition: background 0.15s;
-	}
-	.btn-load-more:hover:not(:disabled) { background: var(--color-canvas); }
-	.btn-load-more:disabled { opacity: 0.5; cursor: not-allowed; }
-
-	/* Modal */
-	.modal-backdrop {
-		position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.35);
-		backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; padding: 24px;
-	}
-	.modal {
-		background: var(--color-neutral); border: 1px solid var(--color-subtle);
-		border-radius: 12px; padding: 24px; width: 100%; max-width: 480px;
-		display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-	}
-	.modal-title { font-size: 1rem; font-weight: 700; color: #1a1a1a; margin: 0; }
-	.modal-body  { font-size: 0.875rem; color: var(--color-copy); margin: 0; }
-	.modal-warning {
-		display: flex; gap: 10px; align-items: flex-start;
-		background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;
-		padding: 12px 14px; font-size: 0.8125rem; color: #92400e;
-	}
-	.modal-warning svg { flex-shrink: 0; margin-top: 1px; color: #f97316; }
-	.modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
-	.btn-modal-cancel {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 500;
-		padding: 7px 16px; border-radius: 7px; border: 1px solid var(--color-subtle);
-		background: transparent; color: var(--color-copy); cursor: pointer; transition: background 0.15s;
-	}
-	.btn-modal-cancel:hover { background: var(--color-surface); }
-	.btn-modal-soft {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 600;
-		padding: 7px 16px; border-radius: 7px; border: 1px solid var(--color-subtle);
-		background: var(--color-surface); color: var(--color-copy); cursor: pointer; transition: background 0.15s;
-	}
-	.btn-modal-soft:hover { background: var(--color-canvas); }
-	.btn-modal-force {
-		font-family: var(--font-inter), sans-serif; font-size: 0.8125rem; font-weight: 600;
-		padding: 7px 16px; border-radius: 7px; border: none;
-		background: var(--color-danger); color: #fff; cursor: pointer; transition: background 0.15s;
-	}
-	.btn-modal-force:hover { background: #dc2626; }
-
-	/* Misc */
-	.banner-error { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 10px 14px; font-size: 0.8125rem; color: var(--color-danger); }
-	.inline-error { font-size: 0.75rem; color: var(--color-danger); }
-	.empty { padding: 32px; text-align: center; font-size: 0.875rem; color: var(--color-copy-light); border: 1px dashed var(--color-subtle); border-radius: 10px; }
-	.shimmer-list { display: flex; flex-direction: column; gap: 8px; }
-	.shimmer-row { height: 52px; border-radius: 8px; background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-canvas) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
 	@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-	.spinner { display: inline-block; width: 10px; height: 10px; border: 2px solid var(--color-subtle); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
 	@keyframes spin { to { transform: rotate(360deg); } }
+	.shimmer { background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-canvas) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+	.table tbody tr:last-child td { border-bottom: none; }
+	.two-col > .field { flex: 1 1 200px; }
+	.editing-row td { background: var(--color-accent-ghost, #f8f7f4); }
+	.error-row td { padding: 4px 14px 8px; }
 </style>

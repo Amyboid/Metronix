@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { adminNav, getBreadcrumbs, getParentView, type AdminView } from '$lib/stores/adminNav';
+	import { adminNav, getBreadcrumbs, getParentView } from '$lib/stores/adminNav';
 
 	$: crumbs = getBreadcrumbs($adminNav);
 	$: parentView = getParentView($adminNav);
 </script>
 
-<div class="breadcrumb-bar">
+<div class="flex items-center gap-3 px-6 py-2.5 min-h-[44px] border-b border-subtle bg-neutral">
 	{#if parentView}
 		<button
-			class="back-btn"
+			class="flex items-center gap-1.5 bg-transparent border-none cursor-pointer font-inter text-[0.8125rem] font-medium text-copy px-2 py-1 rounded-md transition-colors hover:bg-surface hover:text-[#1a1a1a] whitespace-nowrap"
 			on:click={() => parentView && adminNav.navigate(parentView)}
 			aria-label="Go back"
 		>
@@ -17,103 +17,22 @@
 			</svg>
 			<span>Back</span>
 		</button>
-		<span class="divider" aria-hidden="true"></span>
+		<span class="w-px h-4 bg-subtle shrink-0" aria-hidden="true"></span>
 	{/if}
 
-	<nav class="crumbs" aria-label="Breadcrumb">
+	<nav class="flex items-center gap-1.5 flex-wrap" aria-label="Breadcrumb">
 		{#each crumbs as crumb, i}
 			{#if i > 0}
-				<span class="sep" aria-hidden="true">/</span>
+				<span class="text-copy-light text-[0.8125rem] select-none" aria-hidden="true">/</span>
 			{/if}
 			{#if crumb.view}
 				<button
-					class="crumb crumb-link"
+					class="font-inter text-[0.8125rem] bg-transparent border-none cursor-pointer p-0 text-primary font-medium underline underline-offset-2 decoration-transparent transition-[text-decoration-color] hover:decoration-primary"
 					on:click={() => crumb.view && adminNav.navigate(crumb.view)}
 				>{crumb.label}</button>
 			{:else}
-				<span class="crumb crumb-current" aria-current="page">{crumb.label}</span>
+				<span class="font-inter text-[0.8125rem] text-copy font-semibold" aria-current="page">{crumb.label}</span>
 			{/if}
 		{/each}
 	</nav>
 </div>
-
-<style>
-	.breadcrumb-bar {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		padding: 10px 24px;
-		border-bottom: 1px solid var(--color-subtle);
-		background: var(--color-neutral);
-		min-height: 44px;
-	}
-
-	.back-btn {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-inter), sans-serif;
-		font-size: 0.8125rem;
-		font-weight: 500;
-		color: var(--color-copy);
-		padding: 4px 8px;
-		border-radius: 6px;
-		transition: background 0.15s, color 0.15s;
-		white-space: nowrap;
-	}
-
-	.back-btn:hover {
-		background: var(--color-surface);
-		color: #1a1a1a;
-	}
-
-	.divider {
-		width: 1px;
-		height: 16px;
-		background: var(--color-subtle);
-		flex-shrink: 0;
-	}
-
-	.crumbs {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		flex-wrap: wrap;
-	}
-
-	.sep {
-		color: var(--color-copy-light);
-		font-size: 0.8125rem;
-		user-select: none;
-	}
-
-	.crumb {
-		font-family: var(--font-inter), sans-serif;
-		font-size: 0.8125rem;
-	}
-
-	.crumb-link {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0;
-		color: var(--color-primary);
-		font-weight: 500;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-		text-decoration-color: transparent;
-		transition: text-decoration-color 0.15s;
-	}
-
-	.crumb-link:hover {
-		text-decoration-color: var(--color-primary);
-	}
-
-	.crumb-current {
-		color: var(--color-copy);
-		font-weight: 600;
-	}
-</style>

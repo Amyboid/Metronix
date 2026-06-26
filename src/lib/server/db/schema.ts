@@ -106,6 +106,7 @@ export const categories = pgTable("categories", {
   bannerPath: text("banner_path"),
   bannerMsg: text("banner_msg"),
   bannerFileId: text("banner_file_id"),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 });
 
 export const productTypes = pgTable("product_types", {
@@ -114,6 +115,7 @@ export const productTypes = pgTable("product_types", {
   bannerPath: text("banner_path"),
   bannerMsg: text("banner_msg"),
   bannerFileId: text("banner_file_id"),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 });
 
 // --- 2. BRANDS TABLE ---
@@ -123,6 +125,7 @@ export const brands = pgTable("brands", {
   name: text("name").notNull(),             // e.g. "Samsung", "LG"
   logoPath: text("logo_path"),                  // e.g. "brand-logo/samsung"
   logoFileId: text("logo_file_id"),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 });
 
 // --- 3. MASTER PRODUCT TABLE ---

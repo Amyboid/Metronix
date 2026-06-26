@@ -76,8 +76,6 @@ export async function uploadToIK(
     }
 
     const data = await res.json();
-    console.log("data from imagekit: ", data);
-    
 
     // IK returns filePath with a leading slash — strip it for clean storage
     const filePath = (data.filePath as string).replace(/^\//, '');

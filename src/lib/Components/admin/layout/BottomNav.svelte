@@ -48,74 +48,17 @@
 	$: currentTab = $adminNav.tab;
 </script>
 
-<nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+<nav class="fixed bottom-0 left-0 right-0 h-nav bg-neutral border-t border-subtle flex items-stretch z-[100] px-1 pb-[env(safe-area-inset-bottom,0)]" role="navigation" aria-label="Main navigation">
 	{#each tabs as tab}
 		<button
-			class="bottom-tab"
-			class:active={currentTab === tab.id}
+			class="flex-1 flex flex-col items-center justify-center gap-[3px] bg-transparent border-none cursor-pointer text-copy-light px-[2px] py-1 rounded-lg transition-colors font-inter -webkit-tap-highlight-color:transparent active:bg-surface"
+			class:text-primary={currentTab === tab.id}
 			on:click={() => adminNav.navigate(tab.defaultView)}
 			aria-current={currentTab === tab.id ? 'page' : undefined}
 			aria-label={tab.label}
 		>
-			<span class="tab-icon">{@html tab.icon}</span>
-			<span class="tab-label">{tab.label}</span>
+			<span class="flex items-center justify-center">{@html tab.icon}</span>
+			<span class="text-[0.6rem] font-medium tracking-[0.02em] whitespace-nowrap">{tab.label}</span>
 		</button>
 	{/each}
 </nav>
-
-<style>
-	.bottom-nav {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		height: var(--spacing-nav);
-		background: var(--color-neutral);
-		border-top: 1px solid var(--color-subtle);
-		display: flex;
-		align-items: stretch;
-		z-index: 100;
-		padding: 0 4px;
-		/* safe area for iOS */
-		padding-bottom: env(safe-area-inset-bottom, 0);
-	}
-
-	.bottom-tab {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 3px;
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: var(--color-copy-light);
-		padding: 4px 2px;
-		border-radius: 8px;
-		transition: color 0.15s, background 0.15s;
-		font-family: var(--font-inter), sans-serif;
-		-webkit-tap-highlight-color: transparent;
-	}
-
-	.bottom-tab:active {
-		background: var(--color-surface);
-	}
-
-	.bottom-tab.active {
-		color: var(--color-primary);
-	}
-
-	.tab-icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.tab-label {
-		font-size: 0.6rem;
-		font-weight: 500;
-		letter-spacing: 0.02em;
-		white-space: nowrap;
-	}
-</style>

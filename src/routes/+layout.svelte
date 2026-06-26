@@ -2,6 +2,7 @@
 	import '../app.css';
 	import Nav from '$lib/Components/Nav.svelte';
 	import Footer from '$lib/Components/Footer.svelte';
+	import { page } from '$app/state';
 	let navLinks = [
 		{ name: 'Admin', link: '/admin' },
 		{ name: 'Home', link: '/' },
@@ -11,22 +12,18 @@
 	let { children, data } = $props();
 
 	const user = $derived(data.user);
-	const adminProfile = $derived(user);
-
-
-
-
+	const isAdmin = $derived(page.url.pathname.startsWith('/admin'));
 </script>
 
-{#if !user}
-	<Nav {navLinks} adminProfile={null} />
-{:else}
-	<Nav navLinks={null} {adminProfile}/>
+{#if !user && !isAdmin}
+	<Nav {navLinks} />
 {/if}
 
 <main
 	class="scroll-smooth relative flex min-h-[100vh] w-full flex-col items-center bg-neutral"
 >
 	{@render children()}
-	<Footer />
-</main> 
+	{#if !isAdmin}
+		<Footer />
+	{/if}
+</main>

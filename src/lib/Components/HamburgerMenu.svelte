@@ -1,10 +1,8 @@
 <script>
 	import { getContext } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import LogoutButton from './LogoutButton.svelte';
-	let text = $state(null);
 	let hamburger = getContext('hamburger');
-	let { navLinks, adminProfile } = $props();
+	let { navLinks } = $props();
 
 	function handleHamburger() {
 		hamburger.show = !hamburger.show;
@@ -22,32 +20,22 @@
 		class="hamburger-menu bg-surface absolute top-1 sm:top-2 right-0 flex w-48 flex-col items-center gap-5 pt-14 sm:w-60 sm:gap-4 sm:pt-16"
 	>
 		<div class="relative flex flex-col items-center gap-5 pb-14">
-			{#if navLinks}
-				{#each navLinks as link}
-					<a
-						data-sveltekit-reload
-						onclick={handleHamburger}
-						class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest"
-						href={link.link}>{link.name}</a
-					>
-				{/each}
-				<button aria-label="contact" class="flex w-full items-center justify-center gap-3 p-2">
-					<a
-						data-sveltekit-reload
-						onclick={handleHamburger}
-						href="/contact"
-						class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest">Contact Us</a
-					>
-				</button>
-			{:else}
-				<span class="text-sm text-copy">Role: {adminProfile.role}</span>
-				<h1 class="capitalize">
-					{adminProfile.username}
-				</h1>
-				<div class="bg-neutral w-full rounded-lg p-1 px-3">
-					<LogoutButton />
-				</div>
-			{/if}
+			{#each navLinks as link}
+				<a
+					data-sveltekit-reload
+					onclick={handleHamburger}
+					class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest"
+					href={link.link}>{link.name}</a
+				>
+			{/each}
+			<button aria-label="contact" class="flex w-full items-center justify-center gap-3 p-2">
+				<a
+					data-sveltekit-reload
+					onclick={handleHamburger}
+					href="/contact"
+					class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest">Contact Us</a
+				>
+			</button>
 		</div>
 	</div>
 </div>

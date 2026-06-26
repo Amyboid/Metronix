@@ -1,5 +1,9 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import { adminNav, type AdminView } from '$lib/stores/adminNav';
+
+	export let collapsed = false;
+	const dispatch = createEventDispatcher();
 
 	const tabs: {
 		id: AdminView['tab'];
@@ -48,8 +52,11 @@
 	$: currentTab = $adminNav.tab;
 </script>
 
-<nav class="left-nav">
-	<ul>
+<nav
+	class="left-nav"
+	class:collapsed
+>
+	<ul class="nav-list">
 		{#each tabs as tab}
 			<li>
 				<button
@@ -57,13 +64,25 @@
 					class:active={currentTab === tab.id}
 					on:click={() => adminNav.navigate(tab.defaultView)}
 					aria-current={currentTab === tab.id ? 'page' : undefined}
+					title={collapsed ? tab.label : undefined}
 				>
-					<span class="nav-icon">{@html tab.icon}</span>
-					<span class="nav-label">{tab.label}</span>
+					<span class="shrink-0 opacity-75 nav-icon">{@html tab.icon}</span>
+					{#if !collapsed}
+						<span class="tracking-[0.01em]">{tab.label}</span>
+					{/if}
 				</button>
 			</li>
 		{/each}
 	</ul>
+
+	<div class="px-3 py-2 border-t border-subtle shrink-0">
+		<button class="flex items-center justify-center w-9 h-9 mx-auto bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" on:click={() => dispatch('toggle')} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class:rotated={collapsed}>
+				<polyline points="11 17 6 12 11 7"/>
+				<polyline points="18 17 13 12 18 7"/>
+			</svg>
+		</button>
+	</div>
 </nav>
 
 <style>
@@ -71,19 +90,22 @@
 		width: 220px;
 		min-width: 220px;
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 		background: var(--color-neutral);
 		border-right: 1px solid var(--color-subtle);
-		padding: 12px 0;
-		overflow-y: auto;
+		transition: width 0.2s ease, min-width 0.2s ease;
 	}
+	.left-nav.collapsed { width: 60px; min-width: 60px; }
 
-	ul {
+	.nav-list {
 		list-style: none;
 		margin: 0;
-		padding: 0;
+		padding: 8px 0;
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		flex: 1;
 	}
 
 	.nav-item {
@@ -101,37 +123,15 @@
 		font-size: 0.875rem;
 		font-weight: 500;
 		color: var(--color-copy);
-		transition:
-			background 0.15s,
-			color 0.15s,
-			border-color 0.15s;
+		transition: background 0.15s, color 0.15s, border-color 0.15s;
 		border-radius: 0 6px 6px 0;
+		overflow: hidden;
+		white-space: nowrap;
 	}
+	.collapsed .nav-item { justify-content: center; padding: 10px 0; }
+	.nav-item:hover { background: var(--color-surface-hover); color: #1a1a1a; }
+	.nav-item.active { border-left-color: var(--color-primary); background: var(--color-surface); color: var(--color-primary); font-weight: 600; }
+	.nav-item.active :global(.nav-icon) { opacity: 1; }
 
-	.nav-item:hover {
-		background: var(--color-surface-hover);
-		color: #1a1a1a;
-	}
-
-	.nav-item.active {
-		border-left-color: var(--color-primary);
-		background: var(--color-surface);
-		color: var(--color-primary);
-		font-weight: 600;
-	}
-
-	.nav-icon {
-		display: flex;
-		align-items: center;
-		flex-shrink: 0;
-		opacity: 0.75;
-	}
-
-	.nav-item.active .nav-icon {
-		opacity: 1;
-	}
-
-	.nav-label {
-		letter-spacing: 0.01em;
-	}
+	.rotated { transform: rotate(180deg); }
 </style>

@@ -29,7 +29,8 @@ CREATE TABLE "brands" (
 	"slug" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"logo_path" text,
-	"logo_file_id" text
+	"logo_file_id" text,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "categories" (
@@ -37,7 +38,8 @@ CREATE TABLE "categories" (
 	"name" text NOT NULL,
 	"banner_path" text,
 	"banner_msg" text,
-	"banner_file_id" text
+	"banner_file_id" text,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "location" (
@@ -73,7 +75,8 @@ CREATE TABLE "product_types" (
 	"name" text NOT NULL,
 	"banner_path" text,
 	"banner_msg" text,
-	"banner_file_id" text
+	"banner_file_id" text,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "product_variants" (
