@@ -22,7 +22,7 @@
 </script>
 
 <div class="flex flex-col gap-6">
-	<div class="sticky top-0 z-10 p-6 pl-0 bg-neutral">
+	<div class="sticky top-0 z-10 p-6 pl-0 pt-0 bg-neutral">
 		<div class="flex gap-1.5 bg-surface border border-subtle rounded-[10px] p-1 w-fit" role="tablist" aria-label="Catalog sections">
 			{#each pills as pill}
 				<button
@@ -37,7 +37,7 @@
 			{/each}
 		</div>
 	</div>
-	<div class="flex-1">
+	<div class="flex-1 pt-6">
 		{#if currentSection === 'categories'}
 			<CategoriesSection />
 		{:else if currentSection === 'product-types'}

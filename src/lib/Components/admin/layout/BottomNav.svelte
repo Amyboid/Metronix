@@ -11,37 +11,37 @@
 			id: 'overview',
 			label: 'Overview',
 			defaultView: { tab: 'overview' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`
+			icon: `<span class="icon-[lucide--layout-grid] w-5 h-5"></span>`
 		},
 		{
 			id: 'products',
 			label: 'Products',
 			defaultView: { tab: 'products', view: 'list' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`
+			icon: `<span class="icon-[lucide--box] w-5 h-5"></span>`
 		},
 		{
 			id: 'pages',
 			label: 'Pages',
 			defaultView: { tab: 'pages', view: 'list' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
+			icon: `<span class="icon-[lucide--file-text] w-5 h-5"></span>`
 		},
 		{
 			id: 'catalog',
 			label: 'Catalog',
 			defaultView: { tab: 'catalog', section: 'categories' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`
+			icon: `<span class="icon-[lucide--list] w-5 h-5"></span>`
 		},
 		{
 			id: 'locations',
 			label: 'Locations',
 			defaultView: { tab: 'locations', view: 'list' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`
+			icon: `<span class="icon-[lucide--map-pin] w-5 h-5"></span>`
 		},
 		{
 			id: 'settings',
 			label: 'Settings',
 			defaultView: { tab: 'settings', section: 'store' },
-			icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`
+			icon: `<span class="icon-[lucide--settings] w-5 h-5"></span>`
 		}
 	];
 

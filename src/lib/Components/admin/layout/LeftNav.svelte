@@ -13,37 +13,37 @@
 			id: 'overview',
 			label: 'Overview',
 			defaultView: { tab: 'overview' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`
+			icon: `<span class="icon-[lucide--layout-grid] w-[18px] h-[18px]"></span>`
 		},
 		{
 			id: 'products',
 			label: 'Products',
 			defaultView: { tab: 'products', view: 'list' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>`
+			icon: `<span class="icon-[lucide--box] w-[18px] h-[18px]"></span>`
 		},
 		{
 			id: 'pages',
 			label: 'Pages',
 			defaultView: { tab: 'pages', view: 'list' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+			icon: `<span class="icon-[lucide--file-text] w-[18px] h-[18px]"></span>`
 		},
 		{
 			id: 'catalog',
 			label: 'Catalog',
 			defaultView: { tab: 'catalog', section: 'categories' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`
+			icon: `<span class="icon-[lucide--list] w-[18px] h-[18px]"></span>`
 		},
 		{
 			id: 'locations',
 			label: 'Locations',
 			defaultView: { tab: 'locations', view: 'list' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`
+			icon: `<span class="icon-[lucide--map-pin] w-[18px] h-[18px]"></span>`
 		},
 		{
 			id: 'settings',
 			label: 'Settings',
 			defaultView: { tab: 'settings', section: 'store' },
-			icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>`
+			icon: `<span class="icon-[lucide--settings] w-[18px] h-[18px]"></span>`
 		}
 	];
 
@@ -75,10 +75,7 @@
 
 	<div class="flex justify-end px-3 py-2 border-t border-subtle shrink-0">
 		<button class="flex items-center justify-center w-9 h-9 bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" onclick={onToggle} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class:rotated={collapsed}>
-				<polyline points="11 17 6 12 11 7"/>
-				<polyline points="18 17 13 12 18 7"/>
-			</svg>
+			<span class="icon-[lucide--chevrons-left] w-5 h-5" class:rotated={collapsed}></span>
 		</button>
 	</div>
 </nav>

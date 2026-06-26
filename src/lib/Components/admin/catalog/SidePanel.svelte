@@ -24,9 +24,7 @@
 			<div class="flex items-center justify-between px-6 h-[var(--spacing-nav)] min-h-[var(--spacing-nav)] border-b border-subtle shrink-0">
 				<h2 class="text-[15px] font-bold text-[#1a1a1a] m-0">{title}</h2>
 				<button class="flex items-center justify-center w-8 h-8 rounded-md border border-subtle bg-transparent cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy" onclick={ondiscard} aria-label="Close">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-					</svg>
+				<span class="icon-[lucide--x] w-4 h-4"></span>
 				</button>
 			</div>
 

@@ -8,8 +8,9 @@
 	// Replace these with actual imports as you build each section
 	import OverviewTab from '$lib/Components/admin/overview/OverviewTab.svelte';
 	import CatalogTab from '$lib/Components/admin/catalog/CatalogTab.svelte';
+	import LocationsTab from '$lib/Components/admin/locations/LocationsTab.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 
 	onMount(() => {
 		// Sync store from current URL on first load
@@ -32,7 +33,7 @@
 		return () => window.removeEventListener('popstate', onPopState);
 	});
 
-	$: currentView = $adminNav;
+	const currentView = $derived($adminNav);
 </script>
 
 <svelte:head>
@@ -70,16 +71,7 @@
 		<CatalogTab />
 
 	{:else if currentView.tab === 'locations'}
-		<div class="placeholder">
-			<h2>Locations</h2>
-			{#if currentView.view === 'list'}
-				<p>Locations list — build <code>LocationList.svelte</code></p>
-			{:else if currentView.view === 'new'}
-				<p>New location form — build <code>LocationForm.svelte</code></p>
-			{:else}
-				<p>Update location <strong>{currentView.id}</strong> — build <code>LocationForm.svelte</code></p>
-			{/if}
-		</div>
+		<LocationsTab />
 
 	{:else if currentView.tab === 'settings'}
 		<div class="placeholder">

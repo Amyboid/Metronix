@@ -239,7 +239,7 @@
 				<label class="inline-flex items-center gap-[5px] font-inter text-xs font-semibold py-1.5 px-3 rounded-md border border-subtle bg-neutral text-copy cursor-pointer whitespace-nowrap transition-colors hover:bg-canvas hover:border-subtle-hover" class:opacity-60={formUploading}>
 					{#if formUploading}<span class="inline-block w-2.5 h-2.5 border-2 border-subtle border-t-primary rounded-full animate-[spin_0.7s_linear_infinite]"></span> Uploading…
 					{:else}
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+						<span class="icon-[lucide--upload] w-3 h-3"></span>
 						{formPending ? 'Replace Logo' : 'Upload Logo'}
 					{/if}
 					<input type="file" accept="image/*" class="hidden" onchange={handleUpload} disabled={formUploading} />
@@ -298,12 +298,12 @@
 				<td class="py-2 px-3.5 text-copy border-b border-subtle">{item.name}</td>
 				<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
 					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1 hover:bg-surface hover:border-subtle-hover" onclick={() => openEdit(item)} title="Edit" aria-label="Edit">
-						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-					</button>
-					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1 hover:bg-[#fef2f2] hover:border-[#fca5a5]" onclick={() => startDelete(item)} disabled={deletingSlug === item.slug} title="Delete">
-						{#if deletingSlug === item.slug}…{:else}
-							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-						{/if}
+					<span class="icon-[lucide--pencil] w-3 h-3"></span>
+				</button>
+				<button class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1 hover:bg-[#fef2f2] hover:border-[#fca5a5]" onclick={() => startDelete(item)} disabled={deletingSlug === item.slug} title="Delete">
+					{#if deletingSlug === item.slug}…{:else}
+						<span class="icon-[lucide--trash-2] w-3 h-3"></span>
+					{/if}
 					</button>
 				</td>
 			</tr>

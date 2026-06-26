@@ -33,11 +33,7 @@
 				<span class="truncate max-w-[200px] text-[0.8125rem] text-copy-light">{adminEmail}</span>
 			{/if}
 			<button class="logout-btn" onclick={handleSignOut} aria-label="Sign out">
-				<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-					<polyline points="16 17 21 12 16 7"/>
-					<line x1="21" y1="12" x2="9" y2="12"/>
-				</svg>
+				<span class="icon-[lucide--log-out] w-4 h-4"></span>
 				<span class="logout-label">Sign out</span>
 			</button>
 		</div>
@@ -50,7 +46,7 @@
 
 		<div class="content-col" class:collapsed>
 			<Breadcrumb />
-			<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 pt-0">
+			<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
 				{@render children?.()}
 			</main>
 		</div>

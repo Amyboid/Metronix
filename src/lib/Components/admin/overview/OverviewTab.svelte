@@ -52,7 +52,7 @@
 
 	{#if error}
 		<div class="flex items-center gap-2 bg-[#fef2f2] border border-[#fecaca] text-danger rounded-lg px-3.5 py-2.5 text-[0.8125rem] font-medium">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+			<span class="icon-[lucide--circle-alert] w-4 h-4"></span>
 			{error}
 		</div>
 	{/if}
@@ -126,10 +126,7 @@
 					{#each data.locations.stores as store}
 						<li class="flex items-start gap-2">
 							<span class="shrink-0 mt-0.5 text-copy-light">
-								<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-									<circle cx="12" cy="10" r="3"/>
-								</svg>
+								<span class="icon-[lucide--map-pin] w-3.5 h-3.5"></span>
 							</span>
 							<span class="flex flex-col gap-[1px]">
 								<span class="text-[0.8125rem] font-semibold text-[#1a1a1a]">{store.storeName}</span>
