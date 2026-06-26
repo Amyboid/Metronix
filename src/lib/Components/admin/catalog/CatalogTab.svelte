@@ -22,18 +22,20 @@
 </script>
 
 <div class="flex flex-col gap-6">
-	<div class="flex gap-1.5 bg-surface border border-subtle rounded-[10px] p-1 w-fit" role="tablist" aria-label="Catalog sections">
-		{#each pills as pill}
-			<button
-				role="tab"
-				aria-selected={currentSection === pill.id}
-				class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none bg-transparent text-copy cursor-pointer transition-colors whitespace-nowrap"
-				class:active-pill={currentSection === pill.id}
-				onclick={() => setSection(pill.id)}
-			>
-				{pill.label}
-			</button>
-		{/each}
+	<div class="sticky top-0 z-10 p-6 pl-0 bg-neutral">
+		<div class="flex gap-1.5 bg-surface border border-subtle rounded-[10px] p-1 w-fit" role="tablist" aria-label="Catalog sections">
+			{#each pills as pill}
+				<button
+					role="tab"
+					aria-selected={currentSection === pill.id}
+					class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none bg-transparent text-copy cursor-pointer transition-colors whitespace-nowrap"
+					class:active-pill={currentSection === pill.id}
+					onclick={() => setSection(pill.id)}
+				>
+					{pill.label}
+				</button>
+			{/each}
+		</div>
 	</div>
 	<div class="flex-1">
 		{#if currentSection === 'categories'}

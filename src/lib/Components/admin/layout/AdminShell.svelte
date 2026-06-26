@@ -4,7 +4,7 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import { onMount } from 'svelte';
 
-	const { adminEmail = '', storeName = 'Admin Panel' } = $props();
+	const { adminEmail = '', storeName = 'Admin Panel', children } = $props<{ adminEmail?: string; storeName?: string; children?: any }>();
 
 	let collapsed = $state(false);
 
@@ -50,8 +50,8 @@
 
 		<div class="content-col" class:collapsed>
 			<Breadcrumb />
-			<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
-				<slot />
+			<main class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6 pt-0">
+				{@render children?.()}
 			</main>
 		</div>
 	</div>
