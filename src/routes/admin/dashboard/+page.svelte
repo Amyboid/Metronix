@@ -9,6 +9,7 @@
 	import OverviewTab from '$lib/Components/admin/overview/OverviewTab.svelte';
 	import CatalogTab from '$lib/Components/admin/catalog/CatalogTab.svelte';
 	import LocationsTab from '$lib/Components/admin/locations/LocationsTab.svelte';
+	import SettingsTab from '$lib/Components/admin/settings/SettingsTab.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -74,10 +75,7 @@
 		<LocationsTab />
 
 	{:else if currentView.tab === 'settings'}
-		<div class="placeholder">
-			<h2>Settings — {currentView.section}</h2>
-			<p>Build <code>SettingsTab.svelte</code></p>
-		</div>
+		<SettingsTab user={data.user} />
 	{/if}
 </AdminShell>
 
