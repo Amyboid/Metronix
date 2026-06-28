@@ -9,6 +9,7 @@
 	import OverviewTab from '$lib/Components/admin/overview/OverviewTab.svelte';
 	import CatalogTab from '$lib/Components/admin/catalog/CatalogTab.svelte';
 	import LocationsTab from '$lib/Components/admin/locations/LocationsTab.svelte';
+	import PagesTab from '$lib/Components/admin/pages/PagesTab.svelte';
 	import SettingsTab from '$lib/Components/admin/settings/SettingsTab.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -59,14 +60,7 @@
 		</div>
 
 	{:else if currentView.tab === 'pages'}
-		<div class="placeholder">
-			<h2>Pages</h2>
-			{#if currentView.view === 'list'}
-				<p>Pages list — build <code>PagesList.svelte</code></p>
-			{:else}
-				<p>Edit page <strong>{currentView.pageName}</strong> — build <code>PageEditor.svelte</code></p>
-			{/if}
-		</div>
+		<PagesTab />
 
 	{:else if currentView.tab === 'catalog'}
 		<CatalogTab />

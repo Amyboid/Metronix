@@ -53,12 +53,16 @@
 </script>
 
 <div bind:this={container} class="min-h-25 w-full">
-	{#if sectionData}
+	{#if sectionBlueprint.isActive === false}
+		<!-- Section disabled — render nothing -->
+	{:else if sectionData}
 		{#if sectionBlueprint.templateSlug === 'product-slider'}
 			<ProductSlider
 				heading={sectionData.config.heading ?? 'Default Title'}
 				products={sectionData.data ?? []}
-				ctaLink={sectionData.config.ctaLink ?? '/'}
+				ctaText={sectionData.config.ctaText ?? ''}
+				filterType={sectionData.config.filterType ?? ''}
+				filterValue={sectionData.config.filterValue ?? sectionData.config.categorySlug ?? ''}
 			/>
 			<!-- {:else if sectionBlueprint.templateSlug === 'long-banner'}
             <LongBanner 

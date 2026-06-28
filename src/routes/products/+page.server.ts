@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { pageSections } from '$lib/server/db/schema';
 import { error } from '@sveltejs/kit';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, and } from 'drizzle-orm';
 
 export async function load({ setHeaders }) {
     // 1. Set Caching: 
@@ -16,7 +16,7 @@ export async function load({ setHeaders }) {
     try {
         // 2. The Streaming Promise
         const layoutPromise = db.query.pageSections.findMany({
-            where: eq(pageSections.pageName, 'products_home'),
+            where: and(eq(pageSections.pageName, 'products_home'), eq(pageSections.isActive, true)),
             orderBy: [asc(pageSections.order)]
         }).catch(err => {
             // Internal error handling for the stream

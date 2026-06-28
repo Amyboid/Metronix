@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
         priority:     pageSections.priority,
         dataSource:   pageSections.dataSource,
         config:       pageSections.config,
-        // isActive added via migration — include when schema is updated
+        isActive:     pageSections.isActive,
     })
         .from(pageSections)
         .where(eq(pageSections.pageName, pageName))

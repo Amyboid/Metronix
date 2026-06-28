@@ -22,6 +22,11 @@ export const GET = async ({ url, setHeaders }) => {
 
         if (!section) return json({ error: 'Not found' }, { status: 404 });
 
+        // Don't serve data for disabled sections
+        if (section.isActive === false) {
+            return json({ config: section.config, data: [] });
+        }
+
         // Dynamic Lookup: Find the right fetcher based on templateSlug
         const fetcher = sectionFetchers[section.templateSlug as keyof typeof sectionFetchers];
 
