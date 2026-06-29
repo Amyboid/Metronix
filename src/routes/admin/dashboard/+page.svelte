@@ -10,6 +10,7 @@
 	import CatalogTab from '$lib/Components/admin/catalog/CatalogTab.svelte';
 	import LocationsTab from '$lib/Components/admin/locations/LocationsTab.svelte';
 	import PagesTab from '$lib/Components/admin/pages/PagesTab.svelte';
+	import ProductList from '$lib/Components/admin/products/ProductList.svelte';
 	import SettingsTab from '$lib/Components/admin/settings/SettingsTab.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -47,17 +48,19 @@
 		<OverviewTab user={data.user} />
 
 	{:else if currentView.tab === 'products'}
-		<!-- Placeholder until ProductList / ProductWizard are built -->
-		<div class="placeholder">
-			<h2>Products</h2>
-			{#if currentView.view === 'list'}
-				<p>Product list view — build <code>ProductList.svelte</code></p>
-			{:else if currentView.view === 'new'}
-				<p>New product wizard — build <code>ProductWizard.svelte</code></p>
-			{:else}
+		{#if currentView.view === 'list'}
+			<ProductList />
+		{:else if currentView.view === 'new'}
+			<div class="placeholder">
+				<h2>New Product</h2>
+				<p>Product wizard — build <code>ProductWizard.svelte</code></p>
+			</div>
+		{:else}
+			<div class="placeholder">
+				<h2>Update Product</h2>
 				<p>Update product <strong>{currentView.slug}</strong> — build <code>ProductWizard.svelte</code></p>
-			{/if}
-		</div>
+			</div>
+		{/if}
 
 	{:else if currentView.tab === 'pages'}
 		<PagesTab />
