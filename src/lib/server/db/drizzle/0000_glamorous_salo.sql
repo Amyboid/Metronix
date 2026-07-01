@@ -73,6 +73,7 @@ CREATE TABLE "product_availability" (
 CREATE TABLE "product_types" (
 	"slug" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"category_slug" text NOT NULL,
 	"banner_path" text,
 	"banner_msg" text,
 	"banner_file_id" text,
@@ -85,7 +86,9 @@ CREATE TABLE "product_variants" (
 	"color_name" text NOT NULL,
 	"hex" text NOT NULL,
 	"main_image_path" text NOT NULL,
-	"gallery_paths" jsonb DEFAULT '[]'::jsonb
+	"main_file_id" text,
+	"gallery_paths" jsonb DEFAULT '[]'::jsonb,
+	"gallery_file_ids" jsonb DEFAULT '[]'::jsonb
 );
 --> statement-breakpoint
 CREATE TABLE "product" (
@@ -107,7 +110,9 @@ CREATE TABLE "product" (
 	"main_image_path" text NOT NULL,
 	"gallery_paths" jsonb,
 	"hero_desktop_path" text,
+	"hero_desktop_file_id" text,
 	"hero_mobile_path" text,
+	"hero_mobile_file_id" text,
 	"specifications" jsonb NOT NULL,
 	"in_the_box" jsonb NOT NULL,
 	"offers" jsonb,
@@ -141,6 +146,15 @@ CREATE TABLE "settings" (
 	"value" text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "tags" (
+	"id" text PRIMARY KEY NOT NULL,
+	"type" text NOT NULL,
+	"value" text NOT NULL,
+	"label" text NOT NULL,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL,
+	CONSTRAINT "tags_value_unique" UNIQUE("value")
+);
+--> statement-breakpoint
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -169,6 +183,7 @@ ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("
 ALTER TABLE "page_section" ADD CONSTRAINT "page_section_template_slug_section_template_slug_fk" FOREIGN KEY ("template_slug") REFERENCES "public"."section_template"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_availability" ADD CONSTRAINT "product_availability_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_availability" ADD CONSTRAINT "product_availability_location_id_location_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."location"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_types" ADD CONSTRAINT "product_types_category_slug_categories_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."categories"("slug") ON DELETE restrict ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_category_slug_categories_slug_fk" FOREIGN KEY ("category_slug") REFERENCES "public"."categories"("slug") ON DELETE restrict ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "product" ADD CONSTRAINT "product_brand_brands_slug_fk" FOREIGN KEY ("brand") REFERENCES "public"."brands"("slug") ON DELETE restrict ON UPDATE cascade;--> statement-breakpoint

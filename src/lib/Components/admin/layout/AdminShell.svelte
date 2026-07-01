@@ -46,7 +46,7 @@
 
 		<div class="content-col" class:collapsed>
 			<Breadcrumb />
-			<main class="flex-1 min-h-0 overflow-hidden flex flex-col">
+			<main class="flex-1 min-h-0 overflow-y-auto flex flex-col">
 				{@render children?.()}
 			</main>
 		</div>

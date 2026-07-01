@@ -1,5 +1,5 @@
 {
-  "id": "2b9339f2-917a-45ad-9fb1-536de2c1c9ce",
+  "id": "2ac786f1-4c05-4fd4-952b-9faba6415042",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -580,6 +580,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "category_slug": {
+          "name": "category_slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "banner_path": {
           "name": "banner_path",
           "type": "text",
@@ -607,7 +613,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "product_types_category_slug_categories_slug_fk": {
+          "name": "product_types_category_slug_categories_slug_fk",
+          "tableFrom": "product_types",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category_slug"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -648,8 +668,21 @@
           "primaryKey": false,
           "notNull": true
         },
+        "main_file_id": {
+          "name": "main_file_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "gallery_paths": {
           "name": "gallery_paths",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::jsonb"
+        },
+        "gallery_file_ids": {
+          "name": "gallery_file_ids",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": false,
@@ -794,8 +827,20 @@
           "primaryKey": false,
           "notNull": false
         },
+        "hero_desktop_file_id": {
+          "name": "hero_desktop_file_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "hero_mobile_path": {
           "name": "hero_mobile_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "hero_mobile_file_id": {
+          "name": "hero_mobile_file_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -1129,6 +1174,58 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tags": {
+      "name": "tags",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tags_value_unique": {
+          "name": "tags_value_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "value"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

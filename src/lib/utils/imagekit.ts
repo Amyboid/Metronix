@@ -52,35 +52,46 @@ export async function uploadToIK(
     file: File,
     folder: string,
     fileName?: string,
+    retries = 2,
 ): Promise<IKUploadResult> {
-    // Fresh token every time — never reuse
-    const auth = await getIKAuth();
+    let lastError: Error | null = null;
 
-    const form = new FormData();
-    form.append('file',      file);
-    form.append('fileName',  fileName ?? file.name);
-    form.append('folder',    folder);
-    form.append('publicKey', auth.publicKey);
-    form.append('signature', auth.signature);
-    form.append('expire',    String(auth.expire));
-    form.append('token',     auth.token);
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            // Fresh token every time — never reuse
+            const auth = await getIKAuth();
 
-    const res = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
-        method: 'POST',
-        body:   form,
-    });
+            const form = new FormData();
+            form.append('file',      file);
+            form.append('fileName',  fileName ?? file.name);
+            form.append('folder',    folder);
+            form.append('publicKey', auth.publicKey);
+            form.append('signature', auth.signature);
+            form.append('expire',    String(auth.expire));
+            form.append('token',     auth.token);
 
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.message ?? 'ImageKit upload failed');
+            const res = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                method: 'POST',
+                body:   form,
+            });
+
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                throw new Error(body.message ?? 'ImageKit upload failed');
+            }
+
+            const data = await res.json();
+            const filePath = (data.filePath as string).replace(/^\//, '');
+            return { fileId: data.fileId, filePath, url: data.url };
+        } catch (e: any) {
+            lastError = e;
+            if (attempt < retries) {
+                await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+            }
+        }
     }
 
-    const data = await res.json();
-
-    // IK returns filePath with a leading slash — strip it for clean storage
-    const filePath = (data.filePath as string).replace(/^\//, '');
-
-    return { fileId: data.fileId, filePath, url: data.url };
+    throw lastError ?? new Error('ImageKit upload failed');
 }
 
 /**

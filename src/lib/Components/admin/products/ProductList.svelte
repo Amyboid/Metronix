@@ -374,7 +374,14 @@
 					</thead>
 					<tbody class="z-10">
 						{#each items as product (product.id)}
-							<tr class="hover:bg-surface/50 transition-colors">
+							<tr
+								class="hover:bg-surface/50 cursor-pointer transition-colors"
+								onclick={(e) => {
+									const target = e.target as HTMLElement;
+									if (target.tagName === 'INPUT' || target.closest('button') || target.closest('label')) return;
+									adminNav.navigate({ tab: 'products', view: 'update', slug: product.slug });
+								}}
+							>
 								<td class="border-subtle w-10 border px-3 py-2"
 									><input
 										type="checkbox"

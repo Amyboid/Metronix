@@ -112,6 +112,9 @@ export const categories = pgTable("categories", {
 export const productTypes = pgTable("product_types", {
   slug: text("slug").primaryKey(),
   name: text("name").notNull(),
+  categorySlug: text("category_slug")
+    .notNull()
+    .references(() => categories.slug, { onDelete: "restrict", onUpdate: "cascade" }),
   bannerPath: text("banner_path"),
   bannerMsg: text("banner_msg"),
   bannerFileId: text("banner_file_id"),
@@ -164,7 +167,9 @@ export const products = pgTable("product", {
   mainImagePath: text("main_image_path").notNull(),
   galleryPaths: jsonb("gallery_paths").$type<string[]>(),
   heroDesktopPath: text("hero_desktop_path"),
+  heroDesktopFileId: text("hero_desktop_file_id"),
   heroMobilePath: text("hero_mobile_path"),
+  heroMobileFileId: text("hero_mobile_file_id"),
 
   // Data Objects
   specifications: jsonb("specifications").$type<{ label: string; value: string }[]>().notNull(),
@@ -196,7 +201,9 @@ export const productVariants = pgTable("product_variants", {
   colorName: text("color_name").notNull(),
   hex: text("hex").notNull(),
   mainImagePath: text("main_image_path").notNull(),
+  mainFileId: text("main_file_id"),
   galleryPaths: jsonb("gallery_paths").$type<string[]>().default([]),
+  galleryFileIds: jsonb("gallery_file_ids").$type<string[]>().default([]),
 });
 
 // --- 5. LOGISTICS TABLES ---
@@ -281,7 +288,16 @@ export const settings = pgTable('settings', {
     key:   text('key').primaryKey(),
     value: text('value').notNull(),
 });
-// --- 9. RELATIONSHIPS ---
+// --- 9. TAGS TABLE (promotion + badge tags) ---
+export const tags = pgTable("tags", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  type: text("type").notNull(), // "promotion" | "badge"
+  value: text("value").notNull().unique(),
+  label: text("label").notNull(),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
+});
+
+// --- 10. RELATIONSHIPS ---
 
 export const brandRelations = relations(brands, ({ many }) => ({
   products: many(products),
