@@ -54,8 +54,11 @@
 	// Active filter count — read from URL (source of truth)
 	let activeFilterCount = $derived(
 		page.url.searchParams.getAll('brand').length +
+			page.url.searchParams.getAll('category').length +
+			page.url.searchParams.getAll('type').length +
 			page.url.searchParams.getAll('badge').length +
 			page.url.searchParams.getAll('stock').length +
+			page.url.searchParams.getAll('color').length +
 			(page.url.searchParams.has('minPrice') || page.url.searchParams.has('maxPrice') ? 1 : 0)
 	);
 

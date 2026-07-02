@@ -1,5 +1,5 @@
 {
-  "id": "2ac786f1-4c05-4fd4-952b-9faba6415042",
+  "id": "2904d397-e165-4146-a023-f1a344d390b4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -329,6 +329,86 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.colors": {
+      "name": "colors",
+      "schema": "",
+      "columns": {
+        "brand": {
+          "name": "brand",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_type": {
+          "name": "product_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hex": {
+          "name": "hex",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "colors_brand_brands_slug_fk": {
+          "name": "colors_brand_brands_slug_fk",
+          "tableFrom": "colors",
+          "tableTo": "brands",
+          "columnsFrom": [
+            "brand"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "colors_product_type_product_types_slug_fk": {
+          "name": "colors_product_type_product_types_slug_fk",
+          "tableFrom": "colors",
+          "tableTo": "product_types",
+          "columnsFrom": [
+            "product_type"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "colors_brand_product_type_hex_pk": {
+          "name": "colors_brand_product_type_hex_pk",
+          "columns": [
+            "brand",
+            "product_type",
+            "hex"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

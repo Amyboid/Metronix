@@ -89,10 +89,15 @@
 	}
 
 	function removeExistingGalleryImage(idx: number) {
+		const removedFileId = (variant.galleryFileIds ?? [])[idx];
 		variant.galleryPaths = variant.galleryPaths.filter((_: string, i: number) => i !== idx);
 		variant.galleryFileIds = (variant.galleryFileIds ?? []).filter(
 			(_: string, i: number) => i !== idx
 		);
+		if (removedFileId) {
+			const pending = (variant as any)._pendingRemovals ?? [];
+			(variant as any)._pendingRemovals = [...pending, removedFileId];
+		}
 		onfileschange?.(!!newMainFile, newGalleryFiles.length);
 	}
 

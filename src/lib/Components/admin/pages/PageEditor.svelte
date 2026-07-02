@@ -166,7 +166,7 @@
 	/>
 {/if}
 
-<section class="flex flex-col gap-5">
+<section class="flex flex-col gap-5 px-6 py-5">
 	<div class="flex items-start justify-between gap-3">
 		<div>
 			<button class="flex items-center gap-1.5 text-[13px] text-copy-light cursor-pointer bg-transparent border-none font-inter mb-1 hover:text-copy transition-colors" onclick={() => adminNav.navigate({ tab: 'pages', view: 'list' })}>

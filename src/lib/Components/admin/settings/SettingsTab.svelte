@@ -29,16 +29,15 @@
 	];
 </script>
 
-<div class="flex flex-col gap-6">
-	<div class="sticky top-0 z-10 bg-neutral py-1 -mx-6 px-6">
+<div class="flex flex-col gap-0">
+	<div class="border-b border-subtle bg-neutral shrink-0 px-6 py-2">
 		<div class="flex gap-1.5 bg-surface border border-subtle rounded-[10px] p-1 w-fit" role="tablist" aria-label="Settings sections">
 			{#each pills as pill}
 				{#if !pill.adminOnly || isSuperAdmin}
 					<button
 						role="tab"
 						aria-selected={currentSection === pill.id}
-						class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none bg-transparent text-copy cursor-pointer transition-colors whitespace-nowrap"
-						class:active-pill={currentSection === pill.id}
+						class="font-inter text-[0.8125rem] font-medium px-4 py-1.5 rounded-[7px] border-none cursor-pointer transition-colors whitespace-nowrap {currentSection === pill.id ? 'bg-neutral text-[#1a1a1a] shadow-[0_1px_3px_rgba(0,0,0,0.08)]' : 'bg-transparent text-copy hover:bg-surface-hover'}"
 						onclick={() => setSection(pill.id)}
 					>
 						{pill.label}
@@ -48,7 +47,7 @@
 		</div>
 	</div>
 
-	<div class="flex-1">
+	<div class="flex-1 overflow-y-auto">
 		{#if currentSection === 'store'}
 			<StoreInfoSection />
 		{:else if currentSection === 'page-size'}
@@ -65,10 +64,3 @@
 	</div>
 </div>
 
-<style>
-	.active-pill {
-		background: var(--color-neutral);
-		color: #1a1a1a;
-		box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-	}
-</style>

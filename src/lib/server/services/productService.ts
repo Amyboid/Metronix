@@ -15,8 +15,11 @@ interface SortConfig {
 
 export interface ProductFilters {
     brands?:    string[];   // e.g. ['Samsung', 'LG']
+    categories?: string[];  // e.g. ['home-appliances']
+    types?:     string[];   // e.g. ['ac', 'fridge']
     badges?:    string[];   // e.g. ['new', 'on-sale']
     stock?:     string[];   // e.g. ['in_stock']
+    colors?:    string[];   // e.g. ['#FF0000', '#000000'] — hex values to match
     minPrice?:  number;
     maxPrice?:  number;
 }
@@ -54,11 +57,30 @@ function buildFilterConditions(filters: ProductFilters) {
     if (filters.brands?.length)
         conditions.push(inArray(products.brand, filters.brands));
 
+    if (filters.categories?.length)
+        conditions.push(inArray(products.categorySlug, filters.categories));
+
+    if (filters.types?.length)
+        conditions.push(inArray(products.productType, filters.types));
+
     if (filters.badges?.length)
         conditions.push(inArray(products.badgeTag, filters.badges));
 
     if (filters.stock?.length)
         conditions.push(inArray(products.stockStatus, filters.stock));
+
+    if (filters.colors?.length) {
+        // Match products that have ANY of the selected colors in their JSONB colors array
+        // Normalize hex to uppercase for case-insensitive matching
+        const colorConditions = filters.colors.map((hex) => {
+            const normalized = hex.toUpperCase();
+            return sql`EXISTS (
+                SELECT 1 FROM jsonb_array_elements(${products.colors}) AS elem
+                WHERE UPPER(elem->>'hex') = ${normalized}
+            )`;
+        });
+        conditions.push(or(...colorConditions));
+    }
 
     if (filters.minPrice !== undefined)
         conditions.push(gte(products.price, filters.minPrice));

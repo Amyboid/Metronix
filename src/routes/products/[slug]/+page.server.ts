@@ -12,18 +12,24 @@ import { eq } from 'drizzle-orm';
 
 /** Parse filter params from URL into a ProductFilters object. */
 function parseFilters(url: URL): ProductFilters {
-    const brands   = url.searchParams.getAll('brand');
-    const badges   = url.searchParams.getAll('badge');
-    const stock    = url.searchParams.getAll('stock');
-    const minPrice = url.searchParams.get('minPrice');
-    const maxPrice = url.searchParams.get('maxPrice');
+    const brands    = url.searchParams.getAll('brand');
+    const categories = url.searchParams.getAll('category');
+    const types     = url.searchParams.getAll('type');
+    const badges    = url.searchParams.getAll('badge');
+    const stock     = url.searchParams.getAll('stock');
+    const colors    = url.searchParams.getAll('color');
+    const minPrice  = url.searchParams.get('minPrice');
+    const maxPrice  = url.searchParams.get('maxPrice');
 
     const filters: ProductFilters = {};
-    if (brands.length)         filters.brands   = brands;
-    if (badges.length)         filters.badges   = badges;
-    if (stock.length)          filters.stock    = stock;
-    if (minPrice !== null)     filters.minPrice = Number(minPrice);
-    if (maxPrice !== null)     filters.maxPrice = Number(maxPrice);
+    if (brands.length)          filters.brands    = brands;
+    if (categories.length)      filters.categories = categories;
+    if (types.length)           filters.types     = types;
+    if (badges.length)          filters.badges    = badges;
+    if (stock.length)           filters.stock     = stock;
+    if (colors.length)          filters.colors    = colors;
+    if (minPrice !== null)      filters.minPrice  = Number(minPrice);
+    if (maxPrice !== null)      filters.maxPrice  = Number(maxPrice);
     return filters;
 }
 

@@ -44,7 +44,7 @@
 	}
 </script>
 
-<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-6 px-6 py-5">
 	<header class="flex flex-col gap-0.5">
 		<h1 class="text-[1.25rem] font-bold text-[#1a1a1a] tracking-[-0.02em] m-0">Overview</h1>
 		<p class="text-[0.8125rem] text-copy-light m-0">Live snapshot · refreshes on tab mount</p>

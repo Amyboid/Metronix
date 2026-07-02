@@ -30,9 +30,9 @@
 			<thead>
 				<tr>
 					{#each columns as col}
-						<th class="py-2.5 px-3.5 text-{col.align || 'left'} text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap {col.width || ''}">{col.label}</th>
+						<th class="bg-surface text-copy-light border-b border-subtle whitespace-nowrap py-2.5 px-3.5 text-{col.align || 'left'} text-[11px] font-bold uppercase tracking-[0.06em] {col.width || ''}">{col.label}</th>
 					{/each}
-					<th class="py-2.5 px-3.5 text-right text-[11px] font-bold uppercase tracking-[0.06em] text-copy-light border-b border-subtle whitespace-nowrap">Actions</th>
+					<th class="bg-surface text-copy-light border-b border-subtle whitespace-nowrap py-2.5 px-3.5 text-right text-[11px] font-bold uppercase tracking-[0.06em]">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -45,5 +45,4 @@
 <style>
 	@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 	.shimmer { background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-canvas) 50%, var(--color-surface) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
-	table tbody tr:last-child td { border-bottom: none; }
 </style>

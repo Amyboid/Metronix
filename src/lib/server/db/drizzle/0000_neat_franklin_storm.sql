@@ -42,6 +42,15 @@ CREATE TABLE "categories" (
 	"created_at" timestamp (3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "colors" (
+	"brand" text NOT NULL,
+	"product_type" text NOT NULL,
+	"hex" text NOT NULL,
+	"name" text NOT NULL,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL,
+	CONSTRAINT "colors_brand_product_type_hex_pk" PRIMARY KEY("brand","product_type","hex")
+);
+--> statement-breakpoint
 CREATE TABLE "location" (
 	"id" text PRIMARY KEY NOT NULL,
 	"store_name" text NOT NULL,
@@ -180,6 +189,8 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "colors" ADD CONSTRAINT "colors_brand_brands_slug_fk" FOREIGN KEY ("brand") REFERENCES "public"."brands"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "colors" ADD CONSTRAINT "colors_product_type_product_types_slug_fk" FOREIGN KEY ("product_type") REFERENCES "public"."product_types"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "page_section" ADD CONSTRAINT "page_section_template_slug_section_template_slug_fk" FOREIGN KEY ("template_slug") REFERENCES "public"."section_template"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_availability" ADD CONSTRAINT "product_availability_product_id_product_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."product"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_availability" ADD CONSTRAINT "product_availability_location_id_location_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."location"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

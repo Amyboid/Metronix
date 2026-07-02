@@ -172,12 +172,14 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     }
 
     if (section === 'product-type') {
-        const { slug, name, bannerPath, bannerMsg, bannerFileId } = body;
+        const { slug, name, categorySlug, bannerPath, bannerMsg, bannerFileId } = body;
         if (!slug || !name) throw error(400, 'slug and name are required');
+        if (!categorySlug) throw error(400, 'categorySlug is required');
 
         await db.insert(productTypes).values({
             slug,
             name,
+            categorySlug,
             bannerPath:   bannerPath   ?? null,
             bannerMsg:    bannerMsg    ?? null,
             bannerFileId: bannerFileId ?? null,

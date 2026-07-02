@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index, integer, jsonb, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, index, integer, jsonb, doublePrecision, primaryKey } from "drizzle-orm/pg-core";
 
 // auth tables start
 export const user = pgTable("user", {
@@ -297,7 +297,19 @@ export const tags = pgTable("tags", {
   createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 });
 
-// --- 10. RELATIONSHIPS ---
+// --- 10. COLORS TABLE (per brand + product type) ---
+export const colors = pgTable("colors", {
+  brand: text("brand").notNull().references(() => brands.slug, { onDelete: "cascade", onUpdate: "cascade" }),
+  productType: text("product_type").notNull().references(() => productTypes.slug, { onDelete: "cascade", onUpdate: "cascade" }),
+  hex: text("hex").notNull(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
+}, (table) => [
+  primaryKey({ columns: [table.brand, table.productType, table.hex] }),
+  index("colors_name_idx").on(table.brand, table.productType, table.name),
+]);
+
+// --- 11. RELATIONSHIPS ---
 
 export const brandRelations = relations(brands, ({ many }) => ({
   products: many(products),

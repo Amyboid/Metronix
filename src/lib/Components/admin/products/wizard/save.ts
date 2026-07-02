@@ -1,4 +1,4 @@
-import { uploadToIK } from '$lib/utils/imagekit';
+import { uploadToIK, deleteFromIK } from '$lib/utils/imagekit';
 import type { ProductFormData } from './types';
 
 export async function uploadVariantImages(
@@ -45,6 +45,15 @@ export async function uploadVariantImages(
 			galleryPaths,
 			galleryFileIds,
 		});
+
+		// Delete removed IK files after saving
+		const pendingRemovals = (v as any)._pendingRemovals as string[] | undefined;
+		if (pendingRemovals?.length) {
+			for (const fid of pendingRemovals) {
+				await deleteFromIK(fid).catch(() => {});
+			}
+			(v as any)._pendingRemovals = null;
+		}
 	}
 
 	return results;
@@ -152,6 +161,26 @@ export async function submitProduct(
 			heroMobileFileId: data.heroMobileFileId,
 		}),
 	]);
+
+	// Save new color combinations to the colors table
+	if (data.brand && data.productType) {
+		for (const v of savedVariants) {
+			if (v.colorName && v.hex) {
+				try {
+					await fetch('/api/admin/colors', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							brand: data.brand,
+							productType: data.productType,
+							hex: v.hex,
+							name: v.colorName,
+						}),
+					});
+				} catch { /* ignore — color save is best-effort */ }
+			}
+		}
+	}
 
 	const payload = buildProductPayload(data, savedVariants, heroResult, productId);
 

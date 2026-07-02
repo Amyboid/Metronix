@@ -9,10 +9,13 @@
 	type ProductType = {
 		slug:         string;
 		name:         string;
+		categorySlug: string;
 		bannerPath:   string | null;
 		bannerFileId: string | null;
 		bannerMsg:    string | null;
 	};
+
+	type CategoryOption = { slug: string; name: string };
 
 	let items:      ProductType[] = $state([]);
 	let loading     = $state(true);
@@ -34,9 +37,12 @@
 	let formError    = $state('');
 	let formBannerPath: string | null = $state(null);
 	let formBannerFileId: string | null = $state(null);
+	let formCategorySlug = $state('');
+	let categoryOptions: CategoryOption[] = $state([]);
 
 	const canSave = $derived.by(() => {
 		if (!formName.trim() || !formSlug.trim()) return false;
+		if (panelMode === 'add' && !formCategorySlug) return false;
 		if (panelMode === 'add') return true;
 		if (!panelItem) return false;
 		return (
@@ -84,7 +90,12 @@
 	onMount(async () => {
 		const auth = await getIKAuth().catch(() => null);
 		if (auth) ikEndpoint = auth.urlEndpoint;
-		await load();
+		await Promise.all([
+			load(),
+			fetch('/api/admin/catalog').then(r => r.json()).then(d => {
+				categoryOptions = d.categories ?? [];
+			}).catch(() => {}),
+		]);
 	});
 
 	// ── Panel helpers ────────────────────────────────────────────────────────
@@ -92,6 +103,7 @@
 		panelMode = 'add'; panelItem = null;
 		formName = ''; formSlug = ''; formBannerMsg = ''; formError = '';
 		formPending = null; formBannerPath = null; formBannerFileId = null;
+		formCategorySlug = '';
 	}
 
 	function openEdit(item: ProductType) {
@@ -100,6 +112,7 @@
 		formBannerMsg = item.bannerMsg ?? '';
 		formBannerPath = item.bannerPath ?? null;
 		formBannerFileId = item.bannerFileId ?? null;
+		formCategorySlug = item.categorySlug ?? '';
 		formPending = null; formError = '';
 	}
 
@@ -145,6 +158,7 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						section: 'product-type', slug: formSlug.trim(), name: formName.trim(),
+						categorySlug: formCategorySlug,
 						bannerMsg: formBannerMsg || null, bannerPath, bannerFileId,
 					}),
 				});
@@ -260,6 +274,21 @@
 			</label>
 		</div>
 
+		<!-- Category -->
+		<label class="flex flex-col gap-[5px]">
+			<span class="text-xs font-semibold text-copy uppercase tracking-[0.04em]">Category <span class="text-danger">*</span></span>
+			<select
+				class="font-inter text-[13px] py-[7px] px-2.5 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border focus:border-primary"
+				bind:value={formCategorySlug}
+				disabled={panelMode === 'edit'}
+			>
+				<option value="">Select category</option>
+				{#each categoryOptions as cat}
+					<option value={cat.slug}>{cat.name}</option>
+				{/each}
+			</select>
+		</label>
+
 		<!-- Banner Message -->
 		<label class="flex flex-col gap-[5px]">
 			<span class="text-xs font-semibold text-copy uppercase tracking-[0.04em]">Banner Message</span>
@@ -283,6 +312,7 @@
 			{ label: 'Banner', width: 'w-20' },
 			{ label: 'Slug' },
 			{ label: 'Name' },
+			{ label: 'Category' },
 			{ label: 'Banner Message' },
 		]}
 		{loading}
@@ -300,6 +330,7 @@
 				</td>
 				<td class="py-2 px-3.5 text-copy border-b border-subtle"><code class="font-mono text-xs text-copy-light">{item.slug}</code></td>
 				<td class="py-2 px-3.5 text-copy border-b border-subtle">{item.name}</td>
+				<td class="py-2 px-3.5 text-copy-light border-b border-subtle text-[12px]">{item.categorySlug ?? '—'}</td>
 				<td class="py-2 px-3.5 text-copy-light border-b border-subtle">{item.bannerMsg ?? '—'}</td>
 				<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
 					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1 hover:bg-surface hover:border-subtle-hover" onclick={() => openEdit(item)} title="Edit" aria-label="Edit">

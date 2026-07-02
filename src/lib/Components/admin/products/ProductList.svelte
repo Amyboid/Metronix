@@ -242,12 +242,12 @@
 
 <div class="flex min-h-0 min-w-0 flex-1 flex-col">
 	<!-- Control bar (fixed at top, does not scroll) -->
-	<div class="border-subtle bg-neutral shrink-0 border-b px-6 py-2">
-		<div class="flex flex-wrap items-center gap-3">
+	<div class="border-subtle bg-neutral shrink-0 border-b px-4 md:px-6 py-2">
+		<div class="flex flex-wrap items-center gap-2 md:gap-3">
+			<!-- Tab pills -->
 			<div class="border-subtle bg-surface flex gap-1.5 rounded-[10px] border p-1">
 				<button
-					class="font-inter cursor-pointer rounded-[7px] border-none px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors {activeTab ===
-					'published'
+					class="font-inter cursor-pointer rounded-[7px] border-none px-3 md:px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors {activeTab === 'published'
 						? 'bg-neutral text-[#1a1a1a] shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
 						: 'text-copy hover:bg-surface-hover bg-transparent'}"
 					onclick={() => switchTab('published')}
@@ -255,8 +255,7 @@
 					Published ({items.length})
 				</button>
 				<button
-					class="font-inter cursor-pointer rounded-[7px] border-none px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors {activeTab ===
-					'unpublished'
+					class="font-inter cursor-pointer rounded-[7px] border-none px-3 md:px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap transition-colors {activeTab === 'unpublished'
 						? 'bg-neutral text-[#1a1a1a] shadow-[0_1px_3px_rgba(0,0,0,0.08)]'
 						: 'text-copy hover:bg-surface-hover bg-transparent'}"
 					onclick={() => switchTab('unpublished')}
@@ -264,26 +263,69 @@
 					Unpublished
 				</button>
 			</div>
+
+			<!-- Bulk actions (visible when items selected) -->
+			{#if selectedIds.length > 0}
+				<div class="flex items-center gap-1.5 md:gap-2 border-l border-subtle pl-2 md:pl-3 ml-1">
+					<span class="text-primary text-[12px] font-semibold hidden sm:inline">{selectedIds.length} selected</span>
+					<span class="text-primary text-[12px] font-semibold sm:hidden">{selectedIds.length}</span>
+
+					{#if activeTab === 'unpublished'}
+						<button
+							class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-md border bg-transparent px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[13px] font-medium transition-colors hover:text-white inline-flex items-center gap-1"
+							onclick={() => bulkAction('publish')}
+						>
+							<span class="icon-[lucide--check-circle] h-3.5 w-3.5 hidden md:inline"></span>
+							Publish
+						</button>
+					{/if}
+
+					{#if activeTab === 'published'}
+						<button
+							class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-md border bg-transparent px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[13px] font-medium transition-colors hover:text-white inline-flex items-center gap-1"
+							onclick={() => bulkAction('unpublish')}
+						>
+							<span class="icon-[lucide--x-circle] h-3.5 w-3.5 hidden md:inline"></span>
+							Unpublish
+						</button>
+					{/if}
+
+					<button
+						class="font-inter border-danger text-danger hover:bg-danger cursor-pointer rounded-md border bg-transparent px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[13px] font-medium transition-colors hover:text-white inline-flex items-center gap-1"
+						onclick={() => bulkAction('delete')}
+					>
+						<span class="icon-[lucide--trash-2] h-3.5 w-3.5 hidden md:inline"></span>
+						Delete
+					</button>
+
+					<button
+						class="font-inter border-subtle text-copy hover:bg-surface cursor-pointer rounded-md border bg-transparent px-2 md:px-3 py-1 md:py-1.5 text-[12px] md:text-[13px] font-medium transition-colors inline-flex items-center gap-1"
+						onclick={() => { selectedIds = []; selectAll = false; }}
+					>
+						<span class="icon-[lucide--x] h-3 w-3"></span>
+						Clear
+					</button>
+				</div>
+			{/if}
+
+			<!-- Right side: filters + add -->
 			<div class="ml-auto flex items-center gap-2">
 				<button
-					class="font-inter border-subtle text-copy hover:bg-surface flex cursor-pointer items-center gap-1.5 rounded-md border bg-transparent px-3 py-[6px] text-[13px] font-medium transition-colors"
-					onclick={() => {
-						showFilters = !showFilters;
-					}}
+					class="font-inter border-subtle text-copy hover:bg-surface flex cursor-pointer items-center gap-1.5 rounded-md border bg-transparent px-2.5 md:px-3 py-[5px] md:py-[6px] text-[12px] md:text-[13px] font-medium transition-colors"
+					onclick={() => { showFilters = !showFilters; }}
 				>
-					<span class="icon-[lucide--filter] h-3.5 w-3.5"></span> Filters
+					<span class="icon-[lucide--filter] h-3.5 w-3.5"></span>
+					<span class="hidden sm:inline">Filters</span>
 					{#if activeFilterCount > 0}
-						<span
-							class="bg-primary flex h-4 w-4 items-center justify-center rounded-full text-[11px] font-bold text-white"
-							>{activeFilterCount}</span
-						>
+						<span class="bg-primary flex h-4 w-4 items-center justify-center rounded-full text-[11px] font-bold text-white">{activeFilterCount}</span>
 					{/if}
 				</button>
 				<button
-					class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-[7px] border bg-transparent px-3.5 py-[7px] text-[13px] font-semibold transition-colors hover:text-white"
+					class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-[7px] border bg-transparent px-2.5 md:px-3.5 py-[5px] md:py-[7px] text-[12px] md:text-[13px] font-semibold transition-colors hover:text-white inline-flex items-center gap-1"
 					onclick={() => adminNav.navigate({ tab: 'products', view: 'new' })}
 				>
-					+ Add Product
+					<span class="icon-[lucide--plus] h-3.5 w-3.5 sm:hidden"></span>
+					<span class="hidden sm:inline">+ Add Product</span>
 				</button>
 			</div>
 		</div>
@@ -294,31 +336,6 @@
 			class="text-danger rounded-lg border border-[#fca5a5] bg-[#fef2f2] px-3.5 py-2.5 text-[13px]"
 		>
 			{listError}
-		</div>
-	{/if}
-
-	{#if selectedIds.length > 0}
-		<div class="border-primary/20 bg-primary/5 flex items-center gap-3 rounded-[10px] border p-3">
-			<span class="text-primary text-[13px] font-medium">{selectedIds.length} selected</span>
-			<button
-				class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors hover:text-white"
-				onclick={() => bulkAction('publish')}>Publish</button
-			>
-			<button
-				class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors hover:text-white"
-				onclick={() => bulkAction('unpublish')}>Unpublish</button
-			>
-			<button
-				class="font-inter border-danger text-danger hover:bg-danger cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors hover:text-white"
-				onclick={() => bulkAction('delete')}>Delete</button
-			>
-			<button
-				class="font-inter border-subtle text-copy hover:bg-surface ml-auto cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors"
-				onclick={() => {
-					selectedIds = [];
-					selectAll = false;
-				}}>Clear</button
-			>
 		</div>
 	{/if}
 

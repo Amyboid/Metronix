@@ -23,15 +23,41 @@ export function validateStep3(_data: ProductFormData): StepValidation {
 
 export function validateStep4(
 	data: ProductFormData,
-	fileState: { hasNewMain: boolean; newGalleryCount: number }[]
+	fileState: { hasNewMain: boolean; newGalleryCount: number }[],
+	availableColors: { hex: string; name: string }[] = []
 ): StepValidation {
 	if (data.variants.length === 0) return { valid: false, error: 'Add at least one color variant' };
 
+	const hexSeen = new Map<string, number>();
 	for (let i = 0; i < data.variants.length; i++) {
 		const v = data.variants[i];
 		const fs = fileState[i] ?? { hasNewMain: false, newGalleryCount: 0 };
 		if (!v.colorName.trim()) return { valid: false, error: `Variant ${i + 1}: color name required` };
 		if (!v.hex) return { valid: false, error: `Variant ${i + 1}: hex color required` };
+
+		// Check for duplicate hex across variants
+		const hexKey = v.hex.toUpperCase();
+		if (hexSeen.has(hexKey)) {
+			return { valid: false, error: `Variant ${i + 1}: duplicate color hex ${v.hex} (same as variant ${hexSeen.get(hexKey)! + 1})` };
+		}
+		hexSeen.set(hexKey, i);
+
+		// Check color conflicts with DB
+		if (availableColors.length) {
+			const nameMatch = availableColors.find(
+				(c) => c.name.toLowerCase() === v.colorName.trim().toLowerCase()
+			);
+			if (nameMatch && nameMatch.hex.toUpperCase() !== v.hex.toUpperCase()) {
+				return { valid: false, error: `Variant ${i + 1}: color name "${v.colorName}" is already used with hex ${nameMatch.hex}` };
+			}
+			const hexMatch = availableColors.find(
+				(c) => c.hex.toUpperCase() === v.hex.toUpperCase()
+			);
+			if (hexMatch && hexMatch.name.toLowerCase() !== v.colorName.trim().toLowerCase()) {
+				return { valid: false, error: `Variant ${i + 1}: hex ${v.hex} is already used with name "${hexMatch.name}"` };
+			}
+		}
+
 		if (!v.mainImagePath && !fs.hasNewMain)
 			return { valid: false, error: `Variant ${i + 1}: main image required` };
 		const totalGallery = v.galleryPaths.length + fs.newGalleryCount;
@@ -47,16 +73,17 @@ export function validateStep5(_data: ProductFormData): StepValidation {
 	return { valid: true };
 }
 
-export const STEP_VALIDATORS = [validateStep1, validateStep2, validateStep3, validateStep4, validateStep5];
-export const STEP_LABELS = ['Basic Info', 'Pricing', 'Details', 'Variants', 'Publish'];
-
 export function validateStep(
 	step: number,
 	data: ProductFormData,
-	fileState?: { hasNewMain: boolean; newGalleryCount: number }[]
+	fileState?: { hasNewMain: boolean; newGalleryCount: number }[],
+	availableColors?: { hex: string; name: string }[]
 ): StepValidation {
-	const validator = STEP_VALIDATORS[step - 1];
+	if (step === 4) return validateStep4(data, fileState ?? [], availableColors ?? []);
+	const validators = [validateStep1, validateStep2, validateStep3, null, validateStep5];
+	const validator = validators[step - 1];
 	if (!validator) return { valid: true };
-	if (step === 4 && fileState) return validateStep4(data, fileState);
 	return validator(data);
 }
+
+export const STEP_LABELS = ['Basic Info', 'Pricing', 'Details', 'Variants', 'Publish'];

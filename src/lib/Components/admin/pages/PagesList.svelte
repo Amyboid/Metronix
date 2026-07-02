@@ -13,7 +13,7 @@
 	}
 </script>
 
-<section class="flex flex-col gap-5">
+<section class="flex flex-col gap-5 px-6 py-5">
 	<SectionHeader title="Pages" subtitle="Manage content sections for each page." />
 
 	<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

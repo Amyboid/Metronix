@@ -35,6 +35,7 @@
 	let typeOptions: CatalogOption[] = $state([]);
 	let ikEndpoint = $state('');
 	let step4FileState: { hasNewMain: boolean; newGalleryCount: number }[] = $state([]);
+	let availableColors: { hex: string; name: string }[] = $state([]);
 	let originalData = $state<string>('');
 
 	const hasChanges = $derived(() => {
@@ -130,6 +131,22 @@
 		Promise.all([loadCatalogOptions(), loadIKEndpoint(), loadProduct()]);
 	});
 
+	async function loadAvailableColors() {
+		if (!data.brand || !data.productType) { availableColors = []; return; }
+		try {
+			const params = new URLSearchParams({ brand: data.brand, productType: data.productType });
+			const res = await fetch(`/api/admin/colors?${params}`);
+			if (res.ok) {
+				const d = await res.json();
+				availableColors = (d.items ?? []).map((c: any) => ({ hex: c.hex, name: c.name }));
+			}
+		} catch { availableColors = []; }
+	}
+
+	$effect(() => {
+		if (data.brand && data.productType) loadAvailableColors();
+	});
+
 	function addVariant() {
 		data.variants = [
 			...data.variants,
@@ -161,7 +178,7 @@
 
 	function nextStep() {
 		if (currentStep >= 5) return;
-		const result = validateStep(currentStep, data, step4FileState);
+		const result = validateStep(currentStep, data, step4FileState, availableColors);
 		if (!result.valid) {
 			error = result.error ?? 'Please fix the errors before continuing';
 			return;
@@ -180,7 +197,7 @@
 	async function save() {
 		// Validate ALL steps before saving
 		for (let step = 1; step <= 5; step++) {
-			const result = validateStep(step, data, step4FileState);
+			const result = validateStep(step, data, step4FileState, availableColors);
 			if (!result.valid) {
 				error = `Step ${step} (${STEP_LABELS[step - 1]}): ${result.error}`;
 				currentStep = step;
