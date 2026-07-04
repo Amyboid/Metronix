@@ -3,7 +3,7 @@
 	import DataTable from '../catalog/DataTable.svelte';
 	import SidePanel from '../catalog/SidePanel.svelte';
 
-	let { currentUserId = '' }: { currentUserId?: string } = $props();
+	let { currentUserId = '', onaction }: { currentUserId?: string; onaction?: (fn: () => void) => void } = $props();
 
 	type AdminUser = {
 		id:        string;
@@ -17,6 +17,19 @@
 	let items:    AdminUser[] = $state([]);
 	let loading   = $state(true);
 	let listError = $state('');
+
+	let selectedIds: string[] = $state([]);
+	let selectAll    = $state(false);
+
+	function toggleSelectAll() {
+		if (selectAll) { selectedIds = []; selectAll = false; }
+		else { selectedIds = items.map(i => i.id); selectAll = true; }
+	}
+	function toggleSelect(id: string) {
+		selectedIds = selectedIds.includes(id) ? selectedIds.filter(x => x !== id) : [...selectedIds, id];
+		selectAll = selectedIds.length === items.length;
+	}
+	function handleRowClick(_id: string) { /* invite-only, no-op */ }
 
 	let inviteOpen  = $state(false);
 	let inviteEmail = $state('');
@@ -37,7 +50,10 @@
 		}
 	}
 
-	onMount(load);
+	onMount(async () => {
+		await load();
+		onaction?.(() => { inviteOpen = true; inviteEmail = ''; inviteError = ''; });
+	});
 
 	async 	function toggleBan(item: AdminUser) {
 		if (item.id === currentUserId) return;
@@ -80,16 +96,6 @@
 </script>
 
 <section class="flex flex-col gap-5">
-	<div class="flex items-start justify-between gap-3">
-		<div>
-			<h2 class="text-base font-bold text-gray-900 mb-0.5">Admin Users</h2>
-			<p class="text-[13px] text-copy-light m-0">Manage admin accounts and access.</p>
-		</div>
-		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-primary bg-transparent text-primary cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-primary hover:text-white" onclick={() => { inviteOpen = true; inviteEmail = ''; inviteError = ''; }}>
-			+ Invite Admin
-		</button>
-	</div>
-
 	{#if listError}
 		<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{listError}</div>
 	{/if}
@@ -104,15 +110,24 @@
 		{loading}
 		empty={items.length === 0}
 		emptyMessage="No admin users found."
+		{selectAll}
+		{selectedIds}
+		onSelectAll={toggleSelectAll}
+		onSelect={toggleSelect}
+		onRowClick={handleRowClick}
 	>
 		{#each items as item (item.id)}
-			<tr>
-				<td class="py-2.5 px-3.5 text-copy border-b border-subtle font-medium">{item.email}</td>
-				<td class="py-2.5 px-3.5 border-b border-subtle">
+			{@const isSelected = selectedIds.includes(item.id)}
+			<tr class="hover:bg-surface/50 cursor-pointer transition-colors" onclick={() => handleRowClick(item.id)}>
+				<td class="border-subtle border px-3 py-2" onclick={(e) => e.stopPropagation()}>
+					<input type="checkbox" checked={isSelected} onchange={() => toggleSelect(item.id)} class="accent-primary cursor-pointer" />
+				</td>
+				<td class="border-subtle border px-3 py-2 font-medium">{item.email}</td>
+				<td class="border-subtle border px-3 py-2">
 					<span class="inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full {item.role === 'super_admin' ? 'bg-primary/10 text-primary' : 'bg-surface text-copy'}">{item.role}</span>
 				</td>
-				<td class="py-2.5 px-3.5 text-copy-light border-b border-subtle text-[13px]">{formatDate(item.createdAt)}</td>
-				<td class="py-2.5 px-3.5 border-b border-subtle">
+				<td class="border-subtle border px-3 py-2 text-copy-light text-[13px]">{formatDate(item.createdAt)}</td>
+				<td class="border-subtle border px-3 py-2">
 					{#if item.id === currentUserId}
 						<span class="text-xs text-copy-light">You</span>
 					{:else}

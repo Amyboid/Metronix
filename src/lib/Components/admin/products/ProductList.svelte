@@ -126,7 +126,30 @@
 		}
 	}
 
+	const FILTER_KEY = 'adminProductFilters';
+
+	function saveFilters() {
+		sessionStorage.setItem(FILTER_KEY, JSON.stringify({
+			activeTab, filterBrand, filterCategory, filterType, filterStock
+		}));
+	}
+
+	function restoreFilters() {
+		try {
+			const saved = sessionStorage.getItem(FILTER_KEY);
+			if (saved) {
+				const f = JSON.parse(saved);
+				activeTab = f.activeTab ?? 'published';
+				filterBrand = f.filterBrand ?? [];
+				filterCategory = f.filterCategory ?? [];
+				filterType = f.filterType ?? [];
+				filterStock = f.filterStock ?? [];
+			}
+		} catch { /* ignore */ }
+	}
+
 	onMount(async () => {
+		restoreFilters();
 		const auth = await fetch('/api/admin/imagekit-auth')
 			.then((r) => r.json())
 			.catch(() => null);
@@ -136,10 +159,12 @@
 
 	function switchTab(tab: 'published' | 'unpublished') {
 		activeTab = tab;
+		saveFilters();
 		load(true);
 	}
 
 	function applyFilters() {
+		saveFilters();
 		load(true);
 	}
 
@@ -148,6 +173,7 @@
 		filterCategory = [];
 		filterType = [];
 		filterStock = [];
+		saveFilters();
 		load(true);
 	}
 
@@ -231,6 +257,7 @@
 	entityLabel="product"
 	productCount={0}
 	checking={false}
+	message="Selected products and all their images will be permanently deleted."
 	onconfirm={() => {
 		deleteConfirming = false;
 		confirmBulkDelete();

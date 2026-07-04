@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import SidePanel from '../catalog/SidePanel.svelte';
 
+	let { onaction }: { onaction?: (fn: () => void) => void } = $props();
+
 	let settings: Record<string, string> = $state({});
 	let loading = $state(true);
 	let editing = $state(false);
@@ -23,6 +25,7 @@
 		} finally {
 			loading = false;
 		}
+		onaction?.(openEdit);
 	});
 
 	function openEdit() {
@@ -52,16 +55,6 @@
 </script>
 
 <section class="flex flex-col gap-5">
-	<div class="flex items-start justify-between gap-3">
-		<div>
-			<h2 class="text-base font-bold text-gray-900 mb-0.5">Page Size</h2>
-			<p class="text-[13px] text-copy-light m-0">Number of items shown per page on listing screens.</p>
-		</div>
-		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-primary bg-transparent text-primary cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-primary hover:text-white" onclick={openEdit}>
-			Edit
-		</button>
-	</div>
-
 	{#if error}
 		<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{error}</div>
 	{/if}

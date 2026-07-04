@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
-	import SectionHeader from '../catalog/SectionHeader.svelte';
 	import DataTable from '../catalog/DataTable.svelte';
 	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
 
@@ -22,6 +21,46 @@
 	let deleteTarget:      Location | null = $state(null);
 	let deleteConfirming   = $state(false);
 	let deleting           = $state(false);
+
+	// ── Selection ────────────────────────────────────────────────────────────
+	let selectedIds: string[] = $state([]);
+	let selectAll = $state(false);
+
+	function toggleSelectAll() {
+		if (selectAll) { selectedIds = []; selectAll = false; }
+		else { selectedIds = items.map((i) => i.id); selectAll = true; }
+	}
+	function toggleSelect(id: string) {
+		selectedIds = selectedIds.includes(id) ? selectedIds.filter((i) => i !== id) : [...selectedIds, id];
+		selectAll = selectedIds.length === items.length;
+	}
+	function handleRowClick(id: string) {
+		const item = items.find((i) => i.id === id);
+		if (item) openEdit(item);
+	}
+
+	function bulkDelete() {
+		if (selectedIds.length === 0) return;
+		if (selectedIds.length === 1) {
+			const item = items.find(i => i.id === selectedIds[0]);
+			if (item) startDelete(item);
+			return;
+		}
+		if (!confirm(`Delete ${selectedIds.length} locations? This cannot be undone.`)) return;
+		(async () => {
+			try {
+				for (const id of selectedIds) {
+					const res = await fetch(`/api/admin/locations?id=${id}`, { method: 'DELETE' });
+					if (!res.ok) {
+						const b = await res.json().catch(() => ({ message: 'Delete failed' }));
+						throw new Error(b.message ?? 'Delete failed');
+					}
+				}
+				selectedIds = []; selectAll = false;
+				await load();
+			} catch (err: any) { listError = err.message ?? 'Delete failed'; }
+		})();
+	}
 
 	async function load() {
 		loading = true; listError = '';
@@ -80,12 +119,39 @@
 	entityLabel="location"
 	productCount={0}
 	checking={false}
+	message="This location and its stock data will be permanently deleted."
 	onconfirm={confirmDelete}
 	oncancel={closeDeleteModal}
 />
 
 <section class="flex flex-col gap-5">
-	<SectionHeader title="Locations" subtitle="Manage store locations and delivery ranges." onAdd={openAdd} addLabel="+ Add Location" />
+	<div class="flex items-center justify-between px-6 py-5">
+		<h2 class="text-[15px] font-bold text-[#1a1a1a] m-0">Locations</h2>
+		<div class="flex items-center gap-2">
+			{#if selectedIds.length > 0}
+				<span class="text-primary text-[13px] font-semibold">{selectedIds.length} selected</span>
+				<button
+					class="font-inter border-danger text-danger hover:bg-danger cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors hover:text-white inline-flex items-center gap-1"
+					onclick={bulkDelete}
+				>
+					<span class="icon-[lucide--trash-2] h-3.5 w-3.5"></span>
+					Delete
+				</button>
+				<button
+					class="font-inter border-subtle text-copy hover:bg-surface cursor-pointer rounded-md border bg-transparent px-3 py-1.5 text-[13px] font-medium transition-colors"
+					onclick={() => { selectedIds = []; selectAll = false; }}
+				>
+					Clear
+				</button>
+			{/if}
+			<button
+				class="font-inter border-primary text-primary hover:bg-primary cursor-pointer rounded-[7px] border bg-transparent px-3 py-[7px] text-[13px] font-semibold transition-colors hover:text-white"
+				onclick={openAdd}
+			>
+				+ Add Location
+			</button>
+		</div>
+	</div>
 
 	{#if listError}
 		<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{listError}</div>
@@ -100,24 +166,23 @@
 		]}
 		{loading}
 		empty={items.length === 0}
-		emptyMessage="No locations yet. Add one above."
+		emptyMessage="No locations yet."
+		{selectAll}
+		{selectedIds}
+		onSelectAll={toggleSelectAll}
+		onSelect={toggleSelect}
+		onRowClick={handleRowClick}
 	>
 		{#each items as item (item.id)}
-			<tr>
-				<td class="py-2.5 px-3.5 text-copy border-b border-subtle font-medium">{item.storeName}</td>
-				<td class="py-2.5 px-3.5 text-copy-light border-b border-subtle">{item.address}</td>
-				<td class="py-2.5 px-3.5 text-copy border-b border-subtle">{item.city}</td>
-				<td class="py-2.5 px-3.5 text-copy-light border-b border-subtle">{item.phone ?? '—'}</td>
-				<td class="text-right whitespace-nowrap py-2.5 px-3.5 border-b border-subtle">
-					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1 hover:bg-surface hover:border-subtle-hover" onclick={() => openEdit(item)} title="Edit" aria-label="Edit">
-						<span class="icon-[lucide--pencil] w-3 h-3"></span>
-					</button>
-					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1 hover:bg-[#fef2f2] hover:border-[#fca5a5]" onclick={() => startDelete(item)} disabled={deletingId === item.id} title="Delete" aria-label="Delete">
-						{#if deletingId === item.id}…{:else}
-							<span class="icon-[lucide--trash-2] w-3 h-3"></span>
-						{/if}
-					</button>
+			{@const isSelected = selectedIds.includes(item.id)}
+			<tr class="hover:bg-surface/50 cursor-pointer transition-colors" onclick={() => handleRowClick(item.id)}>
+				<td class="border-subtle w-10 border px-3 py-2" onclick={(e) => e.stopPropagation()}>
+					<input type="checkbox" class="accent-primary cursor-pointer" checked={isSelected} onchange={() => toggleSelect(item.id)} />
 				</td>
+				<td class="border-subtle border px-3 py-2 font-medium">{item.storeName}</td>
+				<td class="border-subtle border px-3 py-2 text-copy-light">{item.address}</td>
+				<td class="border-subtle border px-3 py-2">{item.city}</td>
+				<td class="border-subtle border px-3 py-2 text-copy-light">{item.phone ?? '—'}</td>
 			</tr>
 		{/each}
 	</DataTable>

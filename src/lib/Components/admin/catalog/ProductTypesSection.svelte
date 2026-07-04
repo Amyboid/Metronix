@@ -2,9 +2,15 @@
 	import { onMount } from 'svelte';
 	import { uploadToIK, deleteFromIK, ikUrl, getIKAuth } from '$lib/utils/imagekit';
 	import SidePanel from './SidePanel.svelte';
-	import SectionHeader from './SectionHeader.svelte';
 	import DataTable from './DataTable.svelte';
 	import DeleteConfirmModal from './DeleteConfirmModal.svelte';
+
+	let { onadd, selectedCount = $bindable(0), bulkDelete = $bindable(null), clearSelection = $bindable(null) }: {
+		onadd?: (fn: () => void) => void;
+		selectedCount?: number;
+		bulkDelete?: (() => void) | null;
+		clearSelection?: (() => void) | null;
+	} = $props();
 
 	type ProductType = {
 		slug:         string;
@@ -24,6 +30,49 @@
 	let offset      = $state(0);
 	let listError   = $state('');
 	let ikEndpoint  = $state('');
+
+	let selectedIds: string[] = $state([]);
+	let selectAll    = $state(false);
+
+	function toggleSelectAll() {
+		if (selectAll) { selectedIds = []; selectAll = false; }
+		else { selectedIds = items.map(i => i.slug); selectAll = true; }
+	}
+	function toggleSelect(id: string) {
+		selectedIds = selectedIds.includes(id) ? selectedIds.filter(x => x !== id) : [...selectedIds, id];
+		selectAll = selectedIds.length === items.length;
+	}
+	function handleRowClick(id: string) {
+		const item = items.find((i) => i.slug === id);
+		if (item) openEdit(item);
+	}
+
+	$effect(() => { selectedCount = selectedIds.length; });
+	$effect(() => { bulkDelete = _bulkDelete; });
+	$effect(() => { clearSelection = () => { selectedIds = []; selectAll = false; }; });
+
+	function _bulkDelete() {
+		if (selectedIds.length === 0) return;
+		if (selectedIds.length === 1) {
+			const item = items.find(i => i.slug === selectedIds[0]);
+			if (item) startDelete(item);
+			return;
+		}
+		if (!confirm(`Delete ${selectedIds.length} product types? This cannot be undone.`)) return;
+		(async () => {
+			try {
+				for (const slug of selectedIds) {
+					const res = await fetch(`/api/admin/catalog?section=product-type&slug=${slug}`, { method: 'DELETE' });
+					if (!res.ok) {
+						const b = await res.json().catch(() => ({ message: 'Delete failed' }));
+						throw new Error(b.message ?? 'Delete failed');
+					}
+				}
+				selectedIds = []; selectAll = false;
+				await load();
+			} catch (err: any) { listError = err.message ?? 'Delete failed'; }
+		})();
+	}
 
 	// ── Panel state ──────────────────────────────────────────────────────────
 	let panelMode:   'add' | 'edit' | null = $state(null);
@@ -96,6 +145,7 @@
 				categoryOptions = d.categories ?? [];
 			}).catch(() => {}),
 		]);
+		onadd?.(openAdd);
 	});
 
 	// ── Panel helpers ────────────────────────────────────────────────────────
@@ -221,6 +271,7 @@
 	entityLabel="product type"
 	productCount={deleteProductCount}
 	checking={deleteChecking}
+	message="This product type and its banner will be permanently deleted."
 	onconfirm={confirmDelete}
 	oncancel={closeDeleteModal}
 />
@@ -303,7 +354,6 @@
 
 <!-- ── Main ──────────────────────────────────────────────────────────────────── -->
 <section class="flex flex-col gap-5">
-	<SectionHeader title="Product Types" subtitle="Manage product type filters, banner images and messages." onAdd={openAdd} addLabel="+ Add Product Type" />
 
 	{#if listError}<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{listError}</div>{/if}
 
@@ -317,31 +367,30 @@
 		]}
 		{loading}
 		empty={items.length === 0}
-		emptyMessage="No product types yet. Add one above."
+		emptyMessage="No product types yet."
+		{selectAll}
+		{selectedIds}
+		onSelectAll={toggleSelectAll}
+		onSelect={toggleSelect}
+		onRowClick={handleRowClick}
 	>
 		{#each items as item: ProductType (item.slug)}
-			<tr>
-				<td class="w-20 py-2 px-3.5 text-copy border-b border-subtle">
+			{@const isSelected = selectedIds.includes(item.slug)}
+			<tr class="hover:bg-surface/50 cursor-pointer transition-colors" onclick={() => handleRowClick(item.slug)}>
+				<td class="border-subtle border px-3 py-2" onclick={(e) => e.stopPropagation()}>
+					<input type="checkbox" checked={isSelected} onchange={() => toggleSelect(item.slug)} class="accent-primary cursor-pointer" />
+				</td>
+				<td class="border-subtle border px-3 py-2">
 					{#if item.bannerPath}
 						<div class="w-16 h-9 rounded-[5px] overflow-hidden bg-canvas border border-subtle"><img class="w-full h-full object-cover" src={thumb(item.bannerPath) ?? ''} alt={item.name} /></div>
 					{:else}
 						<div class="w-16 h-9 flex items-center justify-center text-xs text-copy-light">—</div>
 					{/if}
 				</td>
-				<td class="py-2 px-3.5 text-copy border-b border-subtle"><code class="font-mono text-xs text-copy-light">{item.slug}</code></td>
-				<td class="py-2 px-3.5 text-copy border-b border-subtle">{item.name}</td>
-				<td class="py-2 px-3.5 text-copy-light border-b border-subtle text-[12px]">{item.categorySlug ?? '—'}</td>
-				<td class="py-2 px-3.5 text-copy-light border-b border-subtle">{item.bannerMsg ?? '—'}</td>
-				<td class="text-right whitespace-nowrap py-2 px-3.5 text-copy border-b border-subtle">
-					<button class="text-xs py-[5px] px-2 rounded-[5px] border border-subtle bg-transparent cursor-pointer text-copy inline-flex items-center justify-center transition-colors ml-1 hover:bg-surface hover:border-subtle-hover" onclick={() => openEdit(item)} title="Edit" aria-label="Edit">
-					<span class="icon-[lucide--pencil] w-3 h-3"></span>
-				</button>
-				<button class="text-xs py-[5px] px-2 rounded-[5px] border border-transparent bg-transparent cursor-pointer text-danger inline-flex items-center justify-center transition-colors ml-1 hover:bg-[#fef2f2] hover:border-[#fca5a5]" onclick={() => startDelete(item)} disabled={deletingSlug === item.slug} title="Delete">
-					{#if deletingSlug === item.slug}…{:else}
-						<span class="icon-[lucide--trash-2] w-3 h-3"></span>
-					{/if}
-					</button>
-				</td>
+				<td class="border-subtle border px-3 py-2"><code class="font-mono text-xs text-copy-light">{item.slug}</code></td>
+				<td class="border-subtle border px-3 py-2">{item.name}</td>
+				<td class="border-subtle border px-3 py-2 text-copy-light text-[12px]">{item.categorySlug ?? '—'}</td>
+				<td class="border-subtle border px-3 py-2 text-copy-light">{item.bannerMsg ?? '—'}</td>
 			</tr>
 		{/each}
 	</DataTable>

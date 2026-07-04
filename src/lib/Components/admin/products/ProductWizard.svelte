@@ -222,18 +222,9 @@
 <div class="flex min-h-0 min-w-0 flex-1 flex-col">
 	<!-- Header -->
 	<div class="border-subtle bg-neutral shrink-0 border-b px-6 py-3">
-		<div class="flex items-center gap-4">
-			<button
-				class="text-copy-light hover:text-copy flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-[13px] font-medium transition-colors"
-				onclick={goBack}
-			>
-				<span class="icon-[lucide--arrow-left] h-3.5 w-3.5"></span>
-				Back
-			</button>
-			<h1 class="text-[15px] font-bold text-[#1a1a1a] m-0">
-				{isEdit ? 'Edit Product' : 'New Product'}
-			</h1>
-		</div>
+		<h1 class="text-[15px] font-bold text-[#1a1a1a] m-0">
+			{isEdit ? 'Edit Product' : 'New Product'}
+		</h1>
 	</div>
 
 	<!-- Step indicator -->

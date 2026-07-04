@@ -5,6 +5,7 @@
 		entityLabel = 'item',
 		productCount = 0,
 		checking = false,
+		message = '',
 		onconfirm,
 		oncancel,
 	}: {
@@ -13,6 +14,7 @@
 		entityLabel?: string;
 		productCount?: number;
 		checking?: boolean;
+		message?: string;
 		onconfirm?: (force: boolean) => void;
 		oncancel?: () => void;
 	} = $props();
@@ -52,7 +54,7 @@
 						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors hover:bg-[#dc2626]" onclick={() => onconfirm?.(true)}>Force delete + {productCount} product{productCount !== 1 ? 's' : ''}</button>
 					</div>
 				{:else}
-					<p class="text-sm text-copy m-0">This {entityLabel} has no linked products and will be permanently deleted.</p>
+					<p class="text-sm text-copy m-0">{message || `This ${entityLabel} has no linked products and will be permanently deleted.`}</p>
 					<div class="flex gap-2 justify-end flex-wrap">
 						<button class="font-inter text-[13px] font-medium py-[7px] px-4 rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" onclick={oncancel}>Cancel</button>
 						<button class="font-inter text-[13px] font-semibold py-[7px] px-4 rounded-[7px] border-none bg-danger text-white cursor-pointer transition-colors hover:bg-[#dc2626]" onclick={() => onconfirm?.(false)}>Delete</button>

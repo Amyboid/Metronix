@@ -3,6 +3,8 @@
 	import DataTable from '../catalog/DataTable.svelte';
 	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
 
+	let { onaction }: { onaction?: (fn: () => void) => void } = $props();
+
 	type AuditLog = {
 		id:         string;
 		adminId:    string;
@@ -21,6 +23,19 @@
 	let lastId    = $state('');
 	let lastDate  = $state('');
 	let listError = $state('');
+
+	let selectedIds: string[] = $state([]);
+	let selectAll    = $state(false);
+
+	function toggleSelectAll() {
+		if (selectAll) { selectedIds = []; selectAll = false; }
+		else { selectedIds = items.map(i => i.id); selectAll = true; }
+	}
+	function toggleSelect(id: string) {
+		selectedIds = selectedIds.includes(id) ? selectedIds.filter(x => x !== id) : [...selectedIds, id];
+		selectAll = selectedIds.length === items.length;
+	}
+	function handleRowClick(_id: string) { /* no-op */ }
 
 	let filterEntity  = $state('');
 	let filterEmail   = $state('');
@@ -63,7 +78,10 @@
 		}
 	}
 
-	onMount(() => load());
+	onMount(async () => {
+		await load();
+		onaction?.(openDeleteBefore);
+	});
 
 	function applyFilters() {
 		load(true);
@@ -121,21 +139,12 @@
 	entityLabel="audit log entries"
 	productCount={0}
 	checking={false}
+	message="All audit log entries before this date will be permanently deleted."
 	onconfirm={confirmDeleteBefore}
 	oncancel={closeDeleteModal}
 />
 
 <section class="flex flex-col gap-5">
-	<div class="flex items-start justify-between gap-3">
-		<div>
-			<h2 class="text-base font-bold text-gray-900 mb-0.5">Audit Logs</h2>
-			<p class="text-[13px] text-copy-light m-0">Track all admin actions across the system.</p>
-		</div>
-		<button class="font-inter text-[13px] font-semibold py-[7px] px-3.5 rounded-[7px] border border-danger bg-transparent text-danger cursor-pointer whitespace-nowrap transition-colors shrink-0 hover:bg-danger hover:text-white" onclick={openDeleteBefore}>
-			Delete Old Logs
-		</button>
-	</div>
-
 	{#if listError}
 		<div class="bg-[#fef2f2] border border-[#fca5a5] rounded-lg py-2.5 px-3.5 text-[13px] text-danger">{listError}</div>
 	{/if}
@@ -178,16 +187,25 @@
 		{loading}
 		empty={items.length === 0}
 		emptyMessage="No audit logs found."
+		{selectAll}
+		{selectedIds}
+		onSelectAll={toggleSelectAll}
+		onSelect={toggleSelect}
+		onRowClick={handleRowClick}
 	>
 		{#each items as item (item.id)}
-			<tr>
-				<td class="py-2 px-3 text-[12px] text-copy-light border-b border-subtle whitespace-nowrap">{formatTimestamp(item.createdAt)}</td>
-				<td class="py-2 px-3 text-copy border-b border-subtle text-[13px]">{item.adminEmail}</td>
-				<td class="py-2 px-3 border-b border-subtle">
+			{@const isSelected = selectedIds.includes(item.id)}
+			<tr class="hover:bg-surface/50 cursor-pointer transition-colors" onclick={() => handleRowClick(item.id)}>
+				<td class="border-subtle border px-3 py-2" onclick={(e) => e.stopPropagation()}>
+					<input type="checkbox" checked={isSelected} onchange={() => toggleSelect(item.id)} class="accent-primary cursor-pointer" />
+				</td>
+				<td class="border-subtle border px-3 py-2 text-[12px] text-copy-light whitespace-nowrap">{formatTimestamp(item.createdAt)}</td>
+				<td class="border-subtle border px-3 py-2 text-copy text-[13px]">{item.adminEmail}</td>
+				<td class="border-subtle border px-3 py-2">
 					<span class="inline-block text-[11px] font-semibold px-2 py-0.5 rounded {item.action === 'deleted' ? 'bg-[#fef2f2] text-danger' : item.action === 'created' ? 'bg-emerald-50 text-emerald-700' : 'bg-surface text-copy'}">{item.action}</span>
 				</td>
-				<td class="py-2 px-3 text-copy-light border-b border-subtle text-[13px]">{item.entityType}</td>
-				<td class="py-2 px-3 text-copy border-b border-subtle text-[13px] max-w-[200px] truncate" title={item.entityName}>{item.entityName}</td>
+				<td class="border-subtle border px-3 py-2 text-copy-light text-[13px]">{item.entityType}</td>
+				<td class="border-subtle border px-3 py-2 text-copy text-[13px] max-w-[200px] truncate" title={item.entityName}>{item.entityName}</td>
 			</tr>
 		{/each}
 	</DataTable>
