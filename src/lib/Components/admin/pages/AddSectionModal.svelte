@@ -7,13 +7,15 @@
 		templates,
 		categoryOptions = [],
 		productTypeOptions = [],
+		ikEndpoint = '',
 		onsaved,
 		onclose,
 	}: {
 		pageName: string;
-		templates: { slug: string; name: string; schemaDefinition: { field: string; type: string; label?: string; required?: boolean; options?: string[]; source?: string; dependsOn?: string }[] }[];
+		templates: { slug: string; name: string; schemaDefinition: { field: string; type: string; label?: string; required?: boolean; options?: string[]; source?: string; dependsOn?: string; folder?: string }[] }[];
 		categoryOptions?: string[];
 		productTypeOptions?: string[];
+		ikEndpoint?: string;
 		onsaved: () => void;
 		onclose: () => void;
 	} = $props();
@@ -104,7 +106,7 @@
 
 		<div class="flex flex-col gap-4">
 			<p class="text-xs font-semibold text-copy uppercase tracking-[0.04em] m-0">Configure: {selectedTemplate.name}</p>
-			<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} />
+			<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} />
 		</div>
 
 		{#if error}

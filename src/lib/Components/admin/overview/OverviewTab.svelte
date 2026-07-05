@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
 	import { Chart, registerables } from 'chart.js';
+	import GlassCard from './GlassCard.svelte';
+	import MetricCard from './MetricCard.svelte';
+	import PlaceholderCard from './PlaceholderCard.svelte';
+	import ShimmerRows from './ShimmerRows.svelte';
 
 	Chart.register(...registerables);
 
@@ -76,7 +80,7 @@
 						},
 						y: {
 							grid: { display: false },
-							ticks: { color: '#6d6d6d', font: { size: 12, weight: '500' } },
+							ticks: { color: '#6d6d6d', font: { size: 12, weight: 500 } },
 						},
 					},
 				},
@@ -127,14 +131,14 @@
 	}
 </script>
 
-<div class="overview-bg flex flex-col gap-5 px-6 pt-5">
+<div class="flex flex-col gap-4 md:gap-5 px-4 md:px-6 py-4 md:py-5">
 	<header class="flex flex-col gap-0.5">
 		<h1 class="text-[1.25rem] font-bold text-[#1a1a1a] tracking-[-0.02em] m-0">Overview</h1>
 		<p class="text-[0.8125rem] text-copy-light m-0">Live snapshot · refreshes on tab mount</p>
 	</header>
 
 	{#if error}
-		<div class="flex items-center gap-2 bg-[#fef2f2] border border-[#fecaca] text-danger rounded-xl px-4 py-3 text-[13px] font-medium glass-card">
+		<div class="flex items-center gap-2 bg-[#fef2f2] border border-[#fecaca] text-danger rounded-xl px-4 py-3 text-[13px] font-medium">
 			<span class="icon-[lucide--circle-alert] w-4 h-4"></span>
 			{error}
 		</div>
@@ -142,57 +146,19 @@
 
 	<!-- Row 1: Metric cards -->
 	<div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-		<!-- Total Products -->
-		<div class="glass-card group">
-			<span class="card-label">Total Products</span>
-			<span class="text-[1.5rem] md:text-[2rem] font-extrabold tracking-[-0.04em] leading-none mt-1.5 text-[#1a1a1a] {loading ? 'shimmer-text' : ''}">
-				{loading ? '—' : data?.totalProducts ?? 0}
-			</span>
-			<span class="card-hint">{data?.perCategory?.length ?? 0} categories</span>
-		</div>
-
-		<!-- Published / Unpublished -->
-		<div class="glass-card group">
-			<span class="card-label">Published</span>
-			<div class="flex items-baseline gap-2 mt-1.5">
-				<span class="text-[1.5rem] md:text-[2rem] font-extrabold tracking-[-0.04em] leading-none text-[#16a34a] {loading ? 'shimmer-text' : ''}">
-					{loading ? '—' : data?.published ?? 0}
-				</span>
-				<span class="text-[0.875rem] md:text-[1rem] font-bold text-amber-500">/ {loading ? '—' : data?.unpublished ?? 0}</span>
-			</div>
-			<span class="card-hint">published / unpublished</span>
-		</div>
-
-		<!-- Inventory Value -->
-		<div class="glass-card group">
-			<span class="card-label">Inventory Value</span>
-			<span class="text-[1.5rem] md:text-[2rem] font-extrabold tracking-[-0.04em] leading-none mt-1.5 text-[#1a1a1a] {loading ? 'shimmer-text' : ''}">
-				{loading ? '—' : fmt(data?.inventoryValue ?? 0)}
-			</span>
-			<span class="card-hint">across {data?.locations?.count ?? 0} locations</span>
-		</div>
-
-		<!-- Low Stock -->
-		<a href="/admin?tab=products" class="glass-card group cursor-pointer no-underline" onclick={(e) => { e.preventDefault(); navigateWithFilter({ filterStock: ['out_of_stock'] }); }}>
-			<span class="card-label">Low Stock</span>
-			<span class="text-[1.5rem] md:text-[2rem] font-extrabold tracking-[-0.04em] leading-none mt-1.5 text-danger {loading ? 'shimmer-text' : ''}">
-				{loading ? '—' : data?.lowStockProducts?.length ?? 0}
-			</span>
-			<span class="card-hint">products need restocking →</span>
-		</a>
+		<MetricCard label="Total Products" value={data?.totalProducts ?? 0} hint="{data?.perCategory?.length ?? 0} categories" {loading} />
+		<MetricCard label="Published" value="{data?.published ?? 0} / {data?.unpublished ?? 0}" hint="published / unpublished" {loading} color="text-[#16a34a]" />
+		<MetricCard label="Inventory Value" value={fmt(data?.inventoryValue ?? 0)} hint="across {data?.locations?.count ?? 0} locations" {loading} />
+		<MetricCard label="Low Stock" value={data?.lowStockProducts?.length ?? 0} hint="products need restocking →" {loading} color="text-danger" onClick={() => navigateWithFilter({ filterStock: ['out_of_stock'] })} />
 	</div>
 
 	<!-- Row 2: Info cards -->
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
 		<!-- Recent Activity -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Recent Activity</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Recent Activity</span>
 			{#if loading}
-				<div class="flex flex-col gap-2">
-					{#each Array(3) as _}
-						<div class="h-8 rounded-lg shimmer"></div>
-					{/each}
-				</div>
+				<ShimmerRows />
 			{:else if data?.recentActivity?.length}
 				<div class="flex flex-col gap-2.5">
 					{#each data.recentActivity as log}
@@ -210,17 +176,13 @@
 			{:else}
 				<p class="text-[12px] text-copy-light m-0">No recent activity</p>
 			{/if}
-		</div>
+		</GlassCard>
 
 		<!-- Stock by Location -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Stock by Location</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Stock by Location</span>
 			{#if loading}
-				<div class="flex flex-col gap-2">
-					{#each Array(3) as _}
-						<div class="h-8 rounded-lg shimmer"></div>
-					{/each}
-				</div>
+				<ShimmerRows />
 			{:else if data?.stockByLocation?.length}
 				<div class="flex flex-col gap-2">
 					{#each data.stockByLocation as loc}
@@ -239,11 +201,11 @@
 			{:else}
 				<p class="text-[12px] text-copy-light m-0">No stock data</p>
 			{/if}
-		</div>
+		</GlassCard>
 
 		<!-- Quick Actions -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Quick Actions</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Quick Actions</span>
 			<div class="flex flex-col gap-2.5">
 				<button
 					class="flex items-center gap-2.5 w-full text-left px-3 py-2.5 rounded-xl bg-white/40 hover:bg-white/60 border border-white/30 transition-all text-[13px] font-medium text-copy cursor-pointer"
@@ -267,14 +229,14 @@
 					Check Low Stock
 				</button>
 			</div>
-		</div>
+		</GlassCard>
 	</div>
 
 	<!-- Row 3: Visual cards -->
 	<div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
 		<!-- Brand Distribution -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Brand Distribution</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Brand Distribution</span>
 			{#if loading}
 				<div class="h-[180px] rounded-lg shimmer"></div>
 			{:else if data?.brandDistribution?.length}
@@ -284,17 +246,13 @@
 			{:else}
 				<p class="text-[12px] text-copy-light m-0">No brand data</p>
 			{/if}
-		</div>
+		</GlassCard>
 
 		<!-- Category Health -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Category Health</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Category Health</span>
 			{#if loading}
-				<div class="flex flex-col gap-2">
-					{#each Array(3) as _}
-						<div class="h-8 rounded-lg shimmer"></div>
-					{/each}
-				</div>
+				<ShimmerRows />
 			{:else if data?.categoryHealth?.length}
 				<div class="flex flex-col gap-2">
 					{#each data.categoryHealth as ch}
@@ -312,17 +270,13 @@
 			{:else}
 				<p class="text-[12px] text-copy-light m-0">No category data</p>
 			{/if}
-		</div>
+		</GlassCard>
 
 		<!-- Promotion Tags -->
-		<div class="glass-card">
-			<span class="card-label mb-3">Promotion Tags</span>
+		<GlassCard>
+			<span class="text-[11px] font-semibold uppercase tracking-[0.06em] text-copy-light mb-3">Promotion Tags</span>
 			{#if loading}
-				<div class="flex flex-col gap-2">
-					{#each Array(3) as _}
-						<div class="h-8 rounded-lg shimmer"></div>
-					{/each}
-				</div>
+				<ShimmerRows />
 			{:else}
 				<div class="flex flex-col gap-3">
 					{#if data?.promotionTags?.length}
@@ -354,119 +308,35 @@
 					{/if}
 				</div>
 			{/if}
-		</div>
+		</GlassCard>
 	</div>
 
 	<!-- Row 4: Placeholders -->
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-		<!-- Revenue Placeholder -->
-		<div class="glass-card opacity-60">
-			<div class="flex items-center gap-2 mb-2">
-				<span class="icon-[lucide--lock] w-4 h-4 text-copy-light"></span>
-				<span class="card-label">Revenue</span>
-			</div>
-			<span class="text-[1.5rem] font-extrabold tracking-[-0.04em] leading-none text-copy-light">Coming Soon</span>
-			<span class="card-hint">Payment integration planned</span>
-		</div>
-
-		<!-- Orders Placeholder -->
-		<div class="glass-card opacity-60">
-			<div class="flex items-center gap-2 mb-2">
-				<span class="icon-[lucide--lock] w-4 h-4 text-copy-light"></span>
-				<span class="card-label">Recent Orders</span>
-			</div>
-			<span class="text-[1.5rem] font-extrabold tracking-[-0.04em] leading-none text-copy-light">Coming Soon</span>
-			<span class="card-hint">Order tracking on the roadmap</span>
-		</div>
+	<div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+		<PlaceholderCard label="Revenue" hint="Payment integration planned" />
+		<PlaceholderCard label="Recent Orders" hint="Order tracking on the roadmap" />
 	</div>
 </div>
 
 <style>
-	.glass-card {
-		background: var(--color-surface);
-		border: 1px solid var(--color-subtle);
-		border-radius: 12px;
-		padding: 18px 20px;
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-		transition: box-shadow 0.2s ease;
-		min-width: 0;
-		overflow: hidden;
-	}
-	.glass-card:hover {
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-	}
-
-	@media (min-width: 768px) {
-		.glass-card {
-			background: rgba(255, 255, 255, 0.55);
-			backdrop-filter: blur(12px);
-			-webkit-backdrop-filter: blur(12px);
-			border-color: rgba(255, 255, 255, 0.5);
-		}
-	}
-	.glass-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 1px;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
-	}
-	.glass-card:hover {
-		box-shadow:
-			0 8px 40px rgba(0, 0, 0, 0.06),
-			0 2px 8px rgba(0, 0, 0, 0.03),
-			inset 0 1px 0 rgba(255, 255, 255, 0.9);
-		transform: translateY(-2px);
-	}
-	.glass-card:hover {
-		box-shadow:
-			0 8px 40px rgba(0, 0, 0, 0.06),
-			0 2px 8px rgba(0, 0, 0, 0.03),
-			inset 0 1px 0 rgba(255, 255, 255, 0.8);
-		border-color: rgba(255, 255, 255, 0.7);
-		transform: translateY(-2px);
-	}
-
-	.card-label {
-		font-size: 0.75rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: var(--color-copy-light);
-	}
-
-	.card-hint {
-		font-size: 0.75rem;
-		color: var(--color-copy-light);
-		margin-top: 2px;
-	}
-
-	@keyframes shimmer {
-		0% { background-position: -400px 0; }
-		100% { background-position: 400px 0; }
-	}
 	.shimmer {
 		background: linear-gradient(90deg, rgba(255,255,255,0.3) 25%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.3) 75%);
 		background-size: 800px 100%;
 		animation: shimmer 1.4s infinite linear;
 		border-radius: 8px;
 	}
-	.shimmer-text {
+
+	@keyframes shimmer {
+		0% { background-position: -400px 0; }
+		100% { background-position: 400px 0; }
+	}
+
+	:global(.shimmer-text) {
 		background: linear-gradient(90deg, #d5d0c3 25%, #e6e3db 50%, #d5d0c3 75%);
 		background-size: 200% 100%;
 		animation: shimmer 1.4s infinite linear;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		border-radius: 4px;
-	}
-
-	.overview-bg {
-		background: var(--color-neutral);
-		min-height: 100%;
 	}
 </style>

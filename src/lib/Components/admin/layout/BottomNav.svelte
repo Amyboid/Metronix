@@ -48,7 +48,7 @@
 	const currentTab = $derived($adminNav.tab);
 </script>
 
-<nav class="fixed bottom-0 left-0 right-0 h-nav bg-neutral border-t border-subtle flex items-stretch z-[100] px-1 pb-[env(safe-area-inset-bottom,0)]" role="navigation" aria-label="Main navigation">
+<nav class="fixed bottom-0 left-0 right-0 h-nav bg-neutral border-t border-subtle flex items-stretch z-[100] px-1 pb-[env(safe-area-inset-bottom,0)]" aria-label="Main navigation">
 	{#each tabs as tab}
 		<button
 			class="flex-1 flex flex-col items-center justify-center gap-[3px] bg-transparent border-none cursor-pointer text-copy-light px-[2px] py-1 rounded-lg transition-colors font-inter -webkit-tap-highlight-color:transparent active:bg-surface"

@@ -1,5 +1,5 @@
 {
-  "id": "2904d397-e165-4146-a023-f1a344d390b4",
+  "id": "40133e30-131e-4be6-a485-c6a87b356f75",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -240,6 +240,66 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.brand_product_types": {
+      "name": "brand_product_types",
+      "schema": "",
+      "columns": {
+        "brand": {
+          "name": "brand",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_type": {
+          "name": "product_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "brand_product_types_brand_brands_slug_fk": {
+          "name": "brand_product_types_brand_brands_slug_fk",
+          "tableFrom": "brand_product_types",
+          "tableTo": "brands",
+          "columnsFrom": [
+            "brand"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "brand_product_types_product_type_product_types_slug_fk": {
+          "name": "brand_product_types_product_type_product_types_slug_fk",
+          "tableFrom": "brand_product_types",
+          "tableTo": "product_types",
+          "columnsFrom": [
+            "product_type"
+          ],
+          "columnsTo": [
+            "slug"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "brand_product_types_brand_product_type_pk": {
+          "name": "brand_product_types_brand_product_type_pk",
+          "columns": [
+            "brand",
+            "product_type"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.brands": {
       "name": "brands",
       "schema": "",
@@ -370,7 +430,35 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "colors_name_idx": {
+          "name": "colors_name_idx",
+          "columns": [
+            {
+              "expression": "brand",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "product_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "colors_brand_brands_slug_fk": {
           "name": "colors_brand_brands_slug_fk",

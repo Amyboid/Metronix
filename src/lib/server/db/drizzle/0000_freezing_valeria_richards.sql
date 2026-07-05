@@ -25,6 +25,12 @@ CREATE TABLE "audit_logs" (
 	"created_at" timestamp (3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "brand_product_types" (
+	"brand" text NOT NULL,
+	"product_type" text NOT NULL,
+	CONSTRAINT "brand_product_types_brand_product_type_pk" PRIMARY KEY("brand","product_type")
+);
+--> statement-breakpoint
 CREATE TABLE "brands" (
 	"slug" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -189,6 +195,8 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "brand_product_types" ADD CONSTRAINT "brand_product_types_brand_brands_slug_fk" FOREIGN KEY ("brand") REFERENCES "public"."brands"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
+ALTER TABLE "brand_product_types" ADD CONSTRAINT "brand_product_types_product_type_product_types_slug_fk" FOREIGN KEY ("product_type") REFERENCES "public"."product_types"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "colors" ADD CONSTRAINT "colors_brand_brands_slug_fk" FOREIGN KEY ("brand") REFERENCES "public"."brands"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "colors" ADD CONSTRAINT "colors_product_type_product_types_slug_fk" FOREIGN KEY ("product_type") REFERENCES "public"."product_types"("slug") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "page_section" ADD CONSTRAINT "page_section_template_slug_section_template_slug_fk" FOREIGN KEY ("template_slug") REFERENCES "public"."section_template"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -204,6 +212,7 @@ CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> state
 CREATE INDEX "audit_admin_idx" ON "audit_logs" USING btree ("admin_id");--> statement-breakpoint
 CREATE INDEX "audit_entity_idx" ON "audit_logs" USING btree ("entity_type","entity_id");--> statement-breakpoint
 CREATE INDEX "audit_created_idx" ON "audit_logs" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "colors_name_idx" ON "colors" USING btree ("brand","product_type","name");--> statement-breakpoint
 CREATE INDEX "availability_product_idx" ON "product_availability" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX "availability_location_idx" ON "product_availability" USING btree ("location_id");--> statement-breakpoint
 CREATE INDEX "product_slug_idx" ON "product" USING btree ("slug");--> statement-breakpoint

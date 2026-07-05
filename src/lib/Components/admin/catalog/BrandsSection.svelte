@@ -17,6 +17,7 @@
 		name:        string;
 		logoPath:    string | null;
 		logoFileId:  string | null;
+		productTypes: string[];
 	};
 
 	// ── List ──────────────────────────────────────────────────────────────────
@@ -78,6 +79,8 @@
 	let panelItem:   Brand | null = $state(null);
 	let formName     = $state('');
 	let formSlug     = $state('');
+	let formProductTypes: string[] = $state([]);
+	let allProductTypes: { slug: string; name: string }[] = $state([]);
 	let formPending: { file: File; previewUrl: string } | null = $state(null);
 	let formUploading = $state(false);
 	let formSaving   = $state(false);
@@ -89,12 +92,14 @@
 		if (!formName.trim() || !formSlug.trim()) return false;
 		if (panelMode === 'add') return true;
 		if (!panelItem) return false;
+		const typesChanged = JSON.stringify([...formProductTypes].sort()) !== JSON.stringify([...(panelItem.productTypes ?? [])].sort());
 		return (
 			formName !== panelItem.name ||
 			formSlug !== panelItem.slug ||
 			formLogoPath !== panelItem.logoPath ||
 			formLogoFileId !== panelItem.logoFileId ||
-			formPending !== null
+			formPending !== null ||
+			typesChanged
 		);
 	});
 
@@ -132,7 +137,12 @@
 	onMount(async () => {
 		const auth = await getIKAuth().catch(() => null);
 		if (auth) ikEndpoint = auth.urlEndpoint;
-		await load();
+		await Promise.all([
+			load(),
+			fetch('/api/admin/catalog').then(r => r.json()).then(d => {
+				allProductTypes = d.productTypes ?? [];
+			}).catch(() => {}),
+		]);
 		onadd?.(openAdd);
 	});
 
@@ -140,12 +150,14 @@
 	function openAdd() {
 		panelMode = 'add'; panelItem = null;
 		formName = ''; formSlug = ''; formError = '';
+		formProductTypes = [];
 		formPending = null; formLogoPath = null; formLogoFileId = null;
 	}
 
 	function openEdit(item: Brand) {
 		panelMode = 'edit'; panelItem = item;
 		formName = item.name; formSlug = item.slug;
+		formProductTypes = [...(item.productTypes ?? [])];
 		formLogoPath = item.logoPath ?? null;
 		formLogoFileId = item.logoFileId ?? null;
 		formPending = null; formError = '';
@@ -193,7 +205,7 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({
 						section: 'brand', slug: formSlug.trim(), name: formName.trim(),
-						logoPath, logoFileId,
+						logoPath, logoFileId, productTypes: formProductTypes,
 					}),
 				});
 				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Create failed' })); throw new Error(b.message); }
@@ -204,6 +216,7 @@
 					body: JSON.stringify({
 						section: 'brand', slug: panelItem!.slug,
 						name: formName.trim(), logoPath, logoFileId,
+						productTypes: formProductTypes,
 					}),
 				});
 				if (!res.ok) {
@@ -316,6 +329,33 @@
 			</label>
 		</div>
 
+		<!-- Product Types (multi-select) -->
+		<div class="flex flex-col gap-[5px]">
+			<span class="text-xs font-semibold text-copy uppercase tracking-[0.04em]">Serves Product Types</span>
+			<p class="text-[11px] text-copy-light m-0">Select which product types this brand offers</p>
+			<div class="flex flex-wrap gap-1.5 mt-1">
+				{#each allProductTypes as pt}
+					{@const selected = formProductTypes.includes(pt.slug)}
+					<button
+						type="button"
+						class="px-2.5 py-1 rounded-full border text-[12px] font-medium cursor-pointer transition-all {selected ? 'border-primary bg-primary/10 text-primary' : 'border-subtle bg-transparent text-copy hover:bg-surface'}"
+						onclick={() => {
+							if (selected) {
+								formProductTypes = formProductTypes.filter((t) => t !== pt.slug);
+							} else {
+								formProductTypes = [...formProductTypes, pt.slug];
+							}
+						}}
+					>
+						{pt.name}
+					</button>
+				{/each}
+				{#if allProductTypes.length === 0}
+					<span class="text-[11px] text-copy-light">No product types available</span>
+				{/if}
+			</div>
+		</div>
+
 		{#if formError}
 			<p class="text-xs text-danger m-0">{formError}</p>
 		{/if}
@@ -332,6 +372,7 @@
 			{ label: 'Logo', width: 'w-20' },
 			{ label: 'Slug' },
 			{ label: 'Name' },
+			{ label: 'Product Types' },
 		]}
 		{loading}
 		empty={items.length === 0}
@@ -357,6 +398,15 @@
 				</td>
 				<td class="border-subtle border px-3 py-2"><code class="font-mono text-xs text-copy-light">{item.slug}</code></td>
 				<td class="border-subtle border px-3 py-2">{item.name}</td>
+				<td class="border-subtle border px-3 py-2">
+					<div class="flex flex-wrap gap-1">
+						{#each (item.productTypes ?? []) as pt}
+							<span class="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary font-medium">{pt}</span>
+						{:else}
+							<span class="text-[11px] text-copy-light">—</span>
+						{/each}
+					</div>
+				</td>
 			</tr>
 		{/each}
 	</DataTable>

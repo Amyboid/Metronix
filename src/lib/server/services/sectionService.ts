@@ -35,7 +35,7 @@ export const sectionFetchers = {
     },
 
     'long-banner': async (config: any) => {
-        return null;
+        return config;
     },
 
     'category-grid': async (config: any) => {

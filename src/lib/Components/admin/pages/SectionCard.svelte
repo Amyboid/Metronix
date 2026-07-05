@@ -54,8 +54,10 @@
 </div>
 
 {#if showDelete}
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div class="fixed inset-0 z-[200] bg-black/35 backdrop-blur-[2px] flex items-center justify-center p-6" onclick={() => { showDelete = false; }} onkeydown={(e) => { if (e.key === 'Escape') showDelete = false; }} role="dialog" tabindex="-1" aria-modal="true">
-		<div class="bg-neutral border border-subtle rounded-xl p-6 w-full max-w-[400px] flex flex-col gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]" role="document" onkeydown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+		<div class="bg-neutral border border-subtle rounded-xl p-6 w-full max-w-[400px] flex flex-col gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]" onkeydown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
 			<h3 class="text-base font-bold text-gray-900 m-0">Delete "{templateName}" section?</h3>
 			<p class="text-sm text-copy m-0">This section will be permanently removed from this page. This action cannot be undone.</p>
 			<div class="flex gap-2 justify-end">

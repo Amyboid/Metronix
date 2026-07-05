@@ -2,12 +2,12 @@
 import { env } from '$env/dynamic/private';
 import { writeAuditLog } from '$lib/server/audit';
 import { db } from '$lib/server/db';
-import { brands, categories, products, productTypes } from '$lib/server/db/schema';
+import { brands, categories, products, productTypes, brandProductTypes } from '$lib/server/db/schema';
 import { error, json } from '@sveltejs/kit';
 import { asc, count, desc, eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
-const CHUNK = 5;
+const CHUNK = 15;
 
 function assertAdmin(locals: App.Locals) {
     if (!locals.user) throw error(401, 'Unauthorized');
@@ -79,8 +79,21 @@ export const GET: RequestHandler = async ({ locals, url }) => {
             .limit(CHUNK)
             .offset(offset);
 
+        // Fetch brand×type associations for each brand
+        const allAssocs = await db.select().from(brandProductTypes);
+        const assocMap = new Map<string, string[]>();
+        for (const a of allAssocs) {
+            const list = assocMap.get(a.brand) ?? [];
+            list.push(a.productType);
+            assocMap.set(a.brand, list);
+        }
+        const itemsWithAssocs = rows.map((b) => ({
+            ...b,
+            productTypes: assocMap.get(b.slug) ?? [],
+        }));
+
         const [{ total }] = await db.select({ total: count() }).from(brands);
-        return json({ items: rows, hasMore: offset + CHUNK < total, total });
+        return json({ items: itemsWithAssocs, hasMore: offset + CHUNK < total, total });
     }
 
     if (section === 'categories') {
@@ -125,7 +138,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
     const { section } = body;
 
     if (section === 'brand') {
-        const { slug, name, logoPath, logoFileId } = body;
+        const { slug, name, logoPath, logoFileId, productTypes: newTypes } = body;
         if (!slug || !name) throw error(400, 'slug and name are required');
 
         await db.insert(brands).values({
@@ -134,6 +147,13 @@ export const POST: RequestHandler = async ({ locals, request }) => {
             logoPath:   logoPath   ?? null,
             logoFileId: logoFileId ?? null,
         });
+
+        // Insert brand×type associations
+        if (Array.isArray(newTypes) && newTypes.length) {
+            await db.insert(brandProductTypes).values(
+                newTypes.map((t: string) => ({ brand: slug, productType: t }))
+            );
+        }
 
         await writeAuditLog({
             adminId:    admin.id,
@@ -210,7 +230,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
     if (!slug) throw error(400, 'Missing slug');
 
 	if (section === 'brand') {
-		const { name, logoPath, logoFileId } = body;
+		const { name, logoPath, logoFileId, productTypes: newTypes } = body;
 		const existing = await db.select().from(brands).where(eq(brands.slug, slug)).limit(1);
 		if (!existing.length) throw error(404, 'Brand not found');
 
@@ -225,6 +245,16 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 		}
 
 		await db.update(brands).set(updateData).where(eq(brands.slug, slug));
+
+		// Update brand×type associations if provided
+		if (Array.isArray(newTypes)) {
+			await db.delete(brandProductTypes).where(eq(brandProductTypes.brand, slug));
+			if (newTypes.length) {
+				await db.insert(brandProductTypes).values(
+					newTypes.map((t: string) => ({ brand: slug, productType: t }))
+				);
+			}
+		}
 
         await writeAuditLog({
             adminId:    admin.id,

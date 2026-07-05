@@ -13,7 +13,7 @@
 </script>
 
 {#if open}
-	<div class="fixed inset-0 z-[200] flex justify-end" transition:fade={{ duration: 200 }} role="dialog" aria-modal="true" onkeydown={(e) => { if (e.key === 'Escape') ondiscard?.(); }}>
+	<div class="fixed inset-0 z-[200] flex justify-end" transition:fade={{ duration: 200 }} role="dialog" tabindex="-1" aria-modal="true" onkeydown={(e) => { if (e.key === 'Escape') ondiscard?.(); }}>
 		<button type="button" class="absolute inset-0 bg-black/35 backdrop-blur-[2px] border-none cursor-default" onclick={ondiscard} aria-label="Close panel"></button>
 
 		<div

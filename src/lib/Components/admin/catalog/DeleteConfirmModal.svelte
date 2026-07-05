@@ -29,9 +29,9 @@
 		tabindex="-1"
 		aria-modal="true"
 	>
+		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
 			class="bg-neutral border border-subtle rounded-xl p-6 w-full max-w-[480px] flex flex-col gap-4 shadow-[0_8px_32px_rgba(0,0,0,0.12)]"
-			role="document"
 			onkeydown={(e) => e.stopPropagation()}
 			onclick={(e) => e.stopPropagation()}
 		>

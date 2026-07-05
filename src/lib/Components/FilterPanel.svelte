@@ -2,7 +2,6 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { findClosestColor, sortByClosest } from '$lib/utils/color';
 
 	interface Props {
 		isOpen: boolean;
@@ -16,7 +15,7 @@
 	type FilterOption = { slug: string; name: string };
 	type BadgeOption = { value: string; label: string };
 	type StockOption = { value: string; label: string; count: number };
-	type ColorOption = { hex: string };
+	type ColorOption = { hex: string; name: string; count: number };
 
 	let brandOptions: FilterOption[] = $state([]);
 	let categoryOptions: FilterOption[] = $state([]);
@@ -33,7 +32,6 @@
 	let selectedBadges = $state<string[]>([]);
 	let selectedStock = $state<string[]>([]);
 	let selectedColors = $state<string[]>([]);
-	let colorPickerHex = $state('#000000');
 	let priceMin = $state(0);
 	let priceMax = $state(200000);
 
@@ -72,7 +70,7 @@
 		}
 		g.push({
 			id: 'color', label: 'Color',
-			options: colorOptions.map((c) => ({ value: c.hex, label: c.hex })),
+			options: colorOptions.map((c) => ({ value: c.hex, label: c.name })),
 			selected: selectedColors,
 		});
 		g.push({
@@ -96,9 +94,7 @@
 		(priceMin > PRICE_MIN || priceMax < PRICE_MAX ? 1 : 0)
 	);
 
-	const sortedColors = $derived(
-		sortByClosest(colorPickerHex, colorOptions.map((c) => ({ hex: c.hex, name: c.hex })))
-	);
+	let hasAppliedFilters = $state(false);
 
 	onMount(async () => {
 		try {
@@ -165,9 +161,12 @@
 		selectedColors = [];
 		priceMin = PRICE_MIN;
 		priceMax = PRICE_MAX;
+		hasAppliedFilters = false;
+		apply();
 	}
 
 	function apply() {
+		hasAppliedFilters = true;
 		const newUrl = new URL(page.url);
 		['brand', 'category', 'type', 'badge', 'stock', 'color', 'minPrice', 'maxPrice', 'page'].forEach((k) =>
 			newUrl.searchParams.delete(k)
@@ -195,17 +194,6 @@
 	function fmt(n: number) {
 		return '₹' + n.toLocaleString('en-IN');
 	}
-
-	function onColorPickerInput(e: Event) {
-		colorPickerHex = (e.target as HTMLInputElement).value;
-	}
-
-	function addClosestColor() {
-		const closest = findClosestColor(colorPickerHex, colorOptions.map((c) => ({ hex: c.hex, name: c.hex })));
-		if (closest && !selectedColors.includes(closest.hex)) {
-			selectedColors = [...selectedColors, closest.hex];
-		}
-	}
 </script>
 
 <!-- ─── Desktop sidebar ───────────────────────────────────────────────────── -->
@@ -217,15 +205,6 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between shrink-0 p-4">
 			<h3 class="text-[13px] font-bold text-gray-900 m-0">Filters</h3>
-			{#if totalSelected > 0}
-				<button class="text-[12px] text-copy-light hover:text-copy bg-transparent border-none cursor-pointer underline p-0" onclick={reset}>
-					Clear all ({totalSelected})
-				</button>
-			{:else}
-				<button class="text-[12px] text-copy-light hover:text-copy bg-transparent border-none cursor-pointer underline p-0" onclick={reset}>
-					Reset
-				</button>
-			{/if}
 		</div>
 
 		<!-- Scrollable body -->
@@ -243,7 +222,7 @@
 
 		<!-- Footer -->
 		<div class="flex gap-2.5 shrink-0 p-4">
-			<button class="flex-1 font-inter text-[13px] font-medium py-[7px] rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" onclick={reset}>Clear All</button>
+			<button class="flex-1 font-inter text-[13px] font-medium py-[7px] rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed" onclick={reset} disabled={!hasAppliedFilters}>Clear All</button>
 			<button class="flex-1 font-inter text-[13px] font-semibold py-[7px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors hover:opacity-90" onclick={apply}>Apply</button>
 		</div>
 	</div>
@@ -258,9 +237,6 @@
 
 		<div class="flex items-center justify-between px-5 pt-3 pb-3 border-b border-subtle shrink-0">
 			<span class="text-[13px] font-bold tracking-[0.08em] uppercase text-copy">Filters</span>
-			{#if totalSelected > 0}
-				<button class="text-[12px] text-copy-light hover:text-copy bg-transparent border-none cursor-pointer underline p-0" onclick={reset}>Clear ({totalSelected})</button>
-			{/if}
 			<button class="flex items-center justify-center w-8 h-8 bg-transparent border-none cursor-pointer text-copy p-1" onclick={cancel} aria-label="Close">
 				<span class="icon-[lucide--x] h-5 w-5"></span>
 			</button>
@@ -279,7 +255,7 @@
 		</div>
 
 		<div class="flex gap-3 px-5 py-3 border-t border-subtle shrink-0">
-			<button class="flex-1 py-[10px] px-4 border border-subtle bg-transparent rounded-[0.5rem] text-[14px] font-semibold cursor-pointer text-copy" onclick={reset}>Reset</button>
+			<button class="flex-1 py-[10px] px-4 border border-subtle bg-transparent rounded-[0.5rem] text-[14px] font-semibold cursor-pointer text-copy disabled:opacity-40 disabled:cursor-not-allowed" onclick={reset} disabled={!hasAppliedFilters}>Clear All</button>
 			<button class="flex-[2] py-[10px] px-4 border-none bg-primary rounded-[0.5rem] text-[14px] font-semibold cursor-pointer text-white" onclick={apply}>Apply</button>
 		</div>
 	</div>
@@ -342,34 +318,24 @@
 					</div>
 
 				{:else if activeGroup === 'color'}
-					<!-- Color picker -->
-					<div class="pb-3 mb-3 border-b border-subtle">
-						<p class="text-[11px] font-semibold text-copy-light uppercase tracking-[0.04em] m-0 mb-1.5">Pick a color</p>
-						<div class="flex items-center gap-2">
-							<input type="color" value={colorPickerHex} oninput={onColorPickerInput} class="w-9 h-9 rounded-lg border-2 border-subtle cursor-pointer p-0 color-input" />
-							<button class="px-3 py-1.5 rounded-full border border-primary bg-transparent text-primary text-[12px] font-semibold cursor-pointer transition-colors hover:bg-primary/10" onclick={addClosestColor}>Find closest</button>
-						</div>
-						{#if sortedColors.length}
-							<p class="text-[11px] text-copy-light m-0 mt-1.5">
-								Closest: <span class="font-medium text-copy inline-flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-sm border border-black/10" style="background-color: {sortedColors[0].hex}"></span>{sortedColors[0].hex}</span>
-								({Math.round(sortedColors[0].distance)} away)
-							</p>
-						{/if}
-					</div>
-					<!-- Color grid -->
-					<div class="grid grid-cols-[repeat(auto-fill,minmax(32px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(36px,1fr))] gap-1.5">
+					<!-- Color swatches with name + count -->
+					<div class="flex flex-col gap-2">
 						{#each colorOptions as color (color.hex)}
 							{@const isSelected = selectedColors.includes(color.hex)}
 							<button
-								class="w-9 h-9 rounded-md border-2 cursor-pointer transition-all active:scale-90 {isSelected ? 'border-primary shadow-[0_0_0_2px_var(--color-primary)]' : 'border-subtle hover:border-subtle-hover'}"
-								style="background-color: {color.hex}"
+								class="flex items-center gap-2.5 px-3 py-2 rounded-lg border text-[13px] cursor-pointer transition-all {isSelected ? 'border-primary bg-primary/10' : 'border-subtle hover:bg-surface'}"
 								onclick={() => toggleValue(color.hex)}
-								title={color.hex}
-								aria-label={color.hex}
-							></button>
+							>
+								<span
+									class="w-5 h-5 rounded-sm shrink-0 border border-black/10"
+									style="background-color: {color.hex}"
+								></span>
+								<span class="font-medium text-copy flex-1">{color.name}</span>
+								<span class="text-copy-light text-[11px]">{color.count}</span>
+							</button>
 						{/each}
 						{#if colorOptions.length === 0}
-							<p class="text-xs text-copy-light text-center py-6 m-0 col-span-full">No colors found</p>
+							<p class="text-xs text-copy-light text-center py-6 m-0">No colors found</p>
 						{/if}
 					</div>
 

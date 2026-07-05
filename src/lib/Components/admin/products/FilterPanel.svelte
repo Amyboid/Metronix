@@ -38,6 +38,8 @@
 		selectedBrand.length + selectedCategory.length + selectedType.length + selectedStock.length
 	);
 
+	let hasAppliedFilters = $state(false);
+
 	function toggleValue(value: string) {
 		const group = activeGroup;
 		let current: string[];
@@ -128,7 +130,7 @@
 
 	<!-- Footer -->
 	<div class="flex gap-2.5 px-4 py-3 border-t border-subtle shrink-0">
-		<button class="flex-1 font-inter text-[13px] font-medium py-[7px] rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface" onclick={onclear}>Clear All</button>
-		<button class="flex-1 font-inter text-[13px] font-semibold py-[7px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors hover:bg-primary-hover" onclick={onapply}>Apply</button>
+		<button class="flex-1 font-inter text-[13px] font-medium py-[7px] rounded-[7px] border border-subtle bg-transparent text-copy cursor-pointer transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed" onclick={() => { onclear?.(); hasAppliedFilters = false; }} disabled={!hasAppliedFilters}>Clear All</button>
+		<button class="flex-1 font-inter text-[13px] font-semibold py-[7px] rounded-[7px] border-none bg-primary text-white cursor-pointer transition-colors hover:bg-primary-hover" onclick={() => { onapply?.(); hasAppliedFilters = true; }}>Apply</button>
 	</div>
 </div>

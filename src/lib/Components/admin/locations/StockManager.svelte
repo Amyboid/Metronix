@@ -120,10 +120,10 @@
 											onkeydown={(e) => { if (e.key === 'Enter') saveStock(item.productId); if (e.key === 'Escape') cancelEdit(); }}
 											disabled={saving}
 										/>
-										<button class="inline-flex items-center justify-center w-6 h-6 rounded border border-primary bg-transparent text-primary cursor-pointer hover:bg-primary hover:text-white disabled:opacity-50" onclick={() => saveStock(item.productId)} disabled={saving}>
+										<button class="inline-flex items-center justify-center w-6 h-6 rounded border border-primary bg-transparent text-primary cursor-pointer hover:bg-primary hover:text-white disabled:opacity-50" onclick={() => saveStock(item.productId)} disabled={saving} aria-label="Save stock">
 											<span class="icon-[lucide--check] w-3 h-3"></span>
 										</button>
-										<button class="inline-flex items-center justify-center w-6 h-6 rounded border border-subtle bg-transparent text-copy cursor-pointer hover:bg-surface" onclick={cancelEdit}>
+										<button class="inline-flex items-center justify-center w-6 h-6 rounded border border-subtle bg-transparent text-copy cursor-pointer hover:bg-surface" onclick={cancelEdit} aria-label="Cancel edit">
 											<span class="icon-[lucide--x] w-3 h-3"></span>
 										</button>
 									</div>

@@ -74,7 +74,7 @@
 	</ul>
 
 	<div class="flex justify-end px-3 py-2 border-t border-subtle shrink-0">
-		<button class="flex items-center justify-center w-9 h-9 bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" onclick={onToggle} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+		<button class="flex items-center justify-center w-9 h-9 bg-transparent border border-subtle rounded-md cursor-pointer text-copy-light transition-colors hover:bg-surface hover:text-copy hover:border-subtle-hover" onclick={onToggle} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
 			<span class="icon-[lucide--chevrons-left] w-5 h-5" class:rotated={collapsed}></span>
 		</button>
 	</div>

@@ -7,11 +7,12 @@
 		template,
 		categoryOptions = [],
 		productTypeOptions = [],
+		ikEndpoint = '',
 		onsaved,
 		onclose,
 	}: {
 		section: { id: string; config: Record<string, any> };
-		template: { slug: string; name: string; schemaDefinition: { field: string; type: string; label?: string; required?: boolean; options?: string[]; source?: string; dependsOn?: string }[] } | undefined;
+		template: { slug: string; name: string; schemaDefinition: { field: string; type: string; label?: string; required?: boolean; options?: string[]; source?: string; dependsOn?: string; folder?: string }[] } | undefined;
 		categoryOptions?: string[];
 		productTypeOptions?: string[];
 		onsaved: () => void;
@@ -65,7 +66,7 @@
 	ondiscard={onclose}
 >
 	<div class="flex flex-col gap-4">
-		<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} />
+		<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} />
 
 		{#if error}
 			<p class="text-xs text-danger m-0">{error}</p>

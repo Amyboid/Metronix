@@ -83,9 +83,15 @@ function pathToView(search: string): AdminView {
 }
 
 function createAdminNav() {
-	const { subscribe, set } = writable<AdminView>(getDefaultView());
+	const store = writable<AdminView>(getDefaultView());
+	const { subscribe, set } = store;
 
 	function navigate(view: AdminView, replace = false) {
+		// Clear product filters when leaving products tab
+		const currentView = get(store);
+		if (currentView.tab === 'products' && view.tab !== 'products') {
+			sessionStorage.removeItem('adminProductFilters');
+		}
 		const path = viewToPath(view);
 		if (replace) {
 			history.replaceState({ view }, '', path);
