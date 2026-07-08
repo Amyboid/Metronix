@@ -38,17 +38,17 @@
 	{:else if sectionData}
 		{#if sectionBlueprint.templateSlug === 'product-slider'}
 			<ProductSlider
-				sectionHeading={sectionData.config.sectionHeading ?? sectionData.config.heading ?? ''}
+				sectionHeading={sectionData.config.sectionHeading ?? ''}
 				products={sectionData.data ?? []}
 				ctaText={sectionData.config.ctaText ?? ''}
-				linkTo={sectionData.config.linkTo ?? sectionData.config.filterType ?? ''}
-				linkValue={sectionData.config.linkValue ?? sectionData.config.filterValue ?? ''}
+				linkTo={sectionData.config.linkTo ?? ''}
+				linkValue={sectionData.config.linkValue ?? ''}
 			/>
 		{:else if sectionBlueprint.templateSlug === 'long-banner'}
 			<LongBanner
 				sectionHeading={sectionData.config.sectionHeading ?? ''}
-				bannerHeading={sectionData.config.bannerHeading ?? sectionData.config.heading ?? ''}
-				bannerSubheading={sectionData.config.bannerSubheading ?? sectionData.config.subheading ?? ''}
+				bannerHeading={sectionData.config.bannerHeading ?? ''}
+				bannerSubheading={sectionData.config.bannerSubheading ?? ''}
 				linkTo={sectionData.config.linkTo ?? ''}
 				linkValue={sectionData.config.linkValue ?? ''}
 				ctaText={sectionData.config.ctaText ?? ''}
@@ -85,8 +85,8 @@
 		{:else if sectionBlueprint.templateSlug === 'product-highlight'}
 			<ProductHighlight
 				sectionHeading={sectionData.config.sectionHeading ?? ''}
-				bannerHeading={sectionData.config.bannerHeading ?? sectionData.config.heading ?? ''}
-				bannerSubheading={sectionData.config.bannerSubheading ?? sectionData.config.subheading ?? ''}
+				bannerHeading={sectionData.config.bannerHeading ?? ''}
+				bannerSubheading={sectionData.config.bannerSubheading ?? ''}
 				linkTo={sectionData.config.linkTo ?? ''}
 				linkValue={sectionData.config.linkValue ?? ''}
 				ctaText={sectionData.config.ctaText ?? ''}

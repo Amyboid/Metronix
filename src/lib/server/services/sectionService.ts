@@ -4,8 +4,8 @@ import { eq, and, SQL } from 'drizzle-orm';
 
 function buildProductConditions(config: any): SQL[] {
     const conditions: SQL[] = [eq(products.isPublished, true)];
-    const filterType  = config.linkTo ?? config.filterType ?? 'category';
-    const filterValue = config.linkValue ?? config.filterValue ?? config.categorySlug ?? '';
+    const filterType  = config.linkTo ?? 'category';
+    const filterValue = config.linkValue ?? '';
 
     if (filterType === 'product_type') {
         conditions.push(eq(products.productType, filterValue));
@@ -18,10 +18,9 @@ function buildProductConditions(config: any): SQL[] {
 export const sectionFetchers = {
     'product-slider': async (config: any) => {
         const conditions = buildProductConditions(config);
-        const tag = config.promotionTag ?? config.tag;
-        if (tag) conditions.push(eq(products.promotionTag, tag));
+        if (config.promotionTag) conditions.push(eq(products.promotionTag, config.promotionTag));
 
-        const limit = Number(config.productLimit ?? config.limit) || 4;
+        const limit = Number(config.productLimit) || 4;
 
         return await db.select({
             id: products.id,
