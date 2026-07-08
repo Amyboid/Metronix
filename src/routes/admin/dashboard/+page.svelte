@@ -11,6 +11,7 @@
 	import ProductList from '$lib/Components/admin/products/ProductList.svelte';
 	import ProductWizard from '$lib/Components/admin/products/ProductWizard.svelte';
 	import SettingsTab from '$lib/Components/admin/settings/SettingsTab.svelte';
+	import TemplatesTab from '$lib/Components/admin/templates/TemplatesTab.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -57,6 +58,9 @@
 
 	{:else if currentView.tab === 'pages'}
 		<PagesTab />
+
+	{:else if currentView.tab === 'templates'}
+		<TemplatesTab />
 
 	{:else if currentView.tab === 'catalog'}
 		<CatalogTab />

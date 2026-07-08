@@ -9,7 +9,7 @@ export async function load({ setHeaders }) {
     // max-age: browser cache (1 hour)
     // s-maxage: CDN/Server cache (1 day)
     setHeaders({
-        'cache-control': 'public, max-age=3600, s-maxage=86400'
+        'cache-control': 'private, no-cache'
     });
     console.log("request to /products/+page.server.ts");
 

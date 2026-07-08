@@ -131,6 +131,17 @@ export const brands = pgTable("brands", {
   createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 });
 
+// --- 2b. BRAND × PRODUCT TYPE ASSOCIATIONS ---
+
+export const brandProductTypes = pgTable("brand_product_types", {
+  brand: text("brand").notNull()
+    .references(() => brands.slug, { onDelete: "cascade", onUpdate: "cascade" }),
+  productType: text("product_type").notNull()
+    .references(() => productTypes.slug, { onDelete: "cascade", onUpdate: "cascade" }),
+}, (table) => [
+  primaryKey({ columns: [table.brand, table.productType] }),
+]);
+
 // --- 3. MASTER PRODUCT TABLE ---
 
 export const products = pgTable("product", {
@@ -254,10 +265,13 @@ export const pageSections = pgTable("page_section", {
   config: jsonb("config")
     .$type<{
       heading?: string;
+      subheading?: string;
       categorySlug?: string;
       tag?: string;
       limit?: number;
       imagePath?: string;
+      desktopImagePath?: string;
+      mobileImagePath?: string;
       ctaLink?: string;
       ctaText?: string;
     }>()

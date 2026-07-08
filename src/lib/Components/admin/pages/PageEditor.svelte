@@ -5,6 +5,7 @@
 	import AddSectionModal from './AddSectionModal.svelte';
 	import EditSectionModal from './EditSectionModal.svelte';
 	import { adminNav } from '$lib/stores/adminNav';
+	import { getIKAuth } from '$lib/utils/imagekit';
 
 	let { pageName }: { pageName: string } = $props();
 
@@ -34,6 +35,7 @@
 
 	let categoryOptions: string[] = $state([]);
 	let productTypeOptions: string[] = $state([]);
+	let ikEndpoint = $state('');
 
 	const flipDurationMs = 200;
 
@@ -68,6 +70,8 @@
 	}
 
 	onMount(async () => {
+		const auth = await getIKAuth().catch(() => null);
+		if (auth) ikEndpoint = auth.urlEndpoint;
 		await load();
 		await loadDynamicOptions();
 	});
@@ -136,10 +140,11 @@
 
 	function getConfigSummary(config: Record<string, any>) {
 		const parts: string[] = [];
-		if (config.heading) parts.push(config.heading);
-		if (config.categorySlug) parts.push(config.categorySlug);
-		if (config.tag) parts.push(config.tag);
-		if (config.limit) parts.push(`limit: ${config.limit}`);
+		for (const [key, val] of Object.entries(config)) {
+			if (val && typeof val === 'string' && val.trim()) {
+				parts.push(key === 'heading' ? val : `${key}: ${val.length > 30 ? val.slice(0, 30) + '…' : val}`);
+			}
+		}
 		return parts.join(' · ') || 'No config';
 	}
 </script>
@@ -150,6 +155,7 @@
 		{templates}
 		{categoryOptions}
 		{productTypeOptions}
+		{ikEndpoint}
 		onsaved={onSectionAdded}
 		onclose={() => { showAddModal = false; }}
 	/>
@@ -161,6 +167,7 @@
 		template={getTemplate(editingSection.templateSlug)}
 		{categoryOptions}
 		{productTypeOptions}
+		{ikEndpoint}
 		onsaved={onSectionEdited}
 		onclose={() => { editingSection = null; }}
 	/>

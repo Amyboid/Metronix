@@ -1,21 +1,21 @@
 <script lang="ts">
     import ImgSlider from '../ImgSlider.svelte';
 
-    let { heading, products, ctaText, filterType, filterValue } = $props<{
-        heading: string;
+    let { sectionHeading, products, ctaText, linkTo, linkValue } = $props<{
+        sectionHeading: string;
         products: any[];
         ctaText?: string;
-        filterType?: string;
-        filterValue?: string;
+        linkTo?: string;
+        linkValue?: string;
     }>();
 
-    const ctaLink = $derived(`/products/${filterValue ?? ''}`);
-    const displayText = $derived(ctaText || `Shop All ${heading?.toLowerCase() ?? ''}`);
+    const ctaLink = $derived('/products/' + (linkValue ?? ''));
+    const displayText = $derived(ctaText || 'Shop All');
 </script>
 
 <section class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%] mx-auto">
     <h1 class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl">
-        {heading}
+        {sectionHeading}
     </h1>
 
     <ImgSlider images={products} />

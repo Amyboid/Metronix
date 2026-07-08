@@ -1,75 +1,101 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import ProductSlider from './section-templates/ProductSlider.svelte';
-	// import LongBanner from './LongBanner.svelte';
+	import LongBanner from './section-templates/LongBanner.svelte';
+	import TwoColumnGrid from './section-templates/TwoColumnGrid.svelte';
+	import ProductHighlight from './section-templates/ProductHighlight.svelte';
+	import GenericSection from './section-templates/GenericSection.svelte';
 	import SkeletonRenderer from './SkeletonRenderer.svelte';
 
-	// Get the blueprint (ID and Template Type) from the +page.svelte loop
 	let { sectionBlueprint } = $props();
-	console.log('section blueprint inside LazySection:', sectionBlueprint);
-
-	// The data we fetch from the API
 	let sectionData = $state<any | null>(null);
 	let isLoading = $state(false);
 	let container: HTMLElement;
 
 	onMount(() => {
-		// Create the observer
 		const observer = new IntersectionObserver(
 			async (entries) => {
 				const entry = entries[0];
-
-				// Trigger if the container is within 250px of the viewport
-				// and we haven't started loading yet
 				if (entry.isIntersecting && !sectionData && !isLoading) {
 					isLoading = true;
-
 					try {
 						const response = await fetch(`/api/sections?id=${sectionBlueprint.id}`);
-						if (response.ok) {
-							sectionData = await response.json();
-						}
+						if (response.ok) sectionData = await response.json();
 					} catch (error) {
 						console.error(`Error loading section ${sectionBlueprint.id}:`, error);
-					} finally {
-						isLoading = false;
-					}
+					} finally { isLoading = false; }
 				}
 			},
-			{
-				// rootMargin of 250px means it starts fetching
-				// before the user actually reaches the section
-				rootMargin: '250px'
-			}
+			{ rootMargin: '250px' }
 		);
-
-		if (container) {
-			observer.observe(container);
-		}
-
-		// Cleanup observer when component is destroyed
+		if (container) observer.observe(container);
 		return () => observer.disconnect();
 	});
 </script>
 
 <div bind:this={container} class="min-h-25 w-full">
 	{#if sectionBlueprint.isActive === false}
-		<!-- Section disabled — render nothing -->
 	{:else if sectionData}
 		{#if sectionBlueprint.templateSlug === 'product-slider'}
 			<ProductSlider
-				heading={sectionData.config.heading ?? 'Default Title'}
+				sectionHeading={sectionData.config.sectionHeading ?? sectionData.config.heading ?? ''}
 				products={sectionData.data ?? []}
 				ctaText={sectionData.config.ctaText ?? ''}
-				filterType={sectionData.config.filterType ?? ''}
-				filterValue={sectionData.config.filterValue ?? sectionData.config.categorySlug ?? ''}
+				linkTo={sectionData.config.linkTo ?? sectionData.config.filterType ?? ''}
+				linkValue={sectionData.config.linkValue ?? sectionData.config.filterValue ?? ''}
 			/>
-			<!-- {:else if sectionBlueprint.templateSlug === 'long-banner'}
-            <LongBanner 
-                title={sectionData.config.title}
-                imagePath={sectionData.config.imagePath}
-                ctaLink={sectionData.config.ctaLink}
-            /> -->
+		{:else if sectionBlueprint.templateSlug === 'long-banner'}
+			<LongBanner
+				sectionHeading={sectionData.config.sectionHeading ?? ''}
+				bannerHeading={sectionData.config.bannerHeading ?? sectionData.config.heading ?? ''}
+				bannerSubheading={sectionData.config.bannerSubheading ?? sectionData.config.subheading ?? ''}
+				linkTo={sectionData.config.linkTo ?? ''}
+				linkValue={sectionData.config.linkValue ?? ''}
+				ctaText={sectionData.config.ctaText ?? ''}
+				ctaLink={sectionData.config.ctaLink ?? ''}
+				desktopImagePath={sectionData.config.desktopImagePath ?? ''}
+				mobileImagePath={sectionData.config.mobileImagePath ?? ''}
+			/>
+		{:else if sectionBlueprint.templateSlug === 'two-column-grid'}
+			<TwoColumnGrid
+				sectionHeading={sectionData.config.sectionHeading ?? ''}
+				leftMode={sectionData.config.leftMode ?? 'batch'}
+				leftProductName={sectionData.config.leftProductName ?? ''}
+				leftHeading={sectionData.config.leftHeading ?? ''}
+				leftSubheading={sectionData.config.leftSubheading ?? ''}
+				leftLinkTo={sectionData.config.leftLinkTo ?? ''}
+				leftLinkValue={sectionData.config.leftLinkValue ?? ''}
+				leftCtaText={sectionData.config.leftCtaText ?? ''}
+				leftCtaLink={sectionData.config.leftCtaLink ?? ''}
+				leftImage={sectionData.config.leftImage ?? ''}
+				leftMobileImage={sectionData.config.leftMobileImage ?? ''}
+				leftProduct={sectionData.leftProduct ?? null}
+				rightMode={sectionData.config.rightMode ?? 'batch'}
+				rightProductName={sectionData.config.rightProductName ?? ''}
+				rightHeading={sectionData.config.rightHeading ?? ''}
+				rightSubheading={sectionData.config.rightSubheading ?? ''}
+				rightLinkTo={sectionData.config.rightLinkTo ?? ''}
+				rightLinkValue={sectionData.config.rightLinkValue ?? ''}
+				rightCtaText={sectionData.config.rightCtaText ?? ''}
+				rightCtaLink={sectionData.config.rightCtaLink ?? ''}
+				rightImage={sectionData.config.rightImage ?? ''}
+				rightMobileImage={sectionData.config.rightMobileImage ?? ''}
+				rightProduct={sectionData.rightProduct ?? null}
+			/>
+		{:else if sectionBlueprint.templateSlug === 'product-highlight'}
+			<ProductHighlight
+				sectionHeading={sectionData.config.sectionHeading ?? ''}
+				bannerHeading={sectionData.config.bannerHeading ?? sectionData.config.heading ?? ''}
+				bannerSubheading={sectionData.config.bannerSubheading ?? sectionData.config.subheading ?? ''}
+				linkTo={sectionData.config.linkTo ?? ''}
+				linkValue={sectionData.config.linkValue ?? ''}
+				ctaText={sectionData.config.ctaText ?? ''}
+				ctaLink={sectionData.config.ctaLink ?? ''}
+				background={sectionData.config.background ?? ''}
+				mobileBackground={sectionData.config.mobileBackground ?? ''}
+			/>
+		{:else}
+			<GenericSection config={sectionData.config ?? {}} schemaDefinition={sectionData.schemaDefinition ?? []} />
 		{/if}
 	{:else}
 		<SkeletonRenderer templateSlug={sectionBlueprint.templateSlug} />
@@ -77,8 +103,5 @@
 </div>
 
 <style>
-	/* Small buffer to ensure the observer has a target to watch */
-	div {
-		transition: opacity 0.4s ease-in-out;
-	}
+	div { transition: opacity 0.4s ease-in-out; }
 </style>

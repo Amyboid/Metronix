@@ -28,6 +28,12 @@
 			icon: `<span class="icon-[lucide--file-text] w-[18px] h-[18px]"></span>`
 		},
 		{
+			id: 'templates',
+			label: 'Templates',
+			defaultView: { tab: 'templates' },
+			icon: `<span class="icon-[lucide--layout-template] w-[18px] h-[18px]"></span>`
+		},
+		{
 			id: 'catalog',
 			label: 'Catalog',
 			defaultView: { tab: 'catalog', section: 'categories' },

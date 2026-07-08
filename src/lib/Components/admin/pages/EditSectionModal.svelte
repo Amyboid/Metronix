@@ -20,6 +20,7 @@
 	} = $props();
 
 	let formData: Record<string, any> = $state({ ...section.config });
+	let formRef: DynamicForm | undefined = $state();
 	let saving = $state(false);
 	let error  = $state('');
 
@@ -36,12 +37,20 @@
 	});
 
 	const canSave = $derived(
-		resolvedSchema.every(f => !f.required || formData[f.field])
+		resolvedSchema.every(f => {
+			if (f.dependsOn && f.showWhen && formData[f.dependsOn] !== f.showWhen) return true;
+			if (!f.required) return true;
+			if (f.type === 'image') return formData[f.field] || formRef?.hasPendingFile(f.field);
+			return !!formData[f.field];
+		})
 	);
 
 	async function save() {
 		saving = true; error = '';
 		try {
+			// Upload pending images first
+			if (formRef) await formRef.uploadPendingImages();
+
 			const res = await fetch('/api/admin/pages', {
 				method: 'PATCH',
 				headers: { 'Content-Type': 'application/json' },
@@ -66,7 +75,7 @@
 	ondiscard={onclose}
 >
 	<div class="flex flex-col gap-4">
-		<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} />
+		<DynamicForm bind:this={formRef} schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} templateSlug={template?.slug ?? ''} />
 
 		{#if error}
 			<p class="text-xs text-danger m-0">{error}</p>

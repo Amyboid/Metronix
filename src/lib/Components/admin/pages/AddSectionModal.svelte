@@ -41,8 +41,16 @@
 
 	const canSave = $derived(
 		selectedSlug !== '' &&
-		resolvedSchema.every(f => !f.required || formData[f.field])
+		resolvedSchema.every(f => {
+			// Skip fields that aren't visible (dependsOn + showWhen)
+			if (f.dependsOn && f.showWhen && formData[f.dependsOn] !== f.showWhen) return true;
+			if (!f.required) return true;
+			if (f.type === 'image') return formData[f.field] || formRef?.hasPendingFile(f.field);
+			return !!formData[f.field];
+		})
 	);
+
+	let formRef: DynamicForm | undefined = $state();
 
 	function selectTemplate(slug: string) {
 		selectedSlug = slug;
@@ -54,6 +62,9 @@
 		if (!selectedTemplate) return;
 		saving = true; error = '';
 		try {
+			// Upload pending images first
+			if (formRef) await formRef.uploadPendingImages();
+
 			const res = await fetch('/api/admin/pages', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -106,7 +117,7 @@
 
 		<div class="flex flex-col gap-4">
 			<p class="text-xs font-semibold text-copy uppercase tracking-[0.04em] m-0">Configure: {selectedTemplate.name}</p>
-			<DynamicForm schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} />
+			<DynamicForm bind:this={formRef} schema={resolvedSchema} bind:data={formData} {dynamicOptions} {ikEndpoint} templateSlug={selectedSlug} />
 		</div>
 
 		{#if error}

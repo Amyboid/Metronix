@@ -4,6 +4,7 @@ export type AdminView =
 	| { tab: 'overview' }
 	| { tab: 'products'; view: 'list' | 'new' | 'update'; slug?: string }
 	| { tab: 'pages'; view: 'list' | 'update'; pageName?: string }
+	| { tab: 'templates' }
 	| { tab: 'catalog'; section: 'categories' | 'product-types' | 'brands' }
 	| { tab: 'locations'; view: 'list' | 'new' | 'update'; id?: string }
 	| { tab: 'settings'; section: 'store' | 'page-size' | 'imagekit' | 'admins' | 'audit-logs' };
@@ -38,6 +39,8 @@ function viewToPath(view: AdminView): string {
 			return view.view === 'list'
 				? '/admin?tab=pages'
 				: `/admin?tab=pages&view=update&pageName=${view.pageName ?? ''}`;
+		case 'templates':
+			return '/admin?tab=templates';
 		case 'catalog':
 			return `/admin?tab=catalog&section=${view.section}`;
 		case 'locations':
@@ -64,6 +67,9 @@ function pathToView(search: string): AdminView {
 		const view = (p.get('view') as 'list' | 'update') || 'list';
 		const pageName = p.get('pageName') ?? undefined;
 		return { tab: 'pages', view, pageName };
+	}
+	if (tab === 'templates') {
+		return { tab: 'templates' };
 	}
 	if (tab === 'catalog') {
 		const section = (p.get('section') as 'categories' | 'product-types' | 'brands') || 'categories';

@@ -1,7 +1,7 @@
 // src/routes/api/sections/+server.ts
 import { json } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { pageSections } from '$lib/server/db/schema';
+import { pageSections, sectionTemplates } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { sectionFetchers } from '$lib/server/services/sectionService';
 
@@ -27,12 +27,21 @@ export const GET = async ({ url, setHeaders }) => {
             return json({ config: section.config, data: [] });
         }
 
+        // Fetch the template's schemaDefinition for GenericSection
+        const template = await db.query.sectionTemplates.findFirst({
+            where: eq(sectionTemplates.slug, section.templateSlug)
+        });
+
         // Dynamic Lookup: Find the right fetcher based on templateSlug
         const fetcher = sectionFetchers[section.templateSlug as keyof typeof sectionFetchers];
 
         const data = fetcher ? await fetcher(section.config) : [];
 
-        return json({ ...section, data });
+        return json({
+            ...section,
+            schemaDefinition: template?.schemaDefinition ?? [],
+            data,
+        });
 
     } catch (err) {
         console.error(err);
