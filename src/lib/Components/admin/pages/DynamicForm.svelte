@@ -38,15 +38,34 @@
 			.join('|')
 	);
 
-	// Check if a field should be visible based on dependsOn + showWhen
 	function isFieldVisible(field: any): boolean {
-		if (!field.dependsOn || !field.showWhen) return true;
+		if (!field.dependsOn) return true;
+		const parentField = schema.find(f => f.field === field.dependsOn);
+		if (parentField && !isFieldVisible(parentField)) return false;
+		if (!field.showWhen) return true;
 		return data[field.dependsOn] === field.showWhen;
 	}
 
 	// Auto-generate CTA link from autoFrom fields
 	function getAutoValue(field: any): string {
 		if (!field.autoFrom?.length) return '';
+
+		// Detect mode field (value is 'single' or 'batch')
+		const modeFieldName = field.autoFrom.find((f: string) => data[f] === 'single' || data[f] === 'batch');
+		if (modeFieldName) {
+			if (data[modeFieldName] === 'single') {
+				// Single mode: use product slug field → /product/details/{slug}
+				const prefix = modeFieldName.replace('Mode', '');
+				const productField = prefix + 'ProductName';
+				return data[productField] ? '/products/details/' + data[productField] : '';
+			}
+			// Batch mode: use linkTo + linkValue → /products/{value}
+			const prefix = modeFieldName.replace('Mode', '');
+			const linkValue = data[prefix + 'LinkValue'];
+			return linkValue ? '/products/' + linkValue : '';
+		}
+
+		// Fallback: no mode field, join last values as listing URL
 		const parts = field.autoFrom.map((f: string) => data[f] ?? '').filter(Boolean);
 		return parts.length ? '/products/' + parts[parts.length - 1] : '';
 	}
@@ -108,6 +127,15 @@
 
 	export function hasPendingFile(fieldName: string): boolean {
 		return fieldName in pendingFiles;
+	}
+
+	export function syncAutoValues() {
+		for (const field of schema) {
+			if (field.disabled && field.autoFrom?.length) {
+				const val = getAutoValue(field);
+				if (val) data[field.field] = val;
+			}
+		}
 	}
 
 	export async function uploadPendingImages(): Promise<void> {

@@ -39,11 +39,18 @@
 		product_type: productTypeOptions,
 	});
 
+	function isFieldVisible(field: any, schema: any[]): boolean {
+		if (!field.dependsOn) return true;
+		const parent = schema.find((f: any) => f.field === field.dependsOn);
+		if (parent && !isFieldVisible(parent, schema)) return false;
+		if (!field.showWhen) return true;
+		return formData[field.dependsOn] === field.showWhen;
+	}
+
 	const canSave = $derived(
 		selectedSlug !== '' &&
 		resolvedSchema.every(f => {
-			// Skip fields that aren't visible (dependsOn + showWhen)
-			if (f.dependsOn && f.showWhen && formData[f.dependsOn] !== f.showWhen) return true;
+			if (!isFieldVisible(f, resolvedSchema)) return true;
 			if (!f.required) return true;
 			if (f.type === 'image') return formData[f.field] || formRef?.hasPendingFile(f.field);
 			return !!formData[f.field];
@@ -62,8 +69,8 @@
 		if (!selectedTemplate) return;
 		saving = true; error = '';
 		try {
-			// Upload pending images first
 			if (formRef) await formRef.uploadPendingImages();
+			if (formRef) formRef.syncAutoValues();
 
 			const res = await fetch('/api/admin/pages', {
 				method: 'POST',

@@ -11,7 +11,7 @@ import {
     brands,
     productTypes,
 } from '$lib/server/db/schema';
-import { eq, and, or, inArray, asc, desc, gt, lt, count, gte, lte, sql } from 'drizzle-orm';
+import { eq, and, or, ilike, inArray, asc, desc, gt, lt, count, gte, lte, sql } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
 import type { RequestHandler } from './$types';
 
@@ -95,6 +95,18 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
     const conditions: any[] = [eq(products.isPublished, isPublished)];
 
+    // Text search
+    const search = url.searchParams.get('search');
+    if (search) {
+        conditions.push(
+            or(
+                ilike(products.name, `%${search}%`),
+                ilike(products.brand, `%${search}%`),
+                ilike(products.slug, `%${search}%`)
+            )!
+        );
+    }
+
     if (brandFilter.length)    conditions.push(inArray(products.brand, brandFilter));
     if (categoryFilter.length) conditions.push(inArray(products.categorySlug, categoryFilter));
     if (typeFilter.length)     conditions.push(inArray(products.productType, typeFilter));
@@ -106,21 +118,27 @@ export const GET: RequestHandler = async ({ locals, url }) => {
     const orderCol = sort === 'price-low' || sort === 'price-high' ? products.price : products.createdAt;
     const primaryName = sort === 'price-low' || sort === 'price-high' ? 'price' : 'createdAt';
 
-    if (lastId && lastCreated) {
-        const primarySql = primaryName === 'createdAt'
-            ? sql`${lastCreated}::timestamp(3)`
-            : sql`${parseInt(lastCreated)}`;
+    const searchLimit = 20;
 
-        const cursorCond = dirAsc
-            ? or(gt(orderCol, primarySql as any), and(eq(orderCol, primarySql as any), gt(products.id, lastId)))
-            : or(lt(orderCol, primarySql as any), and(eq(orderCol, primarySql as any), lt(products.id, lastId)));
+    if (!search) {
+        if (lastId && lastCreated) {
+            const primarySql = primaryName === 'createdAt'
+                ? sql`${lastCreated}::timestamp(3)`
+                : sql`${parseInt(lastCreated)}`;
 
-        conditions.push(cursorCond);
+            const cursorCond = dirAsc
+                ? or(gt(orderCol, primarySql as any), and(eq(orderCol, primarySql as any), gt(products.id, lastId)))
+                : or(lt(orderCol, primarySql as any), and(eq(orderCol, primarySql as any), lt(products.id, lastId)));
+
+            conditions.push(cursorCond);
+        }
     }
 
-    const orderBy = dirAsc
-        ? [asc(orderCol), asc(products.id)]
-        : [desc(orderCol), desc(products.id)];
+    const orderBy = search
+        ? [asc(products.name)]
+        : dirAsc
+            ? [asc(orderCol), asc(products.id)]
+            : [desc(orderCol), desc(products.id)];
 
     const rows = await db.select({
         id:            products.id,
@@ -139,9 +157,9 @@ export const GET: RequestHandler = async ({ locals, url }) => {
         .from(products)
         .where(and(...conditions))
         .orderBy(...orderBy)
-        .limit(limit + 1);
+        .limit(search ? searchLimit : limit + 1);
 
-    const hasMore = rows.length > limit;
+    const hasMore = search ? false : rows.length > limit;
     if (hasMore) rows.pop();
 
     return json({ items: rows, hasMore });

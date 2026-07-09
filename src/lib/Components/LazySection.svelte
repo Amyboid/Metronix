@@ -69,7 +69,7 @@
 				leftCtaLink={sectionData.config.leftCtaLink ?? ''}
 				leftImage={sectionData.config.leftImage ?? ''}
 				leftMobileImage={sectionData.config.leftMobileImage ?? ''}
-				leftProduct={sectionData.leftProduct ?? null}
+				leftProduct={sectionData.data?.leftProduct ?? null}
 				rightMode={sectionData.config.rightMode ?? 'batch'}
 				rightProductName={sectionData.config.rightProductName ?? ''}
 				rightHeading={sectionData.config.rightHeading ?? ''}
@@ -80,7 +80,7 @@
 				rightCtaLink={sectionData.config.rightCtaLink ?? ''}
 				rightImage={sectionData.config.rightImage ?? ''}
 				rightMobileImage={sectionData.config.rightMobileImage ?? ''}
-				rightProduct={sectionData.rightProduct ?? null}
+				rightProduct={sectionData.data?.rightProduct ?? null}
 			/>
 		{:else if sectionBlueprint.templateSlug === 'product-highlight'}
 			<ProductHighlight

@@ -66,7 +66,7 @@
 		<!-- Left Column -->
 		<div class="flex flex-col gap-4">
 			{#if leftMode === 'single' && leftProduct}
-				<a href="/products/details/{leftProduct.slug}" class="group block">
+				<a href={leftCtaLink || '#'} class="group block">
 					<div class="aspect-square rounded-xl overflow-hidden bg-surface border border-subtle">
 						{#if leftProduct.mainImagePath}
 							<img src={img(leftProduct.mainImagePath)} alt={leftProduct.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
@@ -109,7 +109,7 @@
 		<!-- Right Column -->
 		<div class="flex flex-col gap-4">
 			{#if rightMode === 'single' && rightProduct}
-				<a href="/products/details/{rightProduct.slug}" class="group block">
+				<a href={rightCtaLink || '#'} class="group block">
 					<div class="aspect-square rounded-xl overflow-hidden bg-surface border border-subtle">
 						{#if rightProduct.mainImagePath}
 							<img src={img(rightProduct.mainImagePath)} alt={rightProduct.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
