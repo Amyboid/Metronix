@@ -26,6 +26,7 @@
 
 	let allProducts: { name: string; slug: string; brand: string; categorySlug: string; productType: string }[] = $state([]);
 	let fuse: Fuse<typeof allProducts[number]> | null = null;
+	let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	async function loadProducts() {
 		if (allProducts.length) return;
@@ -40,12 +41,6 @@
 				});
 			}
 		} catch { /* ignore */ }
-	}
-
-	function handleSearch() {
-		if (!searchQuery?.trim()) { searchResult = []; return; }
-		if (!fuse) return;
-		searchResult = fuse.search(searchQuery).slice(0, 10).map(r => r.item);
 	}
 
 	function clearSearch() {
@@ -70,7 +65,13 @@
 
 	$effect(() => {
 		void searchQuery;
-		handleSearch();
+		if (searchTimeout) clearTimeout(searchTimeout);
+		searchTimeout = setTimeout(() => {
+			if (!searchQuery?.trim()) { searchResult = []; return; }
+			if (!fuse) return;
+			searchResult = fuse.search(searchQuery).slice(0, 10).map(r => r.item);
+		}, 300);
+		return () => { if (searchTimeout) clearTimeout(searchTimeout); };
 	});
 </script>
 
