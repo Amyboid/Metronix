@@ -2,10 +2,18 @@
 	import { setContext } from 'svelte';
 	import HamburgerMenu from './HamburgerMenu.svelte';
 	import { fly } from 'svelte/transition';
+	import { page } from '$app/state';
 
 	const { navLinks } = $props();
 	let hamburger = $state({ show: false });
 	setContext('hamburger', hamburger);
+
+	function isActive(href) {
+		const path = page.url.pathname.replace(/\/+$/, '') || '/';
+		const link = href.replace(/\/+$/, '') || '/';
+		if (link === '/') return path === '/';
+		return path === link || path.startsWith(link + '/');
+	}
 </script>
 
 <nav
@@ -23,11 +31,12 @@
 	<div class="nav-right flex items-center gap-4">
 		<div class="navlinks hidden gap-8 md:flex md:items-center">
 			{#each navLinks as link}
-				<a data-sveltekit-reload href={link.link}>{link.name}</a>
+				<a
+					data-sveltekit-reload
+					href={link.link}
+					class:opacity-70={!isActive(link.link)}
+				>{link.name}</a>
 			{/each}
-			<button class="contact-us-btn relative hidden cursor-pointer items-center md:flex">
-				<a data-sveltekit-reload href="/contact">ContactUs</a>
-			</button>
 		</div>
 		<button
 			onclick={() => { hamburger.show = !hamburger.show; }}

@@ -1,11 +1,19 @@
 <script>
 	import { getContext } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
+	import { page } from '$app/state';
 	let hamburger = getContext('hamburger');
 	let { navLinks } = $props();
 
 	function handleHamburger() {
 		hamburger.show = !hamburger.show;
+	}
+
+	function isActive(href) {
+		const path = page.url.pathname.replace(/\/+$/, '') || '/';
+		const link = href.replace(/\/+$/, '') || '/';
+		if (link === '/') return path === '/';
+		return path === link || path.startsWith(link + '/');
 	}
 </script>
 
@@ -25,17 +33,10 @@
 					data-sveltekit-reload
 					onclick={handleHamburger}
 					class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest"
+					class:opacity-70={!isActive(link.link)}
 					href={link.link}>{link.name}</a
 				>
 			{/each}
-			<button aria-label="contact" class="flex w-full items-center justify-center gap-3 p-2">
-				<a
-					data-sveltekit-reload
-					onclick={handleHamburger}
-					href="/contact"
-					class="text-xs font-semibold tracking-wider sm:text-sm sm:tracking-widest">Contact Us</a
-				>
-			</button>
 		</div>
 	</div>
 </div>

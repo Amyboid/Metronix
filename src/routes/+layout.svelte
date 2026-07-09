@@ -6,8 +6,9 @@
 	let navLinks = [
 		{ name: 'Admin', link: '/admin' },
 		{ name: 'Home', link: '/' },
-		{ name: 'Products', link: '/products/' },
-		{ name: 'About Us', link: '/about' }
+		{ name: 'Products', link: '/products' },
+		{ name: 'About Us', link: '/about' },
+		{ name: 'Contact Us', link: '/contact' }
 	];
 	let { children, data } = $props();
 
