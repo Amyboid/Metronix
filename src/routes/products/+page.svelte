@@ -95,8 +95,8 @@
 	</div>
 </section>
 
-<section class="main-section flex w-full min-w-80 flex-col items-center gap-10 p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0">
-	<section class="find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]">
+<section class="main-section flex w-full min-w-80 flex-col items-center gap-10">
+	<section class=" p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0 find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]">
 		{#if isFocused}
 			<button onclick={() => (isFocused = false)} aria-label="blur-background" class="blur-background absolute top-0 left-0 z-40 h-full w-full"></button>
 		{/if}
@@ -142,7 +142,7 @@
 		</div>
 	</section>
 
-	<section class="w-[90%] md:w-[85%]">
+	<section class=" p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0 w-[90%] md:w-[85%]">
 		<ul class="product-nav flex w-full items-center justify-center gap-20">
 			{#each buttons as button}
 				<li>

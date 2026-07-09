@@ -11,7 +11,7 @@
 		ctaText = '',
 		ctaLink = '',
 		desktopImagePath = '',
-		mobileImagePath = '',
+		mobileImagePath = ''
 	}: {
 		sectionHeading?: string;
 		bannerHeading?: string;
@@ -32,18 +32,27 @@
 	}
 </script>
 
-<section class="long-banner mb-10 px-4 md:px-[8%]">
+<section class="z-10 mb-10 flex h-auto w-full border flex-col items-center justify-center gap-10 mx-auto">
 	{#if sectionHeading}
-		<h2 class="text-center text-xl font-bold text-gray-900 mb-4">{sectionHeading}</h2>
+		<h1
+			class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
+		>
+			{sectionHeading}
+		</h1>
 	{/if}
 
 	{#if desktopImagePath}
-		<div class="relative rounded-2xl overflow-hidden">
+		<div class="relative overflow-hidden rounded-2xl">
 			<picture>
 				{#if mobileImagePath}
 					<source media="(max-width: 768px)" srcset={img(mobileImagePath)} />
 				{/if}
-				<img src={img(desktopImagePath)} alt={bannerHeading} class="w-full h-64 md:h-80 object-cover" loading="lazy" />
+				<img
+					src={img(desktopImagePath)}
+					alt={bannerHeading}
+					class="h-64 w-full object-cover md:h-80"
+					loading="lazy"
+				/>
 			</picture>
 
 			<div class="long-banner-content">
@@ -62,14 +71,19 @@
 </section>
 
 <style>
-	.long-banner-content {
+	/* .long-banner-content {
 		position: absolute;
 		inset: 0;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
 		padding: 2rem;
-		background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.1) 60%, transparent 100%);
+		background: linear-gradient(
+			to top,
+			rgba(0, 0, 0, 0.65) 0%,
+			rgba(0, 0, 0, 0.1) 60%,
+			transparent 100%
+		);
 	}
 	.long-banner-heading {
 		font-size: 1.75rem;
@@ -95,9 +109,15 @@
 		transition: opacity 0.2s;
 		width: fit-content;
 	}
-	.long-banner-cta:hover { opacity: 0.85; }
-	@media (max-width: 768px) {
-		.long-banner-heading { font-size: 1.25rem; }
-		.long-banner-subheading { font-size: 0.875rem; }
+	.long-banner-cta:hover {
+		opacity: 0.85;
 	}
+	@media (max-width: 768px) {
+		.long-banner-heading {
+			font-size: 1.25rem;
+		}
+		.long-banner-subheading {
+			font-size: 0.875rem;
+		}
+	} */
 </style>
