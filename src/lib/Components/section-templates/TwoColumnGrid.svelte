@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
-	import ImgSlider from '../ImgSlider.svelte';
+	import ProductCard from '../ProductCard.svelte';
 	const base = env.PUBLIC_ASSET_BASE_URL || '';
 
 	let {
 		sectionHeading = '',
 		leftMode = 'batch',
-		leftProductName = '',
+		leftProductSlug = '',
 		leftHeading = '',
 		leftSubheading = '',
 		leftLinkTo = '',
@@ -16,7 +16,7 @@
 		leftImage = '',
 		leftMobileImage = '',
 		rightMode = 'batch',
-		rightProductName = '',
+		rightProductSlug = '',
 		rightHeading = '',
 		rightSubheading = '',
 		rightLinkTo = '',
@@ -30,7 +30,7 @@
 	}: {
 		sectionHeading?: string;
 		leftMode?: string;
-		leftProductName?: string;
+		leftProductSlug?: string;
 		leftHeading?: string;
 		leftSubheading?: string;
 		leftLinkTo?: string;
@@ -40,7 +40,7 @@
 		leftImage?: string;
 		leftMobileImage?: string;
 		rightMode?: string;
-		rightProductName?: string;
+		rightProductSlug?: string;
 		rightHeading?: string;
 		rightSubheading?: string;
 		rightLinkTo?: string;
@@ -54,7 +54,6 @@
 	} = $props();
 
 	function img(path: string) { return `${base}/${path}`; }
-	function autoLink(linkTo: string, linkValue: string) { return '/products/' + (linkValue ?? ''); }
 </script>
 
 <section class="two-col-grid mb-10 px-4 md:px-[8%]">
@@ -66,16 +65,8 @@
 		<!-- Left Column -->
 		<div class="flex flex-col gap-4">
 			{#if leftMode === 'single' && leftProduct}
-				<a href={leftCtaLink || '#'} class="group block">
-					<div class="aspect-square rounded-xl overflow-hidden bg-surface border border-subtle">
-						{#if leftProduct.mainImagePath}
-							<img src={img(leftProduct.mainImagePath)} alt={leftProduct.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
-						{:else}
-							<div class="w-full h-full flex items-center justify-center text-copy-light text-xs">No image</div>
-						{/if}
-					</div>
-					<p class="mt-2 text-sm font-medium text-copy truncate">{leftProduct.name}</p>
-					<p class="text-sm text-primary font-bold">₹{leftProduct.price?.toLocaleString('en-IN')}</p>
+				<a href={leftCtaLink || '#'} class="block">
+					<ProductCard product={leftProduct} />
 				</a>
 			{:else if leftMode === 'batch'}
 				{#if leftImage}
@@ -109,16 +100,8 @@
 		<!-- Right Column -->
 		<div class="flex flex-col gap-4">
 			{#if rightMode === 'single' && rightProduct}
-				<a href={rightCtaLink || '#'} class="group block">
-					<div class="aspect-square rounded-xl overflow-hidden bg-surface border border-subtle">
-						{#if rightProduct.mainImagePath}
-							<img src={img(rightProduct.mainImagePath)} alt={rightProduct.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
-						{:else}
-							<div class="w-full h-full flex items-center justify-center text-copy-light text-xs">No image</div>
-						{/if}
-					</div>
-					<p class="mt-2 text-sm font-medium text-copy truncate">{rightProduct.name}</p>
-					<p class="text-sm text-primary font-bold">₹{rightProduct.price?.toLocaleString('en-IN')}</p>
+				<a href={rightCtaLink || '#'} class="block">
+					<ProductCard product={rightProduct} />
 				</a>
 			{:else if rightMode === 'batch'}
 				{#if rightImage}

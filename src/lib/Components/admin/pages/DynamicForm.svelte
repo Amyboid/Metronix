@@ -54,9 +54,9 @@
 		const modeFieldName = field.autoFrom.find((f: string) => data[f] === 'single' || data[f] === 'batch');
 		if (modeFieldName) {
 			if (data[modeFieldName] === 'single') {
-				// Single mode: use product slug field → /product/details/{slug}
+				// Single mode: use product slug field → /products/details/{slug}
 				const prefix = modeFieldName.replace('Mode', '');
-				const productField = prefix + 'ProductName';
+				const productField = prefix + 'ProductSlug';
 				return data[productField] ? '/products/details/' + data[productField] : '';
 			}
 			// Batch mode: use linkTo + linkValue → /products/{value}
@@ -99,8 +99,6 @@
 	function selectProduct(field: any, product: { slug: string; name: string; price: number }) {
 		ensureSearchState(field.field);
 		data[field.field] = product.slug;
-		data[field.field + '_name'] = product.name;
-		data[field.field + '_price'] = product.price;
 		searchStates[field.field].query = product.name;
 		searchStates[field.field].results = [];
 	}
@@ -134,6 +132,29 @@
 			if (field.disabled && field.autoFrom?.length) {
 				const val = getAutoValue(field);
 				if (val) data[field.field] = val;
+			}
+		}
+	}
+
+	export function cleanConfigForMode() {
+		// Detect left/right prefixes from schema fields
+		const prefixes = [...new Set(
+			schema.map(f => {
+				const match = f.field.match(/^(left|right)/);
+				return match ? match[0] : null;
+			}).filter(Boolean)
+		)];
+
+		for (const prefix of prefixes) {
+			const mode = data[prefix + 'Mode'];
+			if (mode === 'single') {
+				// Remove batch-only fields
+				for (const suffix of ['Heading', 'Subheading', 'LinkTo', 'LinkValue', 'CtaText', 'Image', 'MobileImage']) {
+					delete data[prefix + suffix];
+				}
+			} else if (mode === 'batch') {
+				// Remove single-only fields
+				delete data[prefix + 'ProductSlug'];
 			}
 		}
 	}
@@ -199,7 +220,7 @@
 				<div class="relative">
 					<input
 						class="font-inter text-[13px] py-[7px] px-2.5 border border-subtle rounded-md bg-neutral text-gray-900 outline-none transition-colors w-full box-border focus:border-primary"
-						value={data[field.field + '_name'] ?? ss.query}
+						value={ss.query}
 						oninput={(e) => onSearchInput(field, e)}
 						placeholder="Search products…"
 					/>

@@ -56,6 +56,7 @@
 	async function save() {
 		saving = true; error = '';
 		try {
+			if (formRef) formRef.cleanConfigForMode();
 			if (formRef) await formRef.uploadPendingImages();
 			if (formRef) formRef.syncAutoValues();
 

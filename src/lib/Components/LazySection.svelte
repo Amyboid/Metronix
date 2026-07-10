@@ -8,6 +8,8 @@
 	import SkeletonRenderer from './SkeletonRenderer.svelte';
 
 	let { sectionBlueprint } = $props();
+	console.log("Section blueprint: ", sectionBlueprint);
+	
 	let sectionData = $state<any | null>(null);
 	let isLoading = $state(false);
 	let container: HTMLElement;
@@ -21,6 +23,8 @@
 					try {
 						const response = await fetch(`/api/sections?id=${sectionBlueprint.id}`);
 						if (response.ok) sectionData = await response.json();
+						console.log("Section Data: ",sectionData);
+						
 					} catch (error) {
 						console.error(`Error loading section ${sectionBlueprint.id}:`, error);
 					} finally { isLoading = false; }
@@ -60,7 +64,7 @@
 			<TwoColumnGrid
 				sectionHeading={sectionData.config.sectionHeading ?? ''}
 				leftMode={sectionData.config.leftMode ?? 'batch'}
-				leftProductName={sectionData.config.leftProductName ?? ''}
+				leftProductSlug={sectionData.config.leftProductSlug ?? ''}
 				leftHeading={sectionData.config.leftHeading ?? ''}
 				leftSubheading={sectionData.config.leftSubheading ?? ''}
 				leftLinkTo={sectionData.config.leftLinkTo ?? ''}
@@ -71,7 +75,7 @@
 				leftMobileImage={sectionData.config.leftMobileImage ?? ''}
 				leftProduct={sectionData.data?.leftProduct ?? null}
 				rightMode={sectionData.config.rightMode ?? 'batch'}
-				rightProductName={sectionData.config.rightProductName ?? ''}
+				rightProductSlug={sectionData.config.rightProductSlug ?? ''}
 				rightHeading={sectionData.config.rightHeading ?? ''}
 				rightSubheading={sectionData.config.rightSubheading ?? ''}
 				rightLinkTo={sectionData.config.rightLinkTo ?? ''}

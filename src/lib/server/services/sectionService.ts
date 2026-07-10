@@ -43,19 +43,19 @@ export const sectionFetchers = {
         // Fetch single products if needed
         const result: any = { ...config };
 
-        if (config.leftMode === 'single' && config.leftProductName) {
+        if (config.leftMode === 'single' && config.leftProductSlug) {
             const rows = await db.select({
                 id: products.id, name: products.name, slug: products.slug,
                 price: products.price, mainImagePath: products.mainImagePath, colors: products.colors,
-            }).from(products).where(eq(products.slug, config.leftProductName)).limit(1);
+            }).from(products).where(eq(products.slug, config.leftProductSlug)).limit(1);
             result.leftProduct = rows[0] ?? null;
         }
 
-        if (config.rightMode === 'single' && config.rightProductName) {
+        if (config.rightMode === 'single' && config.rightProductSlug) {
             const rows = await db.select({
                 id: products.id, name: products.name, slug: products.slug,
                 price: products.price, mainImagePath: products.mainImagePath, colors: products.colors,
-            }).from(products).where(eq(products.slug, config.rightProductName)).limit(1);
+            }).from(products).where(eq(products.slug, config.rightProductSlug)).limit(1);
             result.rightProduct = rows[0] ?? null;
         }
 
