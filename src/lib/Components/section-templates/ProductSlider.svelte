@@ -8,12 +8,13 @@
         linkTo?: string;
         linkValue?: string;
     }>();
+console.log("Prod: ", products);
 
     const ctaLink = $derived('/products/' + (linkValue ?? ''));
     const displayText = $derived(ctaText || 'Shop All');
 </script>
 
-<section class="z-10 mb-10 flex h-auto w-[90%] flex-col items-center justify-center gap-10 md:w-[85%] mx-auto">
+<section class=" p-4 pt-0 sm:pt-0 md:p-6 md:px-12 md:pt-0 w-[90%] md:w-[85%] z-10 mb-10 flex h-auto flex-col items-center justify-center gap-10 md:w-[85%] mx-auto">
     <h1 class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl">
         {sectionHeading}
     </h1>

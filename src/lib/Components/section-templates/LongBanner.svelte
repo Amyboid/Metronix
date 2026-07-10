@@ -32,7 +32,7 @@
 	}
 </script>
 
-<section class="z-10 mb-10 flex h-auto w-full border flex-col items-center justify-center gap-10 mx-auto">
+<section class="z-10 mx-auto mb-10 flex h-auto w-full flex-col items-center justify-center gap-10">
 	{#if sectionHeading}
 		<h1
 			class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"
@@ -40,34 +40,44 @@
 			{sectionHeading}
 		</h1>
 	{/if}
-
-	{#if desktopImagePath}
-		<div class="relative overflow-hidden rounded-2xl">
-			<picture>
-				{#if mobileImagePath}
-					<source media="(max-width: 768px)" srcset={img(mobileImagePath)} />
-				{/if}
-				<img
-					src={img(desktopImagePath)}
-					alt={bannerHeading}
-					class="h-64 w-full object-cover md:h-80"
-					loading="lazy"
-				/>
-			</picture>
-
-			<div class="long-banner-content">
-				{#if bannerHeading}
-					<h3 class="long-banner-heading">{bannerHeading}</h3>
-				{/if}
-				{#if bannerSubheading}
-					<p class="long-banner-subheading">{bannerSubheading}</p>
-				{/if}
-				{#if displayCtaLink && ctaText}
-					<a href={displayCtaLink} class="long-banner-cta">{ctaText}</a>
-				{/if}
+	<section class="h-full w-full py-10 bg-surface">
+		{#if desktopImagePath}
+			<div
+				class="h-128 relative z-10 mx-auto flex sm:h-auto w-[90%] flex-col items-center justify-between sm:justify-center-safe gap-10 lg:gap-16 overflow-hidden sm:flex-row md:w-[85%]"
+			>
+				<div class="flex flex-col gap-1 md:gap-2 md:w-[24%]">
+					{#if bannerHeading}
+						<h3 class="font-semibold text-sm sm:text-base">{bannerHeading}</h3>
+					{/if}
+					{#if bannerSubheading}
+						<p class="text-black text-xl sm:text-2xl lg:text-4xl font-semibold">{bannerSubheading}</p>
+					{/if}
+					{#if displayCtaLink && ctaText}
+						<a
+							data-sveltekit-reload
+							class="mt-2 flex items-center tracking-wide sm:text-left"
+							href={displayCtaLink}
+						>
+							<p class="first-letter:uppercase text-sm md:text-base text-link hover:underline">{ctaText}</p>
+							<span class="icon-[cil--arrow-right] text-link ml-2 h-4 w-4"></span>
+						</a>
+					{/if}
+				</div>
+				<div></div>
+				<picture class="md:w-130">
+					{#if mobileImagePath}
+						<source media="(max-width: 768px)" srcset={img(mobileImagePath)} />
+					{/if}
+					<img
+						src={img(desktopImagePath)}
+						alt={bannerHeading}
+						class="w-full object-cover sm:h-auto"
+						loading="lazy"
+					/>
+				</picture>
 			</div>
-		</div>
-	{/if}
+		{/if}
+	</section>
 </section>
 
 <style>

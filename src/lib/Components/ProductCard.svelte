@@ -18,7 +18,7 @@
 		href={'/products/details/' + product.slug}
 		class="block h-full w-full no-underline"
 	>
-		<div class="bg-surface flex h-100 w-full flex-col items-center justify-center gap-4 rounded-lg px-5">
+		<div class="bg-surface flex h-128 w-full flex-col items-center justify-center gap-4 rounded-lg px-5">
 			<!-- Main image -->
 			<img
 				class="h-50 object-contain"
