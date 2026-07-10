@@ -61,21 +61,21 @@
 		<h2 class="text-center text-xl font-bold text-gray-900 mb-6">{sectionHeading}</h2>
 	{/if}
 
-	<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 		<!-- Left Column -->
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-4 md:col-span-1 h-full">
 			{#if leftMode === 'single' && leftProduct}
-				<a href={leftCtaLink || '#'} class="block">
+				<a href={leftCtaLink || '#'} class="block h-full">
 					<ProductCard product={leftProduct} />
 				</a>
 			{:else if leftMode === 'batch'}
 				{#if leftImage}
-					<div class="relative rounded-xl overflow-hidden">
-						<picture>
+					<div class="relative rounded-xl overflow-hidden h-full">
+						<picture class="h-full">
 							{#if leftMobileImage}
 								<source media="(max-width: 768px)" srcset={img(leftMobileImage)} />
 							{/if}
-							<img src={img(leftImage)} alt={leftHeading} class="w-full h-48 object-cover" loading="lazy" />
+							<img src={img(leftImage)} alt={leftHeading} class="w-full h-full object-cover" loading="lazy" />
 						</picture>
 						<div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/50 to-transparent rounded-xl">
 							{#if leftHeading}
@@ -90,27 +90,27 @@
 						</div>
 					</div>
 				{:else}
-					<div class="h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">No image</div>
+					<div class="h-full min-h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">No image</div>
 				{/if}
 			{:else}
-				<div class="h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">Configure left column</div>
+				<div class="h-full min-h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">Configure left column</div>
 			{/if}
 		</div>
 
 		<!-- Right Column -->
-		<div class="flex flex-col gap-4">
+		<div class="flex flex-col gap-4 md:col-span-2 h-full">
 			{#if rightMode === 'single' && rightProduct}
-				<a href={rightCtaLink || '#'} class="block">
+				<a href={rightCtaLink || '#'} class="block h-full">
 					<ProductCard product={rightProduct} />
 				</a>
 			{:else if rightMode === 'batch'}
 				{#if rightImage}
-					<div class="relative rounded-xl overflow-hidden">
-						<picture>
+					<div class="relative rounded-xl overflow-hidden h-full">
+						<picture class="h-full">
 							{#if rightMobileImage}
 								<source media="(max-width: 768px)" srcset={img(rightMobileImage)} />
 							{/if}
-							<img src={img(rightImage)} alt={rightHeading} class="w-full h-48 object-cover" loading="lazy" />
+							<img src={img(rightImage)} alt={rightHeading} class="w-full h-full object-cover" loading="lazy" />
 						</picture>
 						<div class="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/50 to-transparent rounded-xl">
 							{#if rightHeading}
@@ -125,10 +125,10 @@
 						</div>
 					</div>
 				{:else}
-					<div class="h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">No image</div>
+					<div class="h-full min-h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">No image</div>
 				{/if}
 			{:else}
-				<div class="h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">Configure right column</div>
+				<div class="h-full min-h-48 rounded-xl bg-surface border border-subtle flex items-center justify-center text-copy-light text-xs">Configure right column</div>
 			{/if}
 		</div>
 	</div>
