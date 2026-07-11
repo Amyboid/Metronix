@@ -12,6 +12,7 @@
 	import ProductWizard from '$lib/Components/admin/products/ProductWizard.svelte';
 	import SettingsTab from '$lib/Components/admin/settings/SettingsTab.svelte';
 	import TemplatesTab from '$lib/Components/admin/templates/TemplatesTab.svelte';
+	import TagsTab from '$lib/Components/admin/tags/TagsTab.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -64,6 +65,9 @@
 
 	{:else if currentView.tab === 'catalog'}
 		<CatalogTab />
+
+	{:else if currentView.tab === 'tags'}
+		<TagsTab />
 
 	{:else if currentView.tab === 'locations'}
 		<LocationsTab />

@@ -7,6 +7,7 @@ export type AdminView =
 	| { tab: 'templates' }
 	| { tab: 'catalog'; section: 'categories' | 'product-types' | 'brands' }
 	| { tab: 'locations'; view: 'list' | 'new' | 'update'; id?: string }
+	| { tab: 'tags' }
 	| { tab: 'settings'; section: 'store' | 'page-size' | 'imagekit' | 'admins' | 'audit-logs' };
 
 const SESSION_KEY = 'adminTab';
@@ -43,6 +44,8 @@ function viewToPath(view: AdminView): string {
 			return '/admin?tab=templates';
 		case 'catalog':
 			return `/admin?tab=catalog&section=${view.section}`;
+		case 'tags':
+			return '/admin?tab=tags';
 		case 'locations':
 			return view.view === 'list'
 				? '/admin?tab=locations'
@@ -74,6 +77,9 @@ function pathToView(search: string): AdminView {
 	if (tab === 'catalog') {
 		const section = (p.get('section') as 'categories' | 'product-types' | 'brands') || 'categories';
 		return { tab: 'catalog', section };
+	}
+	if (tab === 'tags') {
+		return { tab: 'tags' };
 	}
 	if (tab === 'locations') {
 		const view = (p.get('view') as 'list' | 'new' | 'update') || 'list';
@@ -146,6 +152,8 @@ export function getBreadcrumbs(view: AdminView): { label: string; view?: AdminVi
 				{ label: 'Catalog', view: { tab: 'catalog', section: 'categories' } },
 				{ label: view.section === 'categories' ? 'Categories' : view.section === 'product-types' ? 'Product Types' : 'Brands' },
 			];
+		case 'tags':
+			return [{ label: 'Tags' }];
 		case 'locations':
 			if (view.view === 'list') return [{ label: 'Locations' }];
 			if (view.view === 'new')

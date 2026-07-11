@@ -19,6 +19,7 @@
   /* --- 3. TEXT (Copy) --- */
   --color-copy: #6d6d6d;            /* Main text */
   --color-copy-light: #9d9d9d;      /* Secondary text */
+  --color-tag: #6204AF;
   
   /* --- 4. BORDERS --- */
   --color-strong: #6d6d6d;          /* Darker, defined borders */

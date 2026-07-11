@@ -40,6 +40,12 @@
 			icon: `<span class="icon-[lucide--list] w-[18px] h-[18px]"></span>`
 		},
 		{
+			id: 'tags',
+			label: 'Tags',
+			defaultView: { tab: 'tags' },
+			icon: `<span class="icon-[lucide--tag] w-[18px] h-[18px]"></span>`
+		},
+		{
 			id: 'locations',
 			label: 'Locations',
 			defaultView: { tab: 'locations', view: 'list' },

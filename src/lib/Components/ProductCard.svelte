@@ -1,15 +1,7 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
+	import { assetBase } from '$lib/utils/assetBase';
 
 	let { product, imgHeight = 'h-60' } = $props();
-
-	const base = env.PUBLIC_ASSET_BASE_URL || '';
-
-	const badgeConfig: Record<string, { label: string; classes: string }> = {
-		'new':       { label: 'New',  classes: 'bg-primary text-white'   },
-		'on-sale':   { label: 'Sale', classes: 'bg-danger text-white'    },
-		'demanding': { label: 'Hot',  classes: 'bg-[#f59e0b] text-white' },
-	};
 </script>
 
 <div class="h-full w-full rounded-lg">
@@ -18,11 +10,11 @@
 		href={'/products/details/' + product.slug}
 		class="block h-full w-full no-underline"
 	>
-		<div class="bg-surface flex h-full min-w-0 w-full flex-col items-center justify-center gap-4 sm:rounded-lg px-5">
+		<div class="bg-surface flex h-full min-w-0 w-full flex-col items-center justify-end gap-4 sm:rounded-lg px-5 pb-[10%]">
 			<!-- Main image -->
 			<img
 				class="{imgHeight} object-contain"
-				src="{base}/{product.mainImagePath}"
+				src="{assetBase}/{product.mainImagePath}"
 				alt={product.name}
 			/>
 
@@ -31,7 +23,7 @@
 				<div class="flex items-center gap-1.5">
 					{#each product.colors as color}
 						<span
-							class="h-3 w-3 flex-shrink-0 rounded-full border border-black/10"
+							class="h-3 w-3 shrink-0 rounded-full border border-black/10"
 							style="background-color: {color.hex};"
 							title={color.name}
 						></span>
@@ -40,9 +32,9 @@
 			{/if}
 
 			<!-- Badge tag -->
-			{#if product.badgeTag && badgeConfig[product.badgeTag]}
-				<span class="inline-flex items-center rounded-full px-2 py-0.5 text-[0.6875rem] font-bold uppercase tracking-wider {badgeConfig[product.badgeTag].classes}">
-					{badgeConfig[product.badgeTag].label}
+			{#if product.badgeLabel}
+				<span class="text-tag text-xs font-semibold capitalize ">
+					{product.badgeLabel}
 				</span>
 			{/if}
 
@@ -75,6 +67,3 @@
 		</div>
 	</a>
 </div>
-
-<style>
-</style>
