@@ -32,7 +32,7 @@
 	}
 </script>
 
-<section class="z-10 mx-auto mb-10 flex h-auto w-full flex-col items-center justify-center gap-10">
+<section class="z-10 mx-auto mb-4 md:mb-10 flex h-auto w-full flex-col items-center justify-center gap-10">
 	{#if sectionHeading}
 		<h1
 			class="w-full text-center text-xl font-semibold tracking-wider sm:text-2xl md:text-3xl lg:text-4xl"

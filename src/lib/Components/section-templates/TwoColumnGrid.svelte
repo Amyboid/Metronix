@@ -59,7 +59,7 @@
 </script>
 
 <section
-	class="z-10 mx-auto mb-10 flex h-auto w-full flex-col items-center justify-center gap-10 p-0 md:w-[85%] md:p-6 md:px-12 md:pt-0"
+	class="z-10 mx-auto md:mb-10 flex h-auto w-full flex-col items-center justify-center gap-10 p-0 md:w-[85%] md:p-6 md:px-12 md:pt-0"
 >
 	{#if sectionHeading}
 		<h2
@@ -68,9 +68,9 @@
 			{sectionHeading}
 		</h2>
 	{/if}
-	<div class="md:min-w-300 md:h-card-tall grid w-full grid-cols-1 gap-2 md:grid-cols-3">
+	<div class="md:min-w-300 md:h-card-tall grid w-full grid-cols-1 gap-4 md:gap-2 md:grid-cols-3">
 		<!-- Left Column -->
-		<div class="h-card-tall flex min-w-0 flex-col gap-4 md:col-span-1">
+		<div class="h-card sm:h-card-tall flex min-w-0 flex-col gap-4 md:col-span-1">
 			{#if leftMode === 'single' && leftProduct}
 				<a href={leftCtaLink || '#'} class="block h-full w-full">
 					<ProductCard product={leftProduct} />
@@ -137,10 +137,10 @@
 		</div>
 
 		<!-- Right Column -->
-		<div class="h-card-tall flex min-w-0 flex-col gap-4 md:col-span-2">
+		<div class="h-card sm:h-card-tall flex min-w-0 flex-col gap-4 md:col-span-2">
 			{#if rightMode === 'single' && rightProduct}
 				<a href={rightCtaLink || '#'} class="block h-full w-full">
-					<ProductCard product={rightProduct} imgHeight="lg:h-80 lg:max-w-130 h-60" />
+					<ProductCard product={rightProduct} />
 				</a>
 			{:else if rightMode === 'batch'}
 				{#if rightImage}

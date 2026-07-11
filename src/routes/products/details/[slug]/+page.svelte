@@ -327,11 +327,11 @@
 
 <!-- ─── Similar Products ──────────────────────────────────────────────────── -->
 {#await data.streamed.similarProducts}
-	<section class="mx-auto mb-12 w-[90%] md:w-[80%] md:min-w-[1125px]">
+	<section class="mx-auto mb-12 w-full md:w-[80%] md:min-w-[1125px]">
 		<div class="flex w-full items-center justify-center p-3">
 			<h1 class="text-2xl font-semibold tracking-wider sm:text-3xl">You Might Also Enjoy</h1>
 		</div>
-		<div class="product-section mb-10 grid h-auto gap-4">
+		<div class="product-section mb-10 grid h-card gap-4">
 			{#each Array(3) as _}
 				<div
 					class="h-[400px] animate-pulse rounded-lg"
@@ -343,14 +343,16 @@
 {:then similarProducts}
 	{#if similarProducts.length > 0}
 		<section
-			class="mx-auto mb-12 flex w-[90%] min-w-[300px] flex-col gap-6 p-3 md:w-[80%] md:min-w-[1125px]"
+			class="mx-auto mb-12 flex w-full min-w-[300px] flex-col gap-6 p-0 md:p-3 md:w-[80%] md:min-w-[1125px]"
 		>
 			<div class="flex w-full items-center justify-center p-3">
 				<h1 class="text-2xl font-semibold tracking-wider sm:text-3xl">You Might Also Enjoy</h1>
 			</div>
-			<div class="product-section mb-10 grid h-card gap-4">
+			<div class="min-h-0 product-section mb-10 grid gap-4">
 				{#each similarProducts as p}
+				<div class="h-card w-full">
 					<ProductCard product={p} />
+				</div>
 				{/each}
 			</div>
 		</section>

@@ -95,7 +95,7 @@
 	</div>
 </section>
 
-<section class="main-section flex w-full min-w-80 flex-col items-center gap-10">
+<section class="main-section flex w-full min-w-80 flex-col items-center gap-4 md:gap-10">
 	<section class="find-product-section mb-2 flex w-[328px] flex-col items-center gap-4 sm:mb-8 sm:w-[395px] md:w-[520px]">
 		{#if isFocused}
 			<button onclick={() => (isFocused = false)} aria-label="blur-background" class="blur-background absolute top-0 left-0 z-40 h-full w-full"></button>
