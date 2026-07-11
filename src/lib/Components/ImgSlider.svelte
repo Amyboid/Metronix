@@ -39,14 +39,14 @@
 </script>
 
 <div class="relative mb-10 flex w-full items-center justify-center">
-	<div class="flex w-full overflow-hidden rounded-lg">
+	<div class="flex w-full overflow-hidden">
 		<div
 			class="flex w-full transition-transform duration-500 ease-in-out"
 			style:transform="translateX(-{currentIndex * 100}%)"
 		>
 			{#each images as product}
-				<div class="img-slider-img-box h-full w-full rounded-lg sm:pr-1 sm:pl-1">
-					<ProductCard product={product}/>
+				<div class="img-slider-img-box h-card w-full sm:rounded-lg sm:pr-1 sm:pl-1">
+					<ProductCard {product} />
 				</div>
 			{/each}
 		</div>
@@ -54,7 +54,7 @@
 
 	{#if showLeftButton}
 		<button
-			class="img-slider-btn absolute left-2 sm:left-3 md:left-4"
+			class="img-slider-btn absolute left-2 sm:left-3 md:left-4 bg-subtle/70 backdrop-blur-xs"
 			onclick={prevImg}
 			aria-label="img-slider-btn-left"
 		>
@@ -64,7 +64,7 @@
 
 	{#if showRightButton}
 		<button
-			class="img-slider-btn absolute right-2 sm:right-3 md:right-4"
+			class="img-slider-btn absolute right-2 sm:right-3 md:right-4 bg-subtle/70 backdrop-blur-xs"
 			onclick={nextImg}
 			aria-label="img-slider-btn-right"
 		>
@@ -109,14 +109,13 @@
 			width: 33.333%;
 		}
 	}
-	
+
 	.img-slider-btn {
-		padding: 5px;
+		padding: 12px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		background-color: var(--color-subtle);
 		border-radius: 8px;
 		top: 50%;
 		transform: translateY(-50%);

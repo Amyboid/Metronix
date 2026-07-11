@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
 
-	let { product } = $props();
+	let { product, imgHeight = 'h-60' } = $props();
 
 	const base = env.PUBLIC_ASSET_BASE_URL || '';
 
@@ -18,10 +18,10 @@
 		href={'/products/details/' + product.slug}
 		class="block h-full w-full no-underline"
 	>
-		<div class="bg-surface flex h-128 w-full flex-col items-center justify-center gap-4 rounded-lg px-5">
+		<div class="bg-surface flex h-full min-w-0 w-full flex-col items-center justify-center gap-4 sm:rounded-lg px-5">
 			<!-- Main image -->
 			<img
-				class="h-50 object-contain"
+				class="{imgHeight} object-contain"
 				src="{base}/{product.mainImagePath}"
 				alt={product.name}
 			/>
@@ -47,7 +47,7 @@
 			{/if}
 
 			<!-- Name and price -->
-			<div class="flex flex-col items-center gap-1">
+			<div class="min-w-0 flex flex-col items-center gap-1">
 				<span class="min-h-16 text-center text-sm tracking-wider hover:underline md:text-base">
 					{product.name}
 				</span>

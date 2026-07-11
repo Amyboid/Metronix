@@ -34,6 +34,8 @@
   --font-inter: 'Inter', serif;
   /* Default Heights  */
   --spacing-nav: 60px;
+  --spacing-card: 512px;
+  --spacing-card-tall: 650px;
 
 }
 

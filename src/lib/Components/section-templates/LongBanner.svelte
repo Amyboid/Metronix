@@ -43,7 +43,7 @@
 	<section class="h-full w-full py-10 bg-surface">
 		{#if desktopImagePath}
 			<div
-				class="h-128 relative z-10 mx-auto flex sm:h-auto w-[90%] flex-col items-center justify-between sm:justify-center-safe gap-10 lg:gap-16 overflow-hidden sm:flex-row md:w-[85%]"
+				class="h-card relative z-10 mx-auto flex sm:h-auto w-[90%] flex-col items-center justify-between sm:justify-center-safe gap-10 lg:gap-16 overflow-hidden sm:flex-row md:w-[85%]"
 			>
 				<div class="flex flex-col gap-1 md:gap-2 md:w-[24%]">
 					{#if bannerHeading}

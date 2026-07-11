@@ -356,7 +356,7 @@
 			<div class="flex w-full items-center justify-center p-3">
 				<h1 class="text-2xl font-semibold tracking-wider sm:text-3xl">You Might Also Enjoy</h1>
 			</div>
-			<div class="product-section mb-10 grid h-auto gap-4">
+			<div class="product-section mb-10 grid h-card gap-4">
 				{#each similarProducts as p}
 					<ProductCard product={p} />
 				{/each}
