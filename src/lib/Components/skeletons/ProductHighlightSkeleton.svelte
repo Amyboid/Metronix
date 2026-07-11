@@ -1,20 +1,3 @@
-<section class="mb-10 px-4 md:px-[8%]">
-	<div class="w-full h-64 md:h-80 rounded-2xl bg-surface shimmer"></div>
-	<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-		{#each Array(4) as _}
-			<div class="aspect-square rounded-xl bg-surface shimmer"></div>
-		{/each}
-	</div>
+<section class="z-10 mx-auto mb-4 md:mb-10 flex h-auto w-full flex-col items-center justify-center gap-10 p-0 md:w-[85%] md:p-6 md:px-12 md:pt-0">
+	<div class="h-card w-full md:min-w-300 md:rounded-lg bg-surface"></div>
 </section>
-
-<style>
-	.shimmer {
-		background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-canvas) 50%, var(--color-surface) 75%);
-		background-size: 200% 100%;
-		animation: shimmer 1.4s infinite;
-	}
-	@keyframes shimmer {
-		0% { background-position: 200% 0; }
-		100% { background-position: -200% 0; }
-	}
-</style>
