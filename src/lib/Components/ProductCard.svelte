@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { assetBase } from '$lib/utils/assetBase';
+	import { env } from '$env/dynamic/public';
 
 	let { product, imgHeight = 'h-60' } = $props();
+
+	const base = env.PUBLIC_ASSET_BASE_URL || '';
 </script>
 
 <div class="h-full w-full rounded-lg">
@@ -10,11 +12,11 @@
 		href={'/products/details/' + product.slug}
 		class="block h-full w-full no-underline"
 	>
-		<div class="bg-surface flex h-full min-w-0 w-full flex-col items-center justify-end gap-4 sm:rounded-lg px-5 pb-[10%]">
+		<div class="bg-surface flex h-full min-w-0 w-full flex-col items-center justify-end gap-4 sm:rounded-lg px-5 pt-[4%] pb-16">
 			<!-- Main image -->
 			<img
 				class="{imgHeight} object-contain"
-				src="{assetBase}/{product.mainImagePath}"
+				src="{base}/{product.mainImagePath}"
 				alt={product.name}
 			/>
 

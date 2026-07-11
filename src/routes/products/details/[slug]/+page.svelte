@@ -61,11 +61,7 @@
 		product.colors?.find((c: any) => c.hex === activeColor)?.name ?? ''
 	);
 
-	const badgeConfig: Record<string, { label: string; cls: string }> = {
-		new: { label: 'New', cls: 'bg-primary text-white' },
-		'on-sale': { label: 'Sale', cls: 'bg-danger text-white' },
-		demanding: { label: 'Hot', cls: 'bg-[#f59e0b] text-white' }
-	};
+
 </script>
 
 <!-- ─── Main Product Section ──────────────────────────────────────────────── -->
@@ -127,13 +123,9 @@
 			</div>
 
 			<!-- Badge -->
-			{#if product.badgeTag && badgeConfig[product.badgeTag]}
-				<span
-					class="inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[0.6875rem] font-bold tracking-wider uppercase {badgeConfig[
-						product.badgeTag
-					].cls}"
-				>
-					{badgeConfig[product.badgeTag].label}
+			{#if product.badgeLabel}
+				<span class="inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[0.6875rem] font-bold tracking-wider uppercase text-link">
+					{product.badgeLabel}
 				</span>
 			{/if}
 
