@@ -333,10 +333,7 @@
 		</div>
 		<div class="product-section mb-10 grid h-card gap-4">
 			{#each Array(3) as _}
-				<div
-					class="h-[400px] animate-pulse rounded-lg"
-					style="background: linear-gradient(to bottom, #dcd8cd80 0%, #dcd8cde1 60%, #dcd8cd80 100%);"
-				></div>
+				<div class="h-[400px] rounded-lg bg-surface"></div>
 			{/each}
 		</div>
 	</section>
