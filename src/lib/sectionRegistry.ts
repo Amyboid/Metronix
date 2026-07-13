@@ -3,8 +3,10 @@ import type { Component } from 'svelte';
 export type SectionTemplateDef = {
   slug: string;
   name: string;
-  component: Component;
-  skeleton?: Component;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  component: Component<any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  skeleton?: Component<any>;
   schema: { field: string; type: string; label?: string; required?: boolean; options?: string[]; source?: string; dependsOn?: string; showWhen?: string; disabled?: boolean; autoFrom?: string[]; tagType?: string }[];
 };
 
