@@ -25,8 +25,7 @@
 		rightCtaLink = '',
 		rightImage = '',
 		rightMobileImage = '',
-		leftProduct = null,
-		rightProduct = null
+		data = {}
 	}: {
 		sectionHeading?: string;
 		leftMode?: string;
@@ -49,9 +48,11 @@
 		rightCtaLink?: string;
 		rightImage?: string;
 		rightMobileImage?: string;
-		leftProduct?: any;
-		rightProduct?: any;
+		data?: any;
 	} = $props();
+
+	const leftProduct = $derived(data?.leftProduct ?? null);
+	const rightProduct = $derived(data?.rightProduct ?? null);
 
 	function img(path: string) {
 		return `${base}/${path}`;

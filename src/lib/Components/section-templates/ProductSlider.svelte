@@ -1,9 +1,9 @@
 <script lang="ts">
 	import ImgSlider from '../ImgSlider.svelte';
 
-	let { sectionHeading, products, ctaText, linkTo, linkValue } = $props<{
+	let { sectionHeading, data = [], ctaText, linkTo, linkValue } = $props<{
 		sectionHeading: string;
-		products: any[];
+		data?: any[];
 		ctaText?: string;
 		linkTo?: string;
 		linkValue?: string;
@@ -23,7 +23,7 @@
 		{sectionHeading}
 	</h1>
 
-	<ImgSlider images={products} />
+	<ImgSlider images={data} />
 
 	<a
 		data-sveltekit-reload
