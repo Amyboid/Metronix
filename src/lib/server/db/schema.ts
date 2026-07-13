@@ -279,6 +279,31 @@ export const pageSections = pgTable("page_section", {
     isActive: boolean('is_active').default(true).notNull(),
 });
 
+// --- 6b. PAGE CONTENT TABLES (published + drafts) ---
+
+export const pageContent = pgTable("page_content", {
+  pageName: text("page_name").notNull(),
+  fieldKey: text("field_key").notNull(),
+  value: text("value").notNull().default(''),
+  fieldType: text("field_type").notNull().default('text'),
+  updatedAt: timestamp("updated_at", { precision: 3 }).defaultNow().$onUpdate(() => new Date()).notNull(),
+}, (table) => [
+  index("page_content_page_idx").on(table.pageName),
+  primaryKey({ columns: [table.pageName, table.fieldKey] }),
+]);
+
+export const pageDrafts = pgTable("page_draft", {
+  pageName: text("page_name").notNull(),
+  fieldKey: text("field_key").notNull(),
+  value: text("value").notNull().default(''),
+  fieldType: text("field_type").notNull().default('text'),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
+}, (table) => [
+  index("page_draft_page_idx").on(table.pageName),
+  primaryKey({ columns: [table.pageName, table.fieldKey] }),
+]);
+
 // --- 7. AUDIT LOGS ---
 
 export const auditLogs = pgTable("audit_logs", {

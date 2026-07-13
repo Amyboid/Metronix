@@ -32,7 +32,7 @@
 	});
 </script>
 
-{#if !user && !isAdmin}
+{#if !isAdmin}
 	<Nav {navLinks} />
 {/if}
 

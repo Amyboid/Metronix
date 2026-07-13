@@ -1,6 +1,6 @@
 node_modules
 .mimocode
-plans
+custom_plans
 # static
 rename.js
 createfiles.sh

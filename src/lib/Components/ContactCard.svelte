@@ -1,5 +1,5 @@
 <script>
-	const { cardDetails } = $props();
+	const { cardDetails, editable = false, fieldKey = '' } = $props();
 </script>
 
 <div class="contact-card flex w-full items-center gap-3 sm:gap-4">
@@ -11,6 +11,10 @@
 	</button>
 	<div class="w-full flex flex-col gap-1 sm:gap-2">
 		<h1 class="text-base sm:text-lg">{cardDetails.title}</h1>
-		<span class="text-xs sm:text-sm text-copy">{cardDetails.content}</span>
+		{#if editable}
+			<span data-editable={fieldKey} class="text-xs sm:text-sm text-copy">{cardDetails.content}</span>
+		{:else}
+			<span class="text-xs sm:text-sm text-copy">{cardDetails.content}</span>
+		{/if}
 	</div>
 </div>

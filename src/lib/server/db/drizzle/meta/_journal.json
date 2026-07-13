@@ -8,6 +8,13 @@
       "when": 1783525079029,
       "tag": "0000_safe_ironclad",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783841118165,
+      "tag": "0001_old_giant_girl",
+      "breakpoints": true
     }
   ]
 }
