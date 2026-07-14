@@ -5,8 +5,7 @@ custom_plans
 rename.js
 createfiles.sh
 categoryWiseData*
-seed.ts
-seed-admin.ts
+seed_data
 mockData*
 copyConnectDb.ts
 itemData.ts
