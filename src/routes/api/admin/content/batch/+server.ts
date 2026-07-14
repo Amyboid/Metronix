@@ -32,11 +32,12 @@ export const POST: RequestHandler = async ({ locals, request }) => {
         fieldKey: draft.fieldKey,
         value: draft.value,
         fieldType: draft.fieldType || 'text',
+        fileId: draft.fileId || null,
         createdBy: admin.id,
       })
       .onConflictDoUpdate({
         target: [pageDrafts.pageName, pageDrafts.fieldKey],
-        set: { value: draft.value, fieldType: draft.fieldType || 'text', createdBy: admin.id },
+        set: { value: draft.value, fieldType: draft.fieldType || 'text', fileId: draft.fileId || null, createdBy: admin.id },
       });
   }
 

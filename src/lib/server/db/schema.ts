@@ -286,6 +286,7 @@ export const pageContent = pgTable("page_content", {
   fieldKey: text("field_key").notNull(),
   value: text("value").notNull().default(''),
   fieldType: text("field_type").notNull().default('text'),
+  fileId: text("file_id"),
   updatedAt: timestamp("updated_at", { precision: 3 }).defaultNow().$onUpdate(() => new Date()).notNull(),
 }, (table) => [
   index("page_content_page_idx").on(table.pageName),
@@ -297,6 +298,7 @@ export const pageDrafts = pgTable("page_draft", {
   fieldKey: text("field_key").notNull(),
   value: text("value").notNull().default(''),
   fieldType: text("field_type").notNull().default('text'),
+  fileId: text("file_id"),
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at", { precision: 3 }).defaultNow().notNull(),
 }, (table) => [

@@ -8,6 +8,13 @@
       "when": 1784009153453,
       "tag": "0000_curly_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784025097657,
+      "tag": "0001_hard_chameleon",
+      "breakpoints": true
     }
   ]
 }

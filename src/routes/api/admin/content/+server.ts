@@ -27,13 +27,14 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
   const publishedMap = Object.fromEntries(published.map(r => [r.fieldKey, r.value]));
   const draftMap = Object.fromEntries(drafts.map(r => [r.fieldKey, r.value]));
+  const publishedFileIds = Object.fromEntries(published.filter(r => r.fileId).map(r => [r.fieldKey, r.fileId]));
   const merged = { ...publishedMap, ...draftMap };
 
-  return json({ published: publishedMap, drafts: draftMap, merged });
+  return json({ published: publishedMap, publishedFileIds, drafts: draftMap, merged });
 };
 
 // ─── POST — save a draft ─────────────────────────────────────────────────────
-// Body: { pageName, fieldKey, value, fieldType? }
+// Body: { pageName, fieldKey, value, fieldType?, fileId? }
 
 export const POST: RequestHandler = async ({ locals, request, url }) => {
   const admin = assertAdmin(locals);
@@ -48,10 +49,16 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 
     for (const draft of drafts) {
       await db.insert(pageContent)
-        .values({ pageName, fieldKey: draft.fieldKey, value: draft.value, fieldType: draft.fieldType })
+        .values({
+          pageName,
+          fieldKey: draft.fieldKey,
+          value: draft.value,
+          fieldType: draft.fieldType,
+          fileId: draft.fileId,
+        })
         .onConflictDoUpdate({
           target: [pageContent.pageName, pageContent.fieldKey],
-          set: { value: draft.value, fieldType: draft.fieldType },
+          set: { value: draft.value, fieldType: draft.fieldType, fileId: draft.fileId },
         });
     }
 
@@ -71,15 +78,15 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 
   // Save a single draft
   const body = await request.json();
-  const { pageName, fieldKey, value, fieldType = 'text' } = body;
+  const { pageName, fieldKey, value, fieldType = 'text', fileId = null } = body;
 
   if (!pageName || !fieldKey) throw error(400, 'Missing pageName or fieldKey');
 
   await db.insert(pageDrafts)
-    .values({ pageName, fieldKey, value, fieldType, createdBy: admin.id })
+    .values({ pageName, fieldKey, value, fieldType, fileId, createdBy: admin.id })
     .onConflictDoUpdate({
       target: [pageDrafts.pageName, pageDrafts.fieldKey],
-      set: { value, fieldType, createdBy: admin.id },
+      set: { value, fieldType, fileId, createdBy: admin.id },
     });
 
   return json({ ok: true });

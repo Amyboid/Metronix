@@ -10,7 +10,9 @@ function getStorageKey(pageName: string) {
   return `draft_${pageName}`;
 }
 
-function getDraftsFromStorage(pageName: string): Record<string, { value: string; fieldType: string }> {
+type DraftValue = { value: string; fieldType: string; fileId?: string };
+
+function getDraftsFromStorage(pageName: string): Record<string, DraftValue> {
   try {
     return JSON.parse(localStorage.getItem(getStorageKey(pageName)) || '{}');
   } catch {
@@ -18,9 +20,9 @@ function getDraftsFromStorage(pageName: string): Record<string, { value: string;
   }
 }
 
-function saveDraftToStorage(pageName: string, fieldKey: string, value: string, fieldType: string) {
+function saveDraftToStorage(pageName: string, fieldKey: string, value: string, fieldType: string, fileId?: string) {
   const drafts = getDraftsFromStorage(pageName);
-  drafts[fieldKey] = { value, fieldType };
+  drafts[fieldKey] = { value, fieldType, fileId };
   try {
     localStorage.setItem(getStorageKey(pageName), JSON.stringify(drafts));
   } catch (e) {
@@ -81,7 +83,7 @@ export async function syncToServer(pageName: string): Promise<number> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       pageName,
-      drafts: entries.map(([fieldKey, { value, fieldType }]) => ({ fieldKey, value, fieldType })),
+      drafts: entries.map(([fieldKey, { value, fieldType, fileId }]) => ({ fieldKey, value, fieldType, fileId })),
     }),
   });
 
@@ -245,8 +247,8 @@ function openImageUpload(pageName: string, el: HTMLElement) {
     el.style.outline = '2px dashed rgba(251, 191, 36, 0.8)';
     el.dataset.staged = 'true';
 
-    // Save draft with pending marker (not the actual filePath)
-    saveDraft(pageName, fieldKey, '__staged_image__', 'image');
+    // Save draft with pending markers (not the actual filePath/fileId)
+    saveDraft(pageName, fieldKey, '__staged_image__', 'image', '__staged_fileid__');
 
     // Notify parent
     window.parent.postMessage({ type: 'image-staged', fieldKey }, '*');
@@ -320,15 +322,14 @@ async function handlePublish(pageName: string) {
     return;
   }
 
-  const { uploadToIK, deleteFromIKByPath } = await import('$lib/utils/imagekit');
+  const { uploadToIK, deleteFromIK, deleteFromIKByPath } = await import('$lib/utils/imagekit');
 
-  // Fetch old published values to delete old images from ImageKit later
-  let oldPublished: Record<string, string> = {};
+  // Fetch old published fileIds to delete old images from ImageKit later
+  let oldFileIds: Record<string, string> = {};
   try {
     const oldRes = await fetch('/api/admin/content?page=' + pageName);
     const data = await oldRes.json();
-    oldPublished = data.published || {};
-    console.log('[IK] old published values:', oldPublished);
+    oldFileIds = data.publishedFileIds || {};
   } catch {
     // Non-critical — proceed without old value cleanup
   }
@@ -337,21 +338,17 @@ async function handlePublish(pageName: string) {
     try {
       const result = await uploadToIK(file, 'assets/page-contents/' + pageName);
 
-      // Save image draft directly to server (not localStorage)
+      // Save image draft with real fileId directly to server (not localStorage)
       await fetch('/api/admin/content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pageName, fieldKey, value: result.filePath, fieldType: 'image' }),
+        body: JSON.stringify({ pageName, fieldKey, value: result.filePath, fieldType: 'image', fileId: result.fileId }),
       });
 
-      // Delete old image from ImageKit (if it was a real path)
-      const oldPath = oldPublished[fieldKey];
-      console.log('[IK] field:', fieldKey, 'oldPath:', oldPath);
-      if (oldPath && oldPath !== '__staged_image__') {
-        console.log('[IK] deleting old image:', oldPath);
-        await deleteFromIKByPath(oldPath);
-      } else {
-        console.log('[IK] skipping delete — no old path or placeholder');
+      // Delete old image from ImageKit using fileId (preferred) or path (fallback)
+      const oldFileId = oldFileIds[fieldKey];
+      if (oldFileId) {
+        await deleteFromIK(oldFileId);
       }
     } catch (err) {
       console.error(`Failed to upload ${fieldKey}:`, err);
@@ -371,8 +368,8 @@ async function handlePublish(pageName: string) {
 
 // ─── Save draft to localStorage ──────────────────────────────────────────────
 
-function saveDraft(pageName: string, fieldKey: string, value: string, fieldType: string = 'text') {
-  saveDraftToStorage(pageName, fieldKey, value, fieldType);
+function saveDraft(pageName: string, fieldKey: string, value: string, fieldType: string = 'text', fileId?: string) {
+  saveDraftToStorage(pageName, fieldKey, value, fieldType, fileId);
   const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
   window.parent.postMessage({ type: 'draft-saved', fieldKey, draftCount }, '*');
 }
