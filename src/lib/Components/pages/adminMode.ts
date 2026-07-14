@@ -1,45 +1,187 @@
+// Staged files for deferred upload (not uploaded until publish)
+const stagedFiles = new Map<string, { file: File; previewUrl: string }>();
+
+// Module-level autoSave flag (can be toggled by parent via postMessage)
+let currentAutoSave = true;
+
+// ─── localStorage helpers ────────────────────────────────────────────────────
+
+function getStorageKey(pageName: string) {
+  return `draft_${pageName}`;
+}
+
+function getDraftsFromStorage(pageName: string): Record<string, { value: string; fieldType: string }> {
+  try {
+    return JSON.parse(localStorage.getItem(getStorageKey(pageName)) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveDraftToStorage(pageName: string, fieldKey: string, value: string, fieldType: string) {
+  const drafts = getDraftsFromStorage(pageName);
+  drafts[fieldKey] = { value, fieldType };
+  try {
+    localStorage.setItem(getStorageKey(pageName), JSON.stringify(drafts));
+  } catch (e) {
+    console.error('Failed to write to localStorage:', e);
+  }
+}
+
+function clearDraftsFromStorage(pageName: string) {
+  localStorage.removeItem(getStorageKey(pageName));
+}
+
+function removeDraftFromStorage(pageName: string, fieldKey: string) {
+  const drafts = getDraftsFromStorage(pageName);
+  delete drafts[fieldKey];
+  localStorage.setItem(getStorageKey(pageName), JSON.stringify(drafts));
+}
+
+export function getLocalStorageDraftCount(pageName: string): number {
+  return Object.keys(getDraftsFromStorage(pageName)).length;
+}
+
+// ─── Highlight edited fields ─────────────────────────────────────────────────
+
+const EDITED_OUTLINE = '2px dashed rgba(251, 191, 36, 0.8)';
+const HOVER_OUTLINE = '2px dashed rgba(59, 130, 246, 0.5)';
+
+function isFieldEdited(pageName: string, fieldKey: string): boolean {
+  const drafts = getDraftsFromStorage(pageName);
+  return !!drafts[fieldKey];
+}
+
+function highlightEditedFields(pageName: string) {
+  const drafts = getDraftsFromStorage(pageName);
+  document.querySelectorAll<HTMLElement>('[data-editable]').forEach((el) => {
+    const fieldKey = el.dataset.editable;
+    if (fieldKey && drafts[fieldKey]) {
+      el.style.outline = EDITED_OUTLINE;
+      el.style.outlineOffset = '2px';
+    }
+  });
+}
+
+export function clearAllHighlights() {
+  document.querySelectorAll<HTMLElement>('[data-editable]').forEach((el) => {
+    el.style.outline = 'none';
+  });
+}
+
+// ─── Sync to server ──────────────────────────────────────────────────────────
+
+export async function syncToServer(pageName: string): Promise<number> {
+  const drafts = getDraftsFromStorage(pageName);
+  const entries = Object.entries(drafts);
+  if (entries.length === 0) return 0;
+
+  const res = await fetch('/api/admin/content/batch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      pageName,
+      drafts: entries.map(([fieldKey, { value, fieldType }]) => ({ fieldKey, value, fieldType })),
+    }),
+  });
+
+  if (res.ok) {
+    clearDraftsFromStorage(pageName);
+    return entries.length;
+  }
+  throw new Error('Sync failed');
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+
 export function initAdminMode(pageName: string, autoSave = true) {
   if (typeof window === 'undefined') return;
 
   const params = new URLSearchParams(window.location.search);
   if (!params.has('admin')) return;
 
+  currentAutoSave = autoSave;
+
   document.addEventListener('DOMContentLoaded', () => {
-    setupEditableElements(pageName, autoSave);
+    setupEditableElements(pageName);
     setupEditableImages(pageName);
+    setupPublishListener(pageName);
+    restoreDraftsFromStorage(pageName);
   });
 
-  // Also run immediately in case DOM is already ready
   if (document.readyState !== 'loading') {
-    setupEditableElements(pageName, autoSave);
+    setupEditableElements(pageName);
     setupEditableImages(pageName);
+    setupPublishListener(pageName);
+    restoreDraftsFromStorage(pageName);
   }
 }
 
-function setupEditableElements(pageName: string, autoSave: boolean) {
+// ─── Restore drafts from localStorage on init ────────────────────────────────
+
+function restoreDraftsFromStorage(pageName: string) {
+  const drafts = getDraftsFromStorage(pageName);
+  for (const [fieldKey, { value }] of Object.entries(drafts)) {
+    const el = document.querySelector(`[data-editable="${fieldKey}"]`);
+    if (el instanceof HTMLElement) {
+      el.innerText = value;
+      // Update originalText to the restored draft value so further edits compare against it
+      el.dataset.originalText = value;
+    }
+  }
+  highlightEditedFields(pageName);
+}
+
+// ─── Text editing ────────────────────────────────────────────────────────────
+
+function setupEditableElements(pageName: string) {
   const elements = document.querySelectorAll<HTMLElement>('[data-editable]');
 
   elements.forEach((el) => {
     el.contentEditable = 'true';
     el.style.cursor = 'text';
 
+    // Store original text for change detection
+    el.dataset.originalText = el.innerText;
+
     el.addEventListener('mouseenter', () => {
-      el.style.outline = '2px dashed rgba(59, 130, 246, 0.5)';
+      el.style.outline = HOVER_OUTLINE;
       el.style.outlineOffset = '2px';
     });
 
     el.addEventListener('mouseleave', () => {
-      el.style.outline = 'none';
+      // Restore yellow outline if field has edits, otherwise remove
+      const fieldKey = el.dataset.editable!;
+      if (isFieldEdited(pageName, fieldKey)) {
+        el.style.outline = EDITED_OUTLINE;
+        el.style.outlineOffset = '2px';
+      } else {
+        el.style.outline = 'none';
+      }
     });
 
     el.addEventListener('blur', () => {
-      if (!autoSave) return;
-      const fieldKey = el.dataset.editable;
+      if (!currentAutoSave) return;
+      const fieldKey = el.dataset.editable!;
       const newValue = el.innerText;
-      saveDraft(pageName, fieldKey!, newValue, 'text');
+      const originalText = el.dataset.originalText || '';
+
+      if (newValue !== originalText) {
+        saveDraft(pageName, fieldKey, newValue, 'text');
+        el.style.outline = EDITED_OUTLINE;
+        el.style.outlineOffset = '2px';
+      } else {
+        // Reverted to original — remove draft and highlight
+        removeDraftFromStorage(pageName, fieldKey);
+        el.style.outline = 'none';
+        const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
+        window.parent.postMessage({ type: 'draft-removed', fieldKey, draftCount }, '*');
+      }
     });
   });
 }
+
+// ─── Image editing ───────────────────────────────────────────────────────────
 
 function setupEditableImages(pageName: string) {
   const images = document.querySelectorAll<HTMLElement>('[data-editable-image]');
@@ -48,7 +190,6 @@ function setupEditableImages(pageName: string) {
     el.style.cursor = 'pointer';
     el.style.position = 'relative';
 
-    // Add edit overlay on hover
     const overlay = document.createElement('div');
     overlay.className = 'image-edit-overlay';
     overlay.innerHTML = '<span style="background: rgba(59,130,246,0.9); color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-family: system-ui;">Change Image</span>';
@@ -62,7 +203,13 @@ function setupEditableImages(pageName: string) {
     });
 
     el.addEventListener('mouseleave', () => {
-      el.style.outline = 'none';
+      // Restore yellow outline if image was staged, otherwise remove
+      if (el.dataset.staged === 'true') {
+        el.style.outline = '2px dashed rgba(251, 191, 36, 0.8)';
+        el.style.outlineOffset = '2px';
+      } else {
+        el.style.outline = 'none';
+      }
       overlay.style.display = 'none';
     });
 
@@ -80,58 +227,158 @@ function openImageUpload(pageName: string, el: HTMLElement) {
   input.type = 'file';
   input.accept = 'image/*';
 
-  input.onchange = async (e) => {
+  input.onchange = (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
 
-    // Show loading state
-    const img = el.querySelector('img') || el;
-    const prevOutline = el.style.outline;
-    el.style.outline = '2px solid rgba(59, 130, 246, 0.8)';
-    el.style.opacity = '0.7';
+    // Stage the file locally (no upload to ImageKit yet)
+    const previewUrl = URL.createObjectURL(file);
+    stagedFiles.set(fieldKey, { file, previewUrl });
 
-    try {
-      // Upload to ImageKit
-      const { uploadToIK } = await import('$lib/utils/imagekit');
-      const result = await uploadToIK(file, 'assets/page-contents/' + pageName);
-
-      // Save the image path as draft
-      await saveDraft(pageName, fieldKey, result.filePath, 'image');
-
-      // Update the image src
-      if (img instanceof HTMLImageElement) {
-        img.src = URL.createObjectURL(file);
-      }
-
-      // Show success feedback
-      el.style.outline = '2px solid rgba(34, 197, 94, 0.8)';
-      setTimeout(() => {
-        el.style.outline = prevOutline || 'none';
-        el.style.opacity = '1';
-      }, 1500);
-    } catch (err) {
-      console.error('Image upload failed:', err);
-      el.style.outline = '2px solid rgba(239, 68, 68, 0.8)';
-      setTimeout(() => {
-        el.style.outline = prevOutline || 'none';
-        el.style.opacity = '1';
-      }, 1500);
+    // Update the image src with local preview
+    const img = el.querySelector('img');
+    if (img instanceof HTMLImageElement) {
+      img.src = previewUrl;
     }
+
+    // Show staged indicator
+    el.style.outline = '2px dashed rgba(251, 191, 36, 0.8)';
+    el.dataset.staged = 'true';
+
+    // Save draft with pending marker (not the actual filePath)
+    saveDraft(pageName, fieldKey, '__staged_image__', 'image');
+
+    // Notify parent
+    window.parent.postMessage({ type: 'image-staged', fieldKey }, '*');
   };
 
   input.click();
 }
 
-async function saveDraft(pageName: string, fieldKey: string, value: string, fieldType: string = 'text') {
-  try {
-    await fetch('/api/admin/content', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pageName, fieldKey, value, fieldType }),
-    });
-    // Notify parent frame that a draft was saved
-    window.parent.postMessage({ type: 'draft-saved', fieldKey }, '*');
-  } catch (e) {
-    console.error('Failed to save draft:', e);
+// ─── Publish / sync / control listeners ──────────────────────────────────────
+
+function setupPublishListener(pageName: string) {
+  window.addEventListener('message', async (event) => {
+    if (event.data?.type === 'publish-request') {
+      await handlePublish(pageName);
+    }
+
+    if (event.data?.type === 'sync-request') {
+      try {
+        const count = await syncToServer(pageName);
+        window.parent.postMessage({ type: 'sync-complete', count }, '*');
+      } catch {
+        window.parent.postMessage({ type: 'sync-failed' }, '*');
+      }
+    }
+
+    if (event.data?.type === 'autosave-toggle') {
+      currentAutoSave = event.data.autoSave;
+    }
+
+    if (event.data?.type === 'save-request') {
+      let savedCount = 0;
+      document.querySelectorAll<HTMLElement>('[data-editable]').forEach((el) => {
+        const fieldKey = el.dataset.editable;
+        if (!fieldKey) return;
+        const newValue = el.innerText;
+        const originalText = el.dataset.originalText || '';
+        if (newValue !== originalText) {
+          saveDraft(pageName, fieldKey, newValue, 'text');
+          el.style.outline = EDITED_OUTLINE;
+          el.style.outlineOffset = '2px';
+          savedCount++;
+        } else {
+          removeDraftFromStorage(pageName, fieldKey);
+          el.style.outline = 'none';
+        }
+      });
+      const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
+      window.parent.postMessage({ type: 'save-complete', draftCount }, '*');
+    }
+  });
+}
+
+async function handlePublish(pageName: string) {
+  // Check online status
+  if (!navigator.onLine) {
+    window.parent.postMessage({ type: 'publish-failed', error: 'Cannot publish while offline' }, '*');
+    return;
   }
+
+  // Sync localStorage drafts to server first
+  try {
+    await syncToServer(pageName);
+  } catch {
+    window.parent.postMessage({ type: 'publish-failed', error: 'Failed to sync drafts' }, '*');
+    return;
+  }
+
+  // Upload staged images
+  if (stagedFiles.size === 0) {
+    window.parent.postMessage({ type: 'images-uploaded' }, '*');
+    return;
+  }
+
+  const { uploadToIK, deleteFromIKByPath } = await import('$lib/utils/imagekit');
+
+  // Fetch old published values to delete old images from ImageKit later
+  let oldPublished: Record<string, string> = {};
+  try {
+    const oldRes = await fetch('/api/admin/content?page=' + pageName);
+    const data = await oldRes.json();
+    oldPublished = data.published || {};
+    console.log('[IK] old published values:', oldPublished);
+  } catch {
+    // Non-critical — proceed without old value cleanup
+  }
+
+  for (const [fieldKey, { file }] of stagedFiles) {
+    try {
+      const result = await uploadToIK(file, 'assets/page-contents/' + pageName);
+
+      // Save image draft directly to server (not localStorage)
+      await fetch('/api/admin/content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pageName, fieldKey, value: result.filePath, fieldType: 'image' }),
+      });
+
+      // Delete old image from ImageKit (if it was a real path)
+      const oldPath = oldPublished[fieldKey];
+      console.log('[IK] field:', fieldKey, 'oldPath:', oldPath);
+      if (oldPath && oldPath !== '__staged_image__') {
+        console.log('[IK] deleting old image:', oldPath);
+        await deleteFromIKByPath(oldPath);
+      } else {
+        console.log('[IK] skipping delete — no old path or placeholder');
+      }
+    } catch (err) {
+      console.error(`Failed to upload ${fieldKey}:`, err);
+      window.parent.postMessage({ type: 'publish-failed', fieldKey, error: String(err) }, '*');
+      return;
+    }
+  }
+
+  // Clean up staged files and preview URLs
+  for (const { previewUrl } of stagedFiles.values()) {
+    URL.revokeObjectURL(previewUrl);
+  }
+  stagedFiles.clear();
+
+  window.parent.postMessage({ type: 'images-uploaded' }, '*');
+}
+
+// ─── Save draft to localStorage ──────────────────────────────────────────────
+
+function saveDraft(pageName: string, fieldKey: string, value: string, fieldType: string = 'text') {
+  saveDraftToStorage(pageName, fieldKey, value, fieldType);
+  const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
+  window.parent.postMessage({ type: 'draft-saved', fieldKey, draftCount }, '*');
+}
+
+// ─── Exports ─────────────────────────────────────────────────────────────────
+
+export function getStagedFilesCount() {
+  return stagedFiles.size;
 }

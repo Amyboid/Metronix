@@ -110,6 +110,24 @@ export async function deleteFromIK(fileId: string | null): Promise<void> {
 }
 
 /**
+ * Delete a file from ImageKit by its filePath (e.g. "assets/page-contents/contact/img.png").
+ * Silent — logs but does not throw on failure.
+ */
+export async function deleteFromIKByPath(filePath: string | null): Promise<void> {
+    if (!filePath) return;
+    try {
+        const res = await fetch(`/api/admin/imagekit-delete?filePath=${encodeURIComponent(filePath)}`, {
+            method: 'DELETE',
+        });
+        if (!res.ok) {
+            console.warn('[IK] delete by path returned', res.status, 'for', filePath);
+        }
+    } catch (e) {
+        console.warn('[IK] delete by path failed for', filePath, e);
+    }
+}
+
+/**
  * Build a rendered URL from a stored filePath.
  * filePath: "assets/brand-logo/samsung.png"
  * → https://ik.imagekit.io/yourid/assets/brand-logo/samsung.png?tr=...

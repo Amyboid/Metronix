@@ -22,20 +22,62 @@ async function deleteIKFile(fileId: string | null) {
     }
 }
 
-// DELETE /api/admin/imagekit-delete?fileId=xxx
-// Deletes a single file from ImageKit by fileId.
-// fileId is returned by ImageKit on upload and stored in DB alongside filePath.
+async function deleteIKFileByPath(filePath: string | null) {
+    if (!filePath) return;
+    const credentials = Buffer.from(`${env.IMAGEKIT_PRIVATE_KEY}:`).toString('base64');
+    const authHeader = { Authorization: `Basic ${credentials}` };
+
+    // Extract folder and filename from path
+    const lastSlash = filePath.lastIndexOf('/');
+    const folder = lastSlash > 0 ? filePath.substring(0, lastSlash + 1) : '/';
+    const fileName = filePath.substring(lastSlash + 1);
+
+    // List files in folder to find the fileId
+    const listRes = await fetch(
+        `https://api.imagekit.io/v1/files?path=${encodeURIComponent(folder)}&searchQuery=name:${encodeURIComponent(fileName)}`,
+        { headers: authHeader }
+    );
+    if (!listRes.ok) {
+        console.error('[IK] list files failed', folder, listRes.status);
+        return;
+    }
+
+    const files = await listRes.json();
+    if (!files.length) {
+        console.warn('[IK] file not found for path:', filePath);
+        return;
+    }
+
+    // Delete by fileId
+    const fileId = files[0].fileId;
+    const deleteRes = await fetch(`https://api.imagekit.io/v1/files/${fileId}`, {
+        method: 'DELETE',
+        headers: authHeader,
+    });
+    if (!deleteRes.ok) {
+        const body = await deleteRes.text();
+        console.error('[IK] delete by fileId failed', fileId, deleteRes.status, body);
+    }
+}
+
+// DELETE /api/admin/imagekit-delete?fileId=xxx  or  ?filePath=xxx
+// Deletes a single file from ImageKit by fileId or filePath.
 export const DELETE: RequestHandler = async ({ locals, url }) => {
     assertAdmin(locals);
 
     const fileId = url.searchParams.get('fileId');
-    if (!fileId) throw error(400, 'Missing fileId');
+    const filePath = url.searchParams.get('filePath');
+
+    if (!fileId && !filePath) throw error(400, 'Missing fileId or filePath');
 
     try {
-        await deleteIKFile(fileId);
+        if (fileId) {
+            await deleteIKFile(fileId);
+        } else {
+            await deleteIKFileByPath(filePath);
+        }
         return json({ ok: true });
     } catch (e: any) {
-        // If file not found on IK side, treat as success (already gone)
         if (e?.message?.includes('not found') || e?.statusNumber === 404) {
             return json({ ok: true, note: 'File not found on ImageKit — skipped' });
         }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/state';
+  import { getLocalStorageDraftCount, clearAllHighlights } from '$lib/Components/pages/adminMode';
 
   let { data } = $props();
 
@@ -7,7 +7,17 @@
   let autoSave = $state(true);
   let draftCount = $state(data.draftCount);
   let showSaved = $state(false);
+  let isPublishing = $state(false);
   let iframeEl: HTMLIFrameElement | undefined = $state();
+
+  // Offline / sync state
+  let isOffline = $state(!navigator.onLine);
+  let showSyncPopup = $state(false);
+  let syncCount = $state(0);
+  let hasStagedImages = $state(false);
+
+  // Reactive hasDrafts — updates when draftCount or server data changes
+  let hasDrafts = $state(data.hasDrafts || getLocalStorageDraftCount(data.pageName) > 0);
 
   const frameWidth = $derived(
     device === 'mobile' ? '375px' : device === 'tablet' ? '768px' : '100%'
@@ -15,15 +25,93 @@
 
   const iframeSrc = $derived(`${data.pageDef.route}?admin=true`);
 
+  // Online/offline detection
+  $effect(() => {
+    const handleOnline = () => {
+      isOffline = false;
+      iframeEl?.contentWindow?.postMessage({ type: 'sync-request' }, '*');
+    };
+    const handleOffline = () => {
+      isOffline = true;
+    };
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  });
+
+  // Send autoSave toggle to iframe whenever it changes
+  $effect(() => {
+    iframeEl?.contentWindow?.postMessage({ type: 'autosave-toggle', autoSave }, '*');
+  });
+
   function handleMessage(event: MessageEvent) {
     if (event.data?.type === 'draft-saved') {
       showSaved = true;
-      draftCount += 1;
+      draftCount = event.data.draftCount;
+      hasDrafts = true;
       setTimeout(() => (showSaved = false), 2000);
+    }
+
+    if (event.data?.type === 'draft-removed') {
+      draftCount = event.data.draftCount;
+      hasDrafts = draftCount > 0;
+    }
+
+    if (event.data?.type === 'save-complete') {
+      showSaved = true;
+      draftCount = event.data.draftCount;
+      hasDrafts = draftCount > 0;
+      setTimeout(() => (showSaved = false), 2000);
+    }
+
+    if (event.data?.type === 'sync-complete') {
+      syncCount = event.data.count;
+      showSyncPopup = true;
+      draftCount = getLocalStorageDraftCount(data.pageName);
+      hasDrafts = draftCount > 0;
+      setTimeout(() => (showSyncPopup = false), 3000);
+    }
+
+    if (event.data?.type === 'sync-failed') {
+      console.error('Sync failed');
+    }
+
+    if (event.data?.type === 'image-staged') {
+      hasStagedImages = true;
+      hasDrafts = true;
+    }
+
+    // Images uploaded in iframe, now publish text content
+    if (event.data?.type === 'images-uploaded') {
+      publishTextContent();
+    }
+
+    // Image upload failed
+    if (event.data?.type === 'publish-failed') {
+      isPublishing = false;
+      alert(`Publish failed: ${event.data.error}`);
     }
   }
 
   async function publishAll() {
+    if (!navigator.onLine) {
+      alert('Cannot publish while offline. Changes will sync when you reconnect.');
+      return;
+    }
+
+    isPublishing = true;
+
+    // First, tell iframe to upload any staged images (and sync localStorage)
+    iframeEl?.contentWindow?.postMessage({ type: 'publish-request' }, '*');
+
+    // If no staged images, iframe will immediately send 'images-uploaded'
+    // which triggers publishTextContent()
+  }
+
+  async function publishTextContent() {
     try {
       const res = await fetch('/api/admin/content?publish=true', {
         method: 'POST',
@@ -32,10 +120,19 @@
       });
       if (res.ok) {
         draftCount = 0;
+        hasDrafts = false;
+        isPublishing = false;
+        hasStagedImages = false;
+        localStorage.removeItem('draft_' + data.pageName);
+        clearAllHighlights();
         iframeEl?.contentWindow?.location.reload();
+      } else {
+        isPublishing = false;
+        alert('Failed to publish content');
       }
     } catch (e) {
       console.error('Failed to publish:', e);
+      isPublishing = false;
     }
   }
 
@@ -43,6 +140,11 @@
     if (!confirm('Discard all unpublished changes?')) return;
     try {
       await fetch(`/api/admin/content?page=${data.pageName}&all=true`, { method: 'DELETE' });
+      localStorage.removeItem('draft_' + data.pageName);
+      hasStagedImages = false;
+      draftCount = 0;
+      hasDrafts = false;
+      clearAllHighlights();
       iframeEl?.contentWindow?.location.reload();
     } catch (e) {
       console.error('Failed to discard:', e);
@@ -63,6 +165,15 @@
     <span class="text-sm font-semibold text-gray-900">{data.pageDef.label} — Preview</span>
     {#if showSaved}
       <span class="text-xs text-green-600">Saved</span>
+    {/if}
+    {#if isOffline}
+      <span class="flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs text-amber-700">
+        <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+        Offline
+      </span>
+    {/if}
+    {#if hasStagedImages && isOffline}
+      <span class="text-xs text-amber-600">Images will be lost on reload</span>
     {/if}
   </div>
 
@@ -89,12 +200,27 @@
       Auto-save
     </label>
 
-    <!-- Publish / Discard -->
-    {#if data.hasDrafts}
+    <!-- Save button (manual, when auto-save is off) -->
+    {#if !autoSave}
       <button
-        class="rounded-md bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700"
+        class="rounded-md bg-green-600 px-3 py-1 text-xs text-white hover:bg-green-700"
+        onclick={() => iframeEl?.contentWindow?.postMessage({ type: 'save-request' }, '*')}
+      >Save</button>
+    {/if}
+
+    <!-- Publish / Discard -->
+    {#if hasDrafts}
+      <button
+        class="rounded-md px-3 py-1 text-xs text-white transition-colors {isPublishing ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}"
         onclick={publishAll}
-      >Publish ({draftCount})</button>
+        disabled={isPublishing}
+      >
+        {#if isPublishing}
+          Publishing...
+        {:else}
+          Publish ({draftCount})
+        {/if}
+      </button>
       <button
         class="rounded-md border border-gray-300 px-3 py-1 text-xs text-gray-600 hover:bg-gray-100"
         onclick={discardAll}
@@ -104,6 +230,13 @@
     {/if}
   </div>
 </div>
+
+<!-- Sync Popup -->
+{#if showSyncPopup}
+  <div class="fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm text-white shadow-lg">
+    {syncCount} changes synced
+  </div>
+{/if}
 
 <!-- Preview Content via iframe -->
 <div class="pt-12 w-full flex justify-center bg-gray-100" style="height: 100vh;">
