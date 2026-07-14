@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getLocalStorageDraftCount, clearAllHighlights } from '$lib/Components/pages/adminMode';
+  import ChangesPanel from '$lib/Components/admin/ChangesPanel.svelte';
 
   let { data } = $props();
 
@@ -15,6 +16,10 @@
   let showSyncPopup = $state(false);
   let syncCount = $state(0);
   let hasStagedImages = $state(false);
+
+  // Changes panel state
+  let showChangesPanel = $state(false);
+  let changesRefreshKey = $state(0);
 
   // Reactive hasDrafts — updates when draftCount or server data changes
   let hasDrafts = $state(data.hasDrafts || getLocalStorageDraftCount(data.pageName) > 0);
@@ -52,18 +57,27 @@
       showSaved = true;
       draftCount = event.data.draftCount;
       hasDrafts = true;
+      changesRefreshKey++;
       setTimeout(() => (showSaved = false), 2000);
     }
 
     if (event.data?.type === 'draft-removed') {
       draftCount = event.data.draftCount;
       hasDrafts = draftCount > 0;
+      changesRefreshKey++;
+    }
+
+    if (event.data?.type === 'draft-changed') {
+      draftCount = event.data.draftCount;
+      hasDrafts = true;
+      changesRefreshKey++;
     }
 
     if (event.data?.type === 'save-complete') {
       showSaved = true;
       draftCount = event.data.draftCount;
       hasDrafts = draftCount > 0;
+      changesRefreshKey++;
       setTimeout(() => (showSaved = false), 2000);
     }
 
@@ -72,6 +86,7 @@
       showSyncPopup = true;
       draftCount = getLocalStorageDraftCount(data.pageName);
       hasDrafts = draftCount > 0;
+      changesRefreshKey++;
       setTimeout(() => (showSyncPopup = false), 3000);
     }
 
@@ -82,6 +97,7 @@
     if (event.data?.type === 'image-staged') {
       hasStagedImages = true;
       hasDrafts = true;
+      changesRefreshKey++;
     }
 
     // Images uploaded in iframe, now publish text content
@@ -94,6 +110,10 @@
       isPublishing = false;
       alert(`Publish failed: ${event.data.error}`);
     }
+  }
+
+  function revertField(fieldKey: string) {
+    iframeEl?.contentWindow?.postMessage({ type: 'revert-field', fieldKey }, '*');
   }
 
   async function publishAll() {
@@ -123,6 +143,7 @@
         hasDrafts = false;
         isPublishing = false;
         hasStagedImages = false;
+        showChangesPanel = false;
         localStorage.removeItem('draft_' + data.pageName);
         clearAllHighlights();
         iframeEl?.contentWindow?.location.reload();
@@ -144,6 +165,7 @@
       hasStagedImages = false;
       draftCount = 0;
       hasDrafts = false;
+      showChangesPanel = false;
       clearAllHighlights();
       iframeEl?.contentWindow?.location.reload();
     } catch (e) {
@@ -208,8 +230,12 @@
       >Save</button>
     {/if}
 
-    <!-- Publish / Discard -->
+    <!-- Changes button + Publish / Discard -->
     {#if hasDrafts}
+      <button
+        class="rounded-md border border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-700 hover:bg-amber-100"
+        onclick={() => (showChangesPanel = true)}
+      >Changes ({draftCount})</button>
       <button
         class="rounded-md px-3 py-1 text-xs text-white transition-colors {isPublishing ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}"
         onclick={publishAll}
@@ -218,7 +244,7 @@
         {#if isPublishing}
           Publishing...
         {:else}
-          Publish ({draftCount})
+          Publish
         {/if}
       </button>
       <button
@@ -237,6 +263,17 @@
     {syncCount} changes synced
   </div>
 {/if}
+
+<!-- Changes Panel -->
+<ChangesPanel
+  open={showChangesPanel}
+  pageName={data.pageName}
+  refreshKey={changesRefreshKey}
+  onClose={() => (showChangesPanel = false)}
+  onRevert={revertField}
+  onPublish={() => { showChangesPanel = false; publishAll(); }}
+  onDiscardAll={() => { showChangesPanel = false; discardAll(); }}
+/>
 
 <!-- Preview Content via iframe -->
 <div class="pt-12 w-full flex justify-center bg-gray-100" style="height: 100vh;">

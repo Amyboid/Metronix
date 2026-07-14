@@ -172,6 +172,8 @@ function setupEditableElements(pageName: string) {
         saveDraft(pageName, fieldKey, newValue, 'text');
         el.style.outline = EDITED_OUTLINE;
         el.style.outlineOffset = '2px';
+        const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
+        window.parent.postMessage({ type: 'draft-changed', fieldKey, draftCount }, '*');
       } else {
         // Reverted to original — remove draft and highlight
         removeDraftFromStorage(pageName, fieldKey);
@@ -297,6 +299,18 @@ function setupPublishListener(pageName: string) {
       });
       const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
       window.parent.postMessage({ type: 'save-complete', draftCount }, '*');
+    }
+
+    if (event.data?.type === 'revert-field') {
+      const fieldKey = event.data.fieldKey;
+      const el = document.querySelector(`[data-editable="${fieldKey}"]`);
+      if (el instanceof HTMLElement) {
+        el.innerText = el.dataset.originalText || '';
+        el.style.outline = 'none';
+      }
+      removeDraftFromStorage(pageName, fieldKey);
+      const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
+      window.parent.postMessage({ type: 'draft-removed', fieldKey, draftCount }, '*');
     }
   });
 }
