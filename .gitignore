@@ -6,6 +6,7 @@ rename.js
 createfiles.sh
 categoryWiseData*
 seed.ts
+seed-admin.ts
 mockData*
 copyConnectDb.ts
 itemData.ts
