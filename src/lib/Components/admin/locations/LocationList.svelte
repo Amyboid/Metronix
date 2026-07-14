@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
-	import DataTable from '../catalog/DataTable.svelte';
-	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
+	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
+	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 
 	type Location = {
 		id:          string;

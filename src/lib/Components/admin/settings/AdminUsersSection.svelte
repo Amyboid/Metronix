@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import DataTable from '../catalog/DataTable.svelte';
-	import SidePanel from '../catalog/SidePanel.svelte';
+	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
+	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 
 	let { currentUserId = '', onaction }: { currentUserId?: string; onaction?: (fn: () => void) => void } = $props();
 

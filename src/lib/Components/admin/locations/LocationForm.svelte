@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
-	import SidePanel from '../catalog/SidePanel.svelte';
+	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 	import StockManager from './StockManager.svelte';
 
 	let { locationId = null }: { locationId?: string | null } = $props();

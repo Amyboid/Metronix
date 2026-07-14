@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import DataTable from '../catalog/DataTable.svelte';
-	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
-	import CreateTemplateModal from '../pages/CreateTemplateModal.svelte';
+	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
+	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
+	import CreateTemplateModal from '$lib/Components/admin/pages/CreateTemplateModal.svelte';
 	import EditTemplateModal from './EditTemplateModal.svelte';
 
 	type Template = {

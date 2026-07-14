@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
-	import ProductCard from '../ProductCard.svelte';
+	import ProductCard from '$lib/Components/ProductCard.svelte';
 	const base = env.PUBLIC_ASSET_BASE_URL || '';
 
 	let {

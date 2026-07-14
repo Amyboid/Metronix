@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import SidePanel from '../catalog/SidePanel.svelte';
+	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 
 	let {
 		template,

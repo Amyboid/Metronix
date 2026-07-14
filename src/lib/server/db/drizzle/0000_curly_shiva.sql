@@ -67,6 +67,25 @@ CREATE TABLE "location" (
 	"phone" text
 );
 --> statement-breakpoint
+CREATE TABLE "page_content" (
+	"page_name" text NOT NULL,
+	"field_key" text NOT NULL,
+	"value" text DEFAULT '' NOT NULL,
+	"field_type" text DEFAULT 'text' NOT NULL,
+	"updated_at" timestamp (3) DEFAULT now() NOT NULL,
+	CONSTRAINT "page_content_page_name_field_key_pk" PRIMARY KEY("page_name","field_key")
+);
+--> statement-breakpoint
+CREATE TABLE "page_draft" (
+	"page_name" text NOT NULL,
+	"field_key" text NOT NULL,
+	"value" text DEFAULT '' NOT NULL,
+	"field_type" text DEFAULT 'text' NOT NULL,
+	"created_by" text NOT NULL,
+	"created_at" timestamp (3) DEFAULT now() NOT NULL,
+	CONSTRAINT "page_draft_page_name_field_key_pk" PRIMARY KEY("page_name","field_key")
+);
+--> statement-breakpoint
 CREATE TABLE "page_section" (
 	"id" text PRIMARY KEY NOT NULL,
 	"page_name" text NOT NULL,
@@ -213,6 +232,8 @@ CREATE INDEX "audit_admin_idx" ON "audit_logs" USING btree ("admin_id");--> stat
 CREATE INDEX "audit_entity_idx" ON "audit_logs" USING btree ("entity_type","entity_id");--> statement-breakpoint
 CREATE INDEX "audit_created_idx" ON "audit_logs" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "colors_name_idx" ON "colors" USING btree ("brand","product_type","name");--> statement-breakpoint
+CREATE INDEX "page_content_page_idx" ON "page_content" USING btree ("page_name");--> statement-breakpoint
+CREATE INDEX "page_draft_page_idx" ON "page_draft" USING btree ("page_name");--> statement-breakpoint
 CREATE INDEX "availability_product_idx" ON "product_availability" USING btree ("product_id");--> statement-breakpoint
 CREATE INDEX "availability_location_idx" ON "product_availability" USING btree ("location_id");--> statement-breakpoint
 CREATE INDEX "product_slug_idx" ON "product" USING btree ("slug");--> statement-breakpoint

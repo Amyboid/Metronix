@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ImgSlider from '../ImgSlider.svelte';
+	import ImgSlider from '$lib/Components/ImgSlider.svelte';
 
 	let { sectionHeading, data = [], ctaText, linkTo, linkValue } = $props<{
 		sectionHeading: string;

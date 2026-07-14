@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
 	import { ikUrl } from '$lib/utils/imagekit';
-	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
+	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 	import FilterPanel from './FilterPanel.svelte';
 
 	type Product = {

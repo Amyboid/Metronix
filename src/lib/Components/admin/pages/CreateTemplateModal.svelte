@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SidePanel from '../catalog/SidePanel.svelte';
+	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 
 	let {
 		onsaved,

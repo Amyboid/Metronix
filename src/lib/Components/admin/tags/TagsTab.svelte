@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import SidePanel from '../catalog/SidePanel.svelte';
-	import DataTable from '../catalog/DataTable.svelte';
-	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
+	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
+	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
+	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 
 	type Tag = {
 		id: string;

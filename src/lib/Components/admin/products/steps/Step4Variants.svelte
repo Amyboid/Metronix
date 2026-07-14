@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import VariantUploader from '../VariantUploader.svelte';
+	import VariantUploader from '$lib/Components/admin/products/VariantUploader.svelte';
 
 	let {
 		data = $bindable(),

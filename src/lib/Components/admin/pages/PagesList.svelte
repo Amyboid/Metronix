@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
-	import SectionHeader from '../catalog/SectionHeader.svelte';
+	import SectionHeader from '$lib/Components/admin/catalog/SectionHeader.svelte';
 	import { pages } from '$lib/contentRegistry';
 
 	type DraftCounts = Record<string, number>;

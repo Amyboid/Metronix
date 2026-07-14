@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import DataTable from '../catalog/DataTable.svelte';
-	import DeleteConfirmModal from '../catalog/DeleteConfirmModal.svelte';
+	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
+	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 
 	let { onaction }: { onaction?: (fn: () => void) => void } = $props();
 
