@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getLocalStorageDraftCount, clearAllHighlights } from '$lib/Components/pages/adminMode';
-  import ChangesPanel from '$lib/Components/admin/ChangesPanel.svelte';
+  import ChangesBar from '$lib/Components/admin/ChangesBar.svelte';
 
   let { data } = $props();
 
@@ -18,7 +18,7 @@
   let hasStagedImages = $state(false);
 
   // Changes panel state
-  let showChangesPanel = $state(false);
+  let showChangesBar = $state(true);
   let changesRefreshKey = $state(0);
 
   // Reactive hasDrafts — updates when draftCount or server data changes
@@ -94,6 +94,10 @@
       console.error('Sync failed');
     }
 
+    if (event.data?.type === 'drafts-cleaned') {
+      changesRefreshKey++;
+    }
+
     if (event.data?.type === 'image-staged') {
       hasStagedImages = true;
       hasDrafts = true;
@@ -143,7 +147,7 @@
         hasDrafts = false;
         isPublishing = false;
         hasStagedImages = false;
-        showChangesPanel = false;
+        showChangesBar = false;
         localStorage.removeItem('draft_' + data.pageName);
         clearAllHighlights();
         iframeEl?.contentWindow?.location.reload();
@@ -165,7 +169,7 @@
       hasStagedImages = false;
       draftCount = 0;
       hasDrafts = false;
-      showChangesPanel = false;
+      showChangesBar = false;
       clearAllHighlights();
       iframeEl?.contentWindow?.location.reload();
     } catch (e) {
@@ -233,9 +237,19 @@
     <!-- Changes button + Publish / Discard -->
     {#if hasDrafts}
       <button
-        class="rounded-md border border-amber-300 bg-amber-50 px-3 py-1 text-xs text-amber-700 hover:bg-amber-100"
-        onclick={() => (showChangesPanel = true)}
-      >Changes ({draftCount})</button>
+        class="relative rounded-md px-2 py-1 transition-colors {showChangesBar ? 'bg-amber-100 text-amber-700' : 'text-gray-600 hover:bg-gray-100'}"
+        onclick={() => (showChangesBar = !showChangesBar)}
+        title="Toggle changes bar"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <line x1="2" y1="4" x2="14" y2="4" />
+          <line x1="2" y1="8" x2="14" y2="8" />
+          <line x1="2" y1="12" x2="10" y2="12" />
+        </svg>
+        {#if !showChangesBar && draftCount > 0}
+          <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-[9px] text-white flex items-center justify-center">{draftCount}</span>
+        {/if}
+      </button>
       <button
         class="rounded-md px-3 py-1 text-xs text-white transition-colors {isPublishing ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}"
         onclick={publishAll}
@@ -265,14 +279,11 @@
 {/if}
 
 <!-- Changes Panel -->
-<ChangesPanel
-  open={showChangesPanel}
+<ChangesBar
+  open={showChangesBar}
   pageName={data.pageName}
   refreshKey={changesRefreshKey}
-  onClose={() => (showChangesPanel = false)}
   onRevert={revertField}
-  onPublish={() => { showChangesPanel = false; publishAll(); }}
-  onDiscardAll={() => { showChangesPanel = false; discardAll(); }}
 />
 
 <!-- Preview Content via iframe -->

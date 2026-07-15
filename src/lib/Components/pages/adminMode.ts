@@ -40,6 +40,20 @@ function removeDraftFromStorage(pageName: string, fieldKey: string) {
   localStorage.setItem(getStorageKey(pageName), JSON.stringify(drafts));
 }
 
+function cleanOrphanedImageDrafts(pageName: string) {
+  const drafts = getDraftsFromStorage(pageName);
+  let changed = false;
+  for (const [fieldKey, draft] of Object.entries(drafts)) {
+    if (draft.value === '__staged_image__') {
+      delete drafts[fieldKey];
+      changed = true;
+    }
+  }
+  if (changed) {
+    localStorage.setItem(getStorageKey(pageName), JSON.stringify(drafts));
+  }
+}
+
 export function getLocalStorageDraftCount(pageName: string): number {
   return Object.keys(getDraftsFromStorage(pageName)).length;
 }
@@ -109,6 +123,8 @@ export function initAdminMode(pageName: string, autoSave = true) {
     setupEditableImages(pageName);
     setupPublishListener(pageName);
     restoreDraftsFromStorage(pageName);
+    cleanOrphanedImageDrafts(pageName);
+    window.parent.postMessage({ type: 'drafts-cleaned' }, '*');
   });
 
   if (document.readyState !== 'loading') {
@@ -116,6 +132,8 @@ export function initAdminMode(pageName: string, autoSave = true) {
     setupEditableImages(pageName);
     setupPublishListener(pageName);
     restoreDraftsFromStorage(pageName);
+    cleanOrphanedImageDrafts(pageName);
+    window.parent.postMessage({ type: 'drafts-cleaned' }, '*');
   }
 }
 
@@ -127,8 +145,7 @@ function restoreDraftsFromStorage(pageName: string) {
     const el = document.querySelector(`[data-editable="${fieldKey}"]`);
     if (el instanceof HTMLElement) {
       el.innerText = value;
-      // Update originalText to the restored draft value so further edits compare against it
-      el.dataset.originalText = value;
+      // DON'T overwrite originalText — keep it as the published value for revert
     }
   }
   highlightEditedFields(pageName);
@@ -217,6 +234,12 @@ function setupEditableImages(pageName: string) {
       overlay.style.display = 'none';
     });
 
+    // Store original image src for revert
+    const img = el.querySelector('img');
+    if (img instanceof HTMLImageElement) {
+      el.dataset.originalSrc = img.src;
+    }
+
     el.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -303,11 +326,26 @@ function setupPublishListener(pageName: string) {
 
     if (event.data?.type === 'revert-field') {
       const fieldKey = event.data.fieldKey;
-      const el = document.querySelector(`[data-editable="${fieldKey}"]`);
-      if (el instanceof HTMLElement) {
-        el.innerText = el.dataset.originalText || '';
-        el.style.outline = 'none';
+
+      // Handle text fields
+      const textEl = document.querySelector(`[data-editable="${fieldKey}"]`);
+      if (textEl instanceof HTMLElement) {
+        textEl.innerText = textEl.dataset.originalText || '';
+        textEl.style.outline = 'none';
       }
+
+      // Handle image fields
+      const imageEl = document.querySelector(`[data-editable-image="${fieldKey}"]`);
+      if (imageEl instanceof HTMLElement) {
+        const img = imageEl.querySelector('img');
+        if (img instanceof HTMLImageElement && imageEl.dataset.originalSrc) {
+          img.src = imageEl.dataset.originalSrc;
+        }
+        imageEl.style.outline = 'none';
+        imageEl.dataset.staged = 'false';
+        stagedFiles.delete(fieldKey);
+      }
+
       removeDraftFromStorage(pageName, fieldKey);
       const draftCount = Object.keys(getDraftsFromStorage(pageName)).length;
       window.parent.postMessage({ type: 'draft-removed', fieldKey, draftCount }, '*');
