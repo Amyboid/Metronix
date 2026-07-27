@@ -130,7 +130,6 @@
 		font-weight: 500;
 		color: var(--color-copy);
 		transition: background 0.15s, color 0.15s, border-color 0.15s;
-		border-radius: 0 6px 6px 0;
 		overflow: hidden;
 		white-space: nowrap;
 	}
