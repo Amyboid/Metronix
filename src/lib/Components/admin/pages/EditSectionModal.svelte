@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 	import DynamicForm from './DynamicForm.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let {
 		section,
@@ -65,7 +66,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ id: section.id, config: formData }),
 			});
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Update failed' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			onsaved();
 		} catch (e: any) {
 			error = e.message ?? 'Save failed';

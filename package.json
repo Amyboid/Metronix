@@ -16,6 +16,7 @@
 		"db:migrate": "bun run scripts/db-migrate.ts",
 		"db:seed": "bun src/lib/server/db/seed_data/seed.ts",
 		"db:seed-admin": "bun src/lib/server/db/seed_data/seed-admin.ts",
+		"db:seed-editor": "bun src/lib/server/db/seed_data/seed-editor.ts",
 		"db:push": "drizzle-kit push",
 		"db:pull": "drizzle-kit pull"
 	},

@@ -2,18 +2,12 @@ import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { colors } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
 
 // GET /api/admin/colors?brand=xxx&productType=xxx
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     const brand = url.searchParams.get('brand');
     const productType = url.searchParams.get('productType');
@@ -31,7 +25,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 
 // POST /api/admin/colors  { brand, productType, hex, name }
 export const POST: RequestHandler = async ({ locals, request }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
     const body = await request.json();
     const { brand, productType, hex, name } = body;
 

@@ -2,19 +2,13 @@ import { json, error } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { tags } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
 
 // ─── GET — list all tags ─────────────────────────────────────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     const type = url.searchParams.get('type'); // "promotion" | "badge" | null (all)
 
@@ -28,7 +22,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // ─── POST — create tag ──────────────────────────────────────────────────────
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
 
     const { type, value, label } = await request.json();
 
@@ -51,7 +45,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 // ─── PATCH — update tag ─────────────────────────────────────────────────────
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
 
     const { id, value, label } = await request.json();
 
@@ -72,7 +66,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 // ─── DELETE — delete tags ───────────────────────────────────────────────────
 
 export const DELETE: RequestHandler = async ({ locals, request }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
 
     const { ids } = await request.json();
 

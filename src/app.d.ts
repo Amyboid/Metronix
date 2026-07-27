@@ -1,5 +1,4 @@
 import type { auth } from '$lib/server/auth';
-import type { Session, User } from 'better-auth';
 
 // Infer the user type from the auth instance so it includes the `role` field
 // added by the admin plugin.

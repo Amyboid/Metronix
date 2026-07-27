@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { adminNav } from '$lib/stores/adminNav';
 	import { ikUrl } from '$lib/utils/imagekit';
+	import { handleApiError } from '$lib/utils/apiError';
 	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 	import FilterPanel from './FilterPanel.svelte';
 
@@ -89,7 +90,7 @@
 			filterStock.forEach((s) => params.append('stock', s));
 
 			const res = await fetch(`/api/admin/products?${params}`);
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items = reset ? data.items : [...items, ...data.items];
 			hasMore = data.hasMore;
@@ -181,12 +182,12 @@
 		const oldVal = product.isPublished;
 		items = items.map((p) => (p.id === product.id ? { ...p, isPublished: !p.isPublished } : p));
 		try {
-			const res = await fetch('/api/admin/products', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ id: product.id, isPublished: !oldVal })
-			});
-			if (!res.ok) throw new Error(await res.text());
+		const res = await fetch('/api/admin/products', {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: product.id, isPublished: !oldVal })
+		});
+			if (!res.ok) await handleApiError(res);
 		} catch (e: any) {
 			items = items.map((p) => (p.id === product.id ? { ...p, isPublished: oldVal } : p));
 			listError = e.message ?? 'Update failed';
@@ -219,12 +220,12 @@
 			return;
 		}
 		try {
-			const res = await fetch('/api/admin/products', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ bulk: true, ids: selectedIds, action })
-			});
-			if (!res.ok) throw new Error(await res.text());
+		const res = await fetch('/api/admin/products', {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ bulk: true, ids: selectedIds, action })
+		});
+			if (!res.ok) await handleApiError(res);
 			selectedIds = [];
 			selectAll = false;
 			await load(true);
@@ -235,12 +236,12 @@
 
 	async function confirmBulkDelete() {
 		try {
-			const res = await fetch('/api/admin/products', {
-				method: 'PATCH',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ bulk: true, ids: selectedIds, action: 'delete' })
-			});
-			if (!res.ok) throw new Error(await res.text());
+		const res = await fetch('/api/admin/products', {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ bulk: true, ids: selectedIds, action: 'delete' })
+		});
+			if (!res.ok) await handleApiError(res);
 			selectedIds = [];
 			selectAll = false;
 			deleteConfirming = false;

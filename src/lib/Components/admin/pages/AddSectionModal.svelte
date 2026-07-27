@@ -1,6 +1,7 @@
 <script lang="ts">
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 	import DynamicForm from './DynamicForm.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let {
 		pageName,
@@ -82,7 +83,7 @@
 					config: formData,
 				}),
 			});
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Failed to add section' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			onsaved();
 		} catch (e: any) {
 			error = e.message ?? 'Save failed';

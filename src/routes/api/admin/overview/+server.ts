@@ -3,11 +3,10 @@ import type { RequestHandler } from './$types';
 import { db } from '$lib/server/db';
 import { products, locations, productAvailability, auditLogs } from '$lib/server/db/schema';
 import { count, eq, sql, and, gt, desc } from 'drizzle-orm';
+import { requireAdminOrEditor } from '$lib/server/adminGuard';
 
 export const GET: RequestHandler = async ({ locals }) => {
-	if (!locals.user || !['admin', 'super_admin'].includes(locals.user.role ?? '')) {
-		return json({ error: 'Forbidden' }, { status: 403 });
-	}
+	requireAdminOrEditor(locals);
 
 	const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 

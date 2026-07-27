@@ -3,6 +3,7 @@
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
 	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	type Tag = {
 		id: string;
@@ -61,7 +62,7 @@
 		try {
 			const url = filterType === 'all' ? '/api/admin/tags' : `/api/admin/tags?type=${filterType}`;
 			const res = await fetch(url);
-			if (!res.ok) throw new Error('Failed to load');
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items = data.items ?? [];
 		} catch (e: any) {
@@ -97,14 +98,14 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ type: formType, value: formValue.trim(), label: formLabel.trim() }),
 				});
-				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Create failed' })); throw new Error(b.message); }
+				if (!res.ok) await handleApiError(res);
 			} else {
 				const res = await fetch('/api/admin/tags', {
 					method: 'PATCH',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ id: panelItem!.id, value: formValue.trim(), label: formLabel.trim() }),
 				});
-				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Update failed' })); throw new Error(b.message); }
+				if (!res.ok) await handleApiError(res);
 			}
 			closePanel();
 			await load();
@@ -130,7 +131,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ ids: [id] }),
 			});
-			if (!res.ok) throw new Error('Delete failed');
+			if (!res.ok) await handleApiError(res);
 			await load();
 		} catch (err: any) { listError = err.message ?? 'Delete failed'; }
 	}
@@ -145,7 +146,7 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ ids: selectedIds }),
 				});
-				if (!res.ok) throw new Error('Delete failed');
+			if (!res.ok) await handleApiError(res);
 				selectedIds = []; selectAll = false;
 				await load();
 			} catch (err: any) { listError = err.message ?? 'Delete failed'; }

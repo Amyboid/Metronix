@@ -5,6 +5,7 @@ import { db } from '$lib/server/db';
 import { pageSections, sectionTemplates } from '$lib/server/db/schema';
 import { eq, asc } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
 
 async function deleteIKFile(fileId: string | null) {
@@ -20,17 +21,10 @@ async function deleteIKFile(fileId: string | null) {
     }
 }
 
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
-
 // ─── GET — list sections for a page + all templates ──────────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     // Check which sections use a specific template
     const checkTemplate = url.searchParams.get('templateSlug');
@@ -69,7 +63,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // ─── POST — add a section ─────────────────────────────────────────────────────
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     // ── Create new template ──
@@ -141,7 +135,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 // ─── PATCH — update config | reorder | enable | disable ──────────────────────
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     // ── Update template schema ──
@@ -230,7 +224,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 // ─── DELETE — remove a section ────────────────────────────────────────────────
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const id    = url.searchParams.get('id');
     const templateSlug = url.searchParams.get('templateSlug');
 

@@ -6,6 +6,7 @@
 	import EditSectionModal from './EditSectionModal.svelte';
 	import { adminNav } from '$lib/stores/adminNav';
 	import { getIKAuth } from '$lib/utils/imagekit';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { pageName }: { pageName: string } = $props();
 
@@ -46,7 +47,7 @@
 				fetch(`/api/admin/pages?pageName=${pageName}`),
 				fetch('/api/admin/pages?templates=true'),
 			]);
-			if (!sectionsRes.ok) throw new Error(await sectionsRes.text());
+			if (!sectionsRes.ok) await handleApiError(sectionsRes);
 			const sData = await sectionsRes.json();
 			const tData = await templatesRes.json();
 			sections = sData.sections;
@@ -89,9 +90,9 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ reorder, pageName }),
 			});
-			if (!res.ok) throw new Error(await res.text());
-		} catch (e: any) {
-			listError = e.message ?? 'Reorder failed';
+		if (!res.ok) await handleApiError(res);
+	} catch (e: any) {
+		listError = e.message ?? 'Reorder failed';
 			await load();
 		}
 	}
@@ -103,7 +104,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ id: section.id, isActive: !section.isActive }),
 			});
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			sections = sections.map(s => s.id === section.id ? { ...s, isActive: !s.isActive } : s);
 		} catch (e: any) {
 			listError = e.message ?? 'Update failed';
@@ -113,7 +114,7 @@
 	async function deleteSection(section: Section) {
 		try {
 			const res = await fetch(`/api/admin/pages?id=${section.id}`, { method: 'DELETE' });
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			sections = sections.filter(s => s.id !== section.id);
 		} catch (e: any) {
 			listError = e.message ?? 'Delete failed';

@@ -13,16 +13,8 @@ import {
 } from '$lib/server/db/schema';
 import { eq, and, or, ilike, inArray, asc, desc, gt, lt, count, gte, lte, sql } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-// ─── Auth guard ───────────────────────────────────────────────────────────────
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
 
 // ─── ImageKit cleanup helpers ────────────────────────────────────────────────
 
@@ -68,7 +60,7 @@ async function cleanupProductImages(productId: string) {
 // ─── GET — list products (cursor pagination + filters) ───────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     // Single product lookup by slug (includes variants)
     const slug = url.searchParams.get('slug');
@@ -168,7 +160,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // ─── POST — create product ────────────────────────────────────────────────────
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     const {
@@ -259,7 +251,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 // ─── PATCH — update product (including bulk publish/unpublish) ────────────────
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     // Bulk action: { ids: string[], action: 'publish' | 'unpublish' | 'delete' }
@@ -400,7 +392,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 // ─── DELETE — single product ──────────────────────────────────────────────────
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const id    = url.searchParams.get('id');
     if (!id) throw error(400, 'Missing id');
 

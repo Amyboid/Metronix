@@ -3,19 +3,13 @@ import { db } from '$lib/server/db';
 import { pageContent, pageDrafts } from '$lib/server/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-function assertAdmin(locals: App.Locals) {
-  if (!locals.user) throw error(401, 'Unauthorized');
-  const role = locals.user.role;
-  if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-  return locals.user as { id: string; email: string; role: string };
-}
 
 // ─── GET — read published + drafts + merged for a page ───────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-  assertAdmin(locals);
+  requireAdminOrEditor(locals);
 
   const pageName = url.searchParams.get('page');
   if (!pageName) throw error(400, 'Missing ?page= param');
@@ -37,7 +31,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // Body: { pageName, fieldKey, value, fieldType?, fileId? }
 
 export const POST: RequestHandler = async ({ locals, request, url }) => {
-  const admin = assertAdmin(locals);
+  const admin = requireAdmin(locals);
 
   // Handle publish action
   if (url.searchParams.get('publish') === 'true') {
@@ -95,7 +89,7 @@ export const POST: RequestHandler = async ({ locals, request, url }) => {
 // ─── DELETE — discard drafts ─────────────────────────────────────────────────
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-  const admin = assertAdmin(locals);
+  const admin = requireAdmin(locals);
 
   const pageName = url.searchParams.get('page');
   const key = url.searchParams.get('key');

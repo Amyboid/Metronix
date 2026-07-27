@@ -4,6 +4,7 @@
 	import SidePanel from './SidePanel.svelte';
 	import DataTable from './DataTable.svelte';
 	import DeleteConfirmModal from './DeleteConfirmModal.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { onadd, selectedCount = $bindable(0), bulkDelete = $bindable(null), clearSelection = $bindable(null) }: {
 		onadd?: (fn: () => void) => void;
@@ -63,10 +64,7 @@
 			try {
 				for (const slug of selectedIds) {
 					const res = await fetch(`/api/admin/catalog?section=brand&slug=${slug}`, { method: 'DELETE' });
-					if (!res.ok) {
-						const b = await res.json().catch(() => ({ message: 'Delete failed' }));
-						throw new Error(b.message ?? 'Delete failed');
-					}
+					if (!res.ok) await handleApiError(res);
 				}
 				selectedIds = []; selectAll = false;
 				await load();
@@ -125,7 +123,7 @@
 		listError = '';
 		try {
 			const res  = await fetch(`/api/admin/catalog?section=brands&offset=${offset}`);
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items   = reset ? data.items : [...items, ...data.items];
 			hasMore = data.hasMore;
@@ -208,8 +206,8 @@
 						logoPath, logoFileId, productTypes: formProductTypes,
 					}),
 				});
-				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Create failed' })); throw new Error(b.message); }
-			} else {
+			if (!res.ok) await handleApiError(res);
+		} else {
 				const res = await fetch('/api/admin/catalog', {
 					method: 'PATCH',
 					headers: { 'Content-Type': 'application/json' },
@@ -221,7 +219,7 @@
 				});
 				if (!res.ok) {
 					if (uploadedFileId) await deleteFromIK(uploadedFileId);
-					throw new Error(await res.text());
+					await handleApiError(res);
 				}
 			}
 			if (formPending?.previewUrl) URL.revokeObjectURL(formPending.previewUrl);
@@ -258,10 +256,7 @@
 				`/api/admin/catalog?section=brand&slug=${slug}${force ? '&force=true' : ''}`,
 				{ method: 'DELETE' }
 			);
-			if (!res.ok) {
-				const b = await res.json().catch(() => ({ message: 'Delete failed' }));
-				throw new Error(b.message ?? 'Delete failed');
-			}
+			if (!res.ok) await handleApiError(res);
 			await load();
 		} catch (err: any) { listError = err.message ?? 'Delete failed'; }
 		finally { deletingSlug = ''; }

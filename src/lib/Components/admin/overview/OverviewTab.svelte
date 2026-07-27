@@ -6,6 +6,7 @@
 	import MetricCard from './MetricCard.svelte';
 	import PlaceholderCard from './PlaceholderCard.svelte';
 	import ShimmerRows from './ShimmerRows.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	Chart.register(...registerables);
 
@@ -37,7 +38,7 @@
 	onMount(async () => {
 		try {
 			const res = await fetch('/api/admin/overview');
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			if (!res.ok) await handleApiError(res);
 			data = await res.json();
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to load overview';

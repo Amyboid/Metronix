@@ -4,19 +4,13 @@ import { db } from '$lib/server/db';
 import { locations, productAvailability, products } from '$lib/server/db/schema';
 import { eq, asc, desc, gt, and, count, sql } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
 
 // ─── GET — list locations OR stock for a location ─────────────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     const locationId = url.searchParams.get('locationId');
 
@@ -62,7 +56,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // ─── POST — create location ───────────────────────────────────────────────────
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     const { storeName, address, city, latitude, longitude, phone } = body;
@@ -101,7 +95,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 // ─── PATCH — update location OR stock count ───────────────────────────────────
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     // Stock update: { locationId, productId, stockCount }
@@ -173,7 +167,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 // ─── DELETE — delete location ─────────────────────────────────────────────────
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const id    = url.searchParams.get('id');
     if (!id) throw error(400, 'Missing id');
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let {
 		onsaved,
@@ -63,10 +64,7 @@
 					schemaDefinition: fields,
 				}),
 			});
-			if (!res.ok) {
-				const body = await res.json().catch(() => ({ message: 'Failed to create template' }));
-				throw new Error(body.message);
-			}
+		if (!res.ok) await handleApiError(res);
 			const template = await res.json();
 			onsaved(template);
 		} catch (e: any) {

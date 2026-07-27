@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { adminNav } from '$lib/stores/adminNav';
+	import { handleApiError } from '$lib/utils/apiError';
 	import Step1BasicInfo from './steps/Step1BasicInfo.svelte';
 	import Step2Pricing from './steps/Step2Pricing.svelte';
 	import Step3Details from './steps/Step3Details.svelte';
@@ -85,7 +86,7 @@
 		if (!slug) return;
 		try {
 			const res = await fetch(`/api/admin/products?slug=${slug}`);
-			if (!res.ok) throw new Error('Failed to load product');
+			if (!res.ok) await handleApiError(res);
 			const result = await res.json();
 			const p = result.items?.[0];
 			if (p) {

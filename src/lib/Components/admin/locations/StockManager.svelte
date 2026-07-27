@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { locationId }: { locationId: string } = $props();
 
@@ -34,7 +35,7 @@
 				params.set('lastName', lastName);
 			}
 			const res = await fetch(`/api/admin/locations?${params}`);
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items = reset ? data.items : [...items, ...data.items];
 			hasMore = data.hasMore;
@@ -69,7 +70,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ locationId, productId, stockCount: editValue }),
 			});
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			items = items.map(i => i.productId === productId ? { ...i, stockCount: editValue } : i);
 			editingId = '';
 		} catch (e: any) {

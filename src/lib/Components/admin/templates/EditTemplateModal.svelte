@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let {
 		template,
@@ -67,10 +68,7 @@
 					schemaDefinition: fields,
 				}),
 			});
-			if (!res.ok) {
-				const body = await res.json().catch(() => ({ message: 'Failed to update template' }));
-				throw new Error(body.message);
-			}
+			if (!res.ok) await handleApiError(res);
 			onsaved({ ...template, schemaDefinition: fields });
 		} catch (e: any) {
 			error = e.message ?? 'Failed to update template';

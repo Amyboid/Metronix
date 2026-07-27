@@ -4,6 +4,7 @@
 	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
 	import CreateTemplateModal from '$lib/Components/admin/pages/CreateTemplateModal.svelte';
 	import EditTemplateModal from './EditTemplateModal.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	type Template = {
 		slug: string;
@@ -31,7 +32,7 @@
 		loading = true; listError = '';
 		try {
 			const res = await fetch('/api/admin/pages?templates=true');
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items = data.templates ?? [];
 		} catch (e: any) {
@@ -81,7 +82,7 @@
 		deletingSlug = slug; closeDeleteModal();
 		try {
 			const res = await fetch(`/api/admin/pages?templateSlug=${slug}`, { method: 'DELETE' });
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Delete failed' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			selectedIds = selectedIds.filter((s) => s !== slug);
 			await load();
 		} catch (err: any) { listError = err.message ?? 'Delete failed'; }

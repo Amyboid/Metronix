@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
 	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { onaction }: { onaction?: (fn: () => void) => void } = $props();
 
@@ -62,9 +63,9 @@
 			if (dateTo)       params.set('dateTo', dateTo);
 
 			const res = await fetch(`/api/admin/audit?${params}`);
-			if (!res.ok) throw new Error(await res.text());
-			const data = await res.json();
-			items = reset ? data.items : [...items, ...data.items];
+		if (!res.ok) await handleApiError(res);
+		const data = await res.json();
+		items = reset ? data.items : [...items, ...data.items];
 			hasMore = data.hasMore;
 			if (data.items.length) {
 				const last = data.items[data.items.length - 1];
@@ -113,8 +114,8 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ before: deleteBefore }),
 			});
-			if (!res.ok) throw new Error(await res.text());
-			showDeleteModal = false;
+		if (!res.ok) await handleApiError(res);
+		showDeleteModal = false;
 			await load(true);
 		} catch (e: any) {
 			listError = e.message ?? 'Delete failed';

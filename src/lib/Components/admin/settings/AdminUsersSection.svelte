@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { currentUserId = '', onaction }: { currentUserId?: string; onaction?: (fn: () => void) => void } = $props();
 
@@ -40,9 +41,9 @@
 		loading = true; listError = '';
 		try {
 			const res = await fetch('/api/admin/users');
-			if (!res.ok) throw new Error(await res.text());
-			const data = await res.json();
-			items = data.items;
+		if (!res.ok) await handleApiError(res);
+		const data = await res.json();
+		items = data.items;
 		} catch (e: any) {
 			listError = e.message ?? 'Failed to load';
 		} finally {
@@ -63,8 +64,8 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ id: item.id, banned: !item.banned }),
 			});
-			if (!res.ok) throw new Error(await res.text());
-			await load();
+		if (!res.ok) await handleApiError(res);
+		await load();
 		} catch (e: any) {
 			listError = e.message ?? 'Failed to update';
 		}
@@ -79,7 +80,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ email: inviteEmail.trim() }),
 			});
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Invite failed' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			inviteOpen = false;
 			inviteEmail = '';
 			await load();

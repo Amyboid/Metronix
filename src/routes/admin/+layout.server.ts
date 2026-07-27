@@ -10,9 +10,9 @@ export const load: LayoutServerLoad = async ({ locals, url }) => {
 		throw redirect(302, '/admin');
 	}
 
-	// Only allow users with admin or super_admin role
+	// Allow admin, super_admin, and editor roles
 	const role = locals.user.role;
-	if (role !== 'admin' && role !== 'super_admin') {
+	if (role !== 'admin' && role !== 'super_admin' && role !== 'editor') {
 		throw redirect(302, '/admin');
 	}
 

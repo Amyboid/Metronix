@@ -26,3 +26,9 @@ export const superAdminRole = ac.newRole({
 	...adminAc.statements,
 	user: ['impersonate-admins', ...adminAc.statements.user],
 });
+
+/**
+ * editor — view-only access. Cannot perform any CUD operations.
+ * The assertAdmin guard in API endpoints already blocks this role.
+ */
+export const editorRole = ac.newRole({});

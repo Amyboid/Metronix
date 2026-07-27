@@ -1,13 +1,8 @@
 // routes/api/admin/imagekit-delete/+server.ts
 import { env } from '$env/dynamic/private';
 import { error, json } from '@sveltejs/kit';
+import { requireAdmin } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-}
 
 async function deleteIKFile(fileId: string | null) {
     if (!fileId) return;
@@ -63,7 +58,7 @@ async function deleteIKFileByPath(filePath: string | null) {
 // DELETE /api/admin/imagekit-delete?fileId=xxx  or  ?filePath=xxx
 // Deletes a single file from ImageKit by fileId or filePath.
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
 
     const fileId = url.searchParams.get('fileId');
     const filePath = url.searchParams.get('filePath');
@@ -90,7 +85,7 @@ export const DELETE: RequestHandler = async ({ locals, url }) => {
 // Body: { fileIds: string[] }
 // Bulk-deletes multiple files — used when force-deleting a brand/category/product-type.
 export const POST: RequestHandler = async ({ locals, request }) => {
-    assertAdmin(locals);
+    requireAdmin(locals);
 
     const body = await request.json();
     const fileIds: string[] = body.fileIds ?? [];

@@ -5,7 +5,7 @@ import { sveltekitCookies } from 'better-auth/svelte-kit';
 import { getRequestEvent } from '$app/server';
 import { db } from '$lib/server/db';
 import * as schema from '$lib/server/db/schema';
-import { ac, adminRole, superAdminRole } from '$lib/server/permissions';
+import { ac, adminRole, superAdminRole, editorRole } from '$lib/server/permissions';
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -35,10 +35,11 @@ export const auth = betterAuth({
 	plugins: [
 		admin({
 			ac,
-			roles: {
-				admin: adminRole,
-				super_admin: superAdminRole,
-			},
+		roles: {
+			admin: adminRole,
+			super_admin: superAdminRole,
+			editor: editorRole,
+		},
 			defaultRole: 'admin',
 			adminRoles: ['admin', 'super_admin'],
 		}),

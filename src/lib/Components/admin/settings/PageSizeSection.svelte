@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { onaction }: { onaction?: (fn: () => void) => void } = $props();
 
@@ -43,7 +44,7 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ updates: [{ key: 'page_size', value: String(formPageSize) }] }),
 			});
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Update failed' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			settings.page_size = String(formPageSize);
 			closePanel();
 		} catch (e: any) {

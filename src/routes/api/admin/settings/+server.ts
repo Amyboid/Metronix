@@ -4,6 +4,7 @@ import { db } from '$lib/server/db';
 import { settings } from '$lib/server/db/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { writeAuditLog } from '$lib/server/audit';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
 
 // Valid setting keys (source of truth)
@@ -18,17 +19,10 @@ const SETTING_KEYS = [
 
 type SettingKey = (typeof SETTING_KEYS)[number];
 
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
-
 // ─── GET — read all settings (or specific keys) ───────────────────────────────
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     const keys = url.searchParams.getAll('key') as SettingKey[];
 
@@ -49,7 +43,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // Body: { updates: { key: string; value: string }[] }
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
 
     const updates: { key: string; value: string }[] = body.updates;

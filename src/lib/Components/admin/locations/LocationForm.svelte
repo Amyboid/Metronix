@@ -3,6 +3,7 @@
 	import { adminNav } from '$lib/stores/adminNav';
 	import SidePanel from '$lib/Components/admin/catalog/SidePanel.svelte';
 	import StockManager from './StockManager.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	let { locationId = null }: { locationId?: string | null } = $props();
 
@@ -88,14 +89,14 @@
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(payload),
 				});
-				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Update failed' })); throw new Error(b.message); }
+				if (!res.ok) await handleApiError(res);
 			} else {
 				const res = await fetch('/api/admin/locations', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(payload),
 				});
-				if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Create failed' })); throw new Error(b.message); }
+				if (!res.ok) await handleApiError(res);
 			}
 			closePanel();
 		} catch (err: any) {

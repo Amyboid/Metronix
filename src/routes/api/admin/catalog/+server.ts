@@ -5,16 +5,10 @@ import { db } from '$lib/server/db';
 import { brands, categories, products, productTypes, brandProductTypes } from '$lib/server/db/schema';
 import { error, json } from '@sveltejs/kit';
 import { asc, count, desc, eq } from 'drizzle-orm';
+import { requireAdmin, requireAdminOrEditor } from '$lib/server/adminGuard';
 import type { RequestHandler } from './$types';
 
 const CHUNK = 15;
-
-function assertAdmin(locals: App.Locals) {
-    if (!locals.user) throw error(401, 'Unauthorized');
-    const role = locals.user.role;
-    if (role !== 'admin' && role !== 'super_admin') throw error(403, 'Forbidden');
-    return locals.user as { id: string; email: string; role: string };
-}
 
 async function deleteIKFile(fileId: string | null) {
     if (!fileId) return;
@@ -34,7 +28,7 @@ async function deleteIKFile(fileId: string | null) {
 // ?section=product-count&entity=brand|category|product-type&slug=xxx  — count linked products
 
 export const GET: RequestHandler = async ({ locals, url }) => {
-    assertAdmin(locals);
+    requireAdminOrEditor(locals);
 
     const section = url.searchParams.get('section');
 
@@ -133,7 +127,7 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 // ─── POST ─────────────────────────────────────────────────────────────────────
 
 export const POST: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
     const { section } = body;
 
@@ -223,7 +217,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 // ─── PATCH ────────────────────────────────────────────────────────────────────
 
 export const PATCH: RequestHandler = async ({ locals, request }) => {
-    const admin = assertAdmin(locals);
+    const admin = requireAdmin(locals);
     const body  = await request.json();
     const { section, slug } = body;
 
@@ -336,7 +330,7 @@ export const PATCH: RequestHandler = async ({ locals, request }) => {
 // ?force=true  → delete linked products + their IK images first, then the parent
 
 export const DELETE: RequestHandler = async ({ locals, url }) => {
-    const admin   = assertAdmin(locals);
+    const admin   = requireAdmin(locals);
     const section = url.searchParams.get('section');
     const slug    = url.searchParams.get('slug');
     const force   = url.searchParams.get('force') === 'true';

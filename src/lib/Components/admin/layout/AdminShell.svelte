@@ -2,6 +2,7 @@
 	import LeftNav from './LeftNav.svelte';
 	import BottomNav from './BottomNav.svelte';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import PermissionDeniedModal from '../PermissionDeniedModal.svelte';
 	import { onMount } from 'svelte';
 
 	const { adminEmail = '', storeName = 'Admin Panel', children } = $props<{ adminEmail?: string; storeName?: string; children?: any }>();
@@ -55,6 +56,8 @@
 	<div class="bottom-nav-wrap" aria-label="Bottom navigation">
 		<BottomNav />
 	</div>
+
+	<PermissionDeniedModal />
 </div>
 
 <style>

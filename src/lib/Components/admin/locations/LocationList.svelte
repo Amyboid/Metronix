@@ -3,6 +3,7 @@
 	import { adminNav } from '$lib/stores/adminNav';
 	import DataTable from '$lib/Components/admin/catalog/DataTable.svelte';
 	import DeleteConfirmModal from '$lib/Components/admin/catalog/DeleteConfirmModal.svelte';
+	import { handleApiError } from '$lib/utils/apiError';
 
 	type Location = {
 		id:          string;
@@ -51,10 +52,7 @@
 			try {
 				for (const id of selectedIds) {
 					const res = await fetch(`/api/admin/locations?id=${id}`, { method: 'DELETE' });
-					if (!res.ok) {
-						const b = await res.json().catch(() => ({ message: 'Delete failed' }));
-						throw new Error(b.message ?? 'Delete failed');
-					}
+					if (!res.ok) await handleApiError(res);
 				}
 				selectedIds = []; selectAll = false;
 				await load();
@@ -66,7 +64,7 @@
 		loading = true; listError = '';
 		try {
 			const res = await fetch('/api/admin/locations');
-			if (!res.ok) throw new Error(await res.text());
+			if (!res.ok) await handleApiError(res);
 			const data = await res.json();
 			items = data.items;
 		} catch (e: any) {
@@ -103,7 +101,7 @@
 		closeDeleteModal();
 		try {
 			const res = await fetch(`/api/admin/locations?id=${id}`, { method: 'DELETE' });
-			if (!res.ok) { const b = await res.json().catch(() => ({ message: 'Delete failed' })); throw new Error(b.message); }
+			if (!res.ok) await handleApiError(res);
 			await load();
 		} catch (err: any) {
 			listError = err.message ?? 'Delete failed';
